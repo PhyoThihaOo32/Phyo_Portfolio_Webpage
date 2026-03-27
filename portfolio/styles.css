@@ -11,6 +11,10 @@
   --font-body: "Reyda", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
   --font-heading: "Reyda", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
   --header-glow: linear-gradient(90deg, rgba(124,58,237,.15), rgba(16,185,129,.08));
+  --hero-gold-1: #fff1a6;
+  --hero-gold-2: #ffd86b;
+  --hero-gold-3: #ffb11f;
+  --hero-gold-shadow: rgba(255, 193, 7, .24);
 }
 
 html[data-theme="cyber"]{
@@ -27,6 +31,10 @@ html[data-theme="cyber"]{
   --font-heading: "Beautiful Police", "Material Theories", "Space Grotesk", "Segoe UI", system-ui, -apple-system, sans-serif;
   --bg-pattern: radial-gradient(circle at 20% 30%, rgba(255,43,209,.18), transparent 30%), radial-gradient(circle at 80% 20%, rgba(34,243,214,.14), transparent 35%), radial-gradient(circle at 50% 80%, rgba(124,93,255,.22), transparent 45%);
   --header-glow: linear-gradient(90deg, rgba(255,43,209,.18), rgba(34,243,214,.14));
+  --hero-gold-1: #fff3c2;
+  --hero-gold-2: #ffd166;
+  --hero-gold-3: #ff8f3f;
+  --hero-gold-shadow: rgba(255, 107, 61, .28);
 }
 
 html[data-theme="space"]{
@@ -43,6 +51,10 @@ html[data-theme="space"]{
   --font-heading: "Trench Thin", "Orbitron", "Space Grotesk", "Eurostile", "Segoe UI", system-ui, -apple-system, sans-serif;
   --bg-pattern: radial-gradient(circle at 20% 30%, rgba(255,79,109,.18), transparent 30%), radial-gradient(circle at 70% 25%, rgba(44,255,156,.16), transparent 32%), radial-gradient(circle at 50% 80%, rgba(82,122,255,.16), transparent 45%), radial-gradient(1200px 800px at 20% -10%, rgba(124,58,237,.15), transparent 60%);
   --header-glow: linear-gradient(90deg, rgba(44,255,156,.18), rgba(255,79,109,.15));
+  --hero-gold-1: #fff7cf;
+  --hero-gold-2: #ffd76a;
+  --hero-gold-3: #ff9b54;
+  --hero-gold-shadow: rgba(255, 168, 76, .3);
 }
 
 html[data-theme="light"]{
@@ -59,6 +71,10 @@ html[data-theme="light"]{
   --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-heading: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   --header-glow: linear-gradient(90deg, rgba(168,85,247,.16), rgba(255,179,138,.12));
+  --hero-gold-1: #fff1c7;
+  --hero-gold-2: #ffcf59;
+  --hero-gold-3: #ff9e47;
+  --hero-gold-shadow: rgba(255, 178, 71, .22);
 }
 
 *{box-sizing:border-box}
@@ -79,7 +95,13 @@ a{color:var(--text); text-decoration: none}
 a:hover{color:var(--accent)}
 
 .muted{color:var(--muted)}
-.accent{background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent}
+.accent{
+  background: linear-gradient(135deg, var(--hero-gold-1) 0%, var(--hero-gold-2) 48%, var(--hero-gold-3) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 3px 16px var(--hero-gold-shadow));
+}
 .btn{display:inline-block; padding:.7rem 1rem; border:1px solid var(--border); border-radius:.6rem; background: var(--bg-elev); color:var(--text); box-shadow: var(--shadow); transition: transform .15s ease, border-color .2s ease, background .2s ease}
 .btn:hover{transform: translateY(-2px); border-color: color-mix(in hsl, var(--accent) 50%, var(--border))}
 .btn.primary{background: linear-gradient(135deg, color-mix(in hsl, var(--accent) 65%, black), color-mix(in hsl, var(--accent-2) 65%, black)); border: none}
