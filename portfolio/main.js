@@ -1,11 +1,12 @@
 (function(){
   const data = window.PORTFOLIO || {};
-  const THEMES = ['dark','light','cyber','space'];
+  const THEMES = ['dark','light','cyber','space','burmese'];
   const THEME_LABELS = {
     dark:'Dark',
     light:'Light',
     cyber:'Cyber',
-    space:'Space'
+    space:'Space',
+    burmese:'Burmese'
   };
 
   const $ = (sel, parent=document) => parent.querySelector(sel);
@@ -32,7 +33,8 @@
         dark:'#0b0f14',
         light:'#f7f8fb',
         cyber:'#0c0b1a',
-        space:'#070b17'
+        space:'#070b17',
+        burmese:'#23120b'
       };
       const m = document.querySelector('meta[name="theme-color"]');
       const theme = root.getAttribute('data-theme');
@@ -327,6 +329,13 @@
         if(!contactCfg.endpoint){
           status.textContent = 'Contact form is not configured yet.';
           status.classList.add('error');
+          return;
+        }
+        if(honeyEl && honeyEl.value.trim()){
+          // Honeypot filled; treat as success without sending
+          formEl.reset();
+          status.textContent = 'Message sent successfully.';
+          status.classList.add('success');
           return;
         }
         submitBtn && (submitBtn.disabled = true);
@@ -849,6 +858,21 @@ async function renderDailyGallery(){
   }
   
   const theme = document.documentElement.getAttribute('data-theme');
+  if(theme === 'burmese'){
+    try{
+      const manifestUrl = new URL('assets/art/burmese/manifest.json?v=1', location.href).toString();
+      const res = await fetch(manifestUrl, {cache:'no-store'});
+      if(res.ok){
+        const imgs = await res.json();
+        if(Array.isArray(imgs) && imgs.length){
+          renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl);
+          try{ window.__gallerySource = 'burmese'; }catch{}
+          bindKenBurns();
+          return;
+        }
+      }
+    }catch{}
+  }
   if(theme === 'cyber'){
     try{
       const manifestUrl = new URL('assets/art/cyber/manifest.json?v=5', location.href).toString();
