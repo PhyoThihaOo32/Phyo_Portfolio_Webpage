@@ -1,65 +1,118 @@
-# Personal Portfolio (Dark, Clean, Structured)
+# Phyo Portfolio Webpage
 
-A zero-dependency, single-page portfolio you can customize by editing `content.js`. No build tools required — open `index.html` in a browser or serve statically.
+[![HTML](https://img.shields.io/badge/HTML5-Structure-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS](https://img.shields.io/badge/CSS3-Styling-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-Interaction-F7DF1E?style=for-the-badge&logo=javascript&logoColor=111)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![PWA](https://img.shields.io/badge/PWA-Enabled-5A0FC8?style=for-the-badge)](https://web.dev/progressive-web-apps/)
+[![Responsive](https://img.shields.io/badge/Responsive-Desktop%20%26%20Mobile-0EA5E9?style=for-the-badge)](#features)
+[![Themes](https://img.shields.io/badge/Themes-Dark%20%7C%20Light%20%7C%20Cyber%20%7C%20Space-10B981?style=for-the-badge)](#features)
 
-## Quick start
+A handcrafted personal portfolio built with HTML, CSS, and JavaScript.
 
-- Edit `content.js` and fill in your real details (name, bio, skills, projects, links).
-- Optional: place a photo at `assets/avatar.svg` (PNG/JPG also work; update path in `content.js`).
-- Optional: add your résumé at `assets/resume.pdf`.
-- Open `index.html` in a browser.
+This project presents my work, background, and personality through a multi-theme interface with custom typography, animated visual sections, curated gallery behavior, and interactive contact features. The goal was to build something that feels personal, technically solid, and visually intentional rather than using a generic portfolio template.
 
-If your browser blocks loading local JS on `file://`, run a tiny local server:
+## Repo Description
 
-- Python: `python3 -m http.server 8000` then open http://localhost:8000/portfolio/
-- Node: `npx serve` (or any static server)
+Multi-theme personal portfolio website with custom fonts, animated visuals, curated galleries, and responsive frontend interactions.
 
-Keyboard shortcuts:
-- `/` focuses project search
-- `t` toggles dark/light theme
+## Features
 
-## Customize
+- Four themes: Dark, Light, Cyber, and Space
+- Custom font system tailored to individual themes
+- Animated code-rain visual treatment for About, Focus, and Highlights
+- Gallery with theme-specific behavior
+- Project filtering and search
+- Responsive layout across desktop and mobile
+- Interactive contact form with mail integration
+- Resume download and vCard export
+- PWA support through `manifest.webmanifest` and `sw.js`
 
-- Colors: tweak CSS variables at the top of `styles.css`.
-- Default theme: change `preferences.theme` in `content.js` ("dark" or "light").
-- Sections: all rendering logic lives in `main.js` — feel free to rearrange or remove sections.
-- Social icons: set URLs in `profile.social` inside `content.js` (only non-empty are shown).
-- Projects: set `featured: true` to emphasize. Use `tags` to enable filtering.
+## Stack
 
-## Deploy
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- Static assets and locally bundled fonts
 
-Any static host works:
-- GitHub Pages: push this `portfolio/` folder to a repo and enable Pages.
-- Vercel/Netlify: drag-and-drop or connect the repo.
-- S3/CloudFront or your own server: upload the folder as-is.
+## Project Goals
 
-PWA: A simple service worker (`sw.js`) is included for offline caching and a minimal `manifest.webmanifest` for installability.
+- Build a portfolio that reflects both technical ability and visual taste
+- Explore frontend architecture without a framework
+- Create a stronger identity through themes, type, motion, and layout
+- Present projects and background in a way that feels deliberate and memorable
 
-## SEO & Sharing
+## Theme System
 
-- Page `<title>` and meta description are in `index.html`.
-- JSON-LD Person schema is injected from your `content.js` (see `injectJsonLd()` in `main.js`).
-- Favicon lives at `assets/favicon.svg`.
+- `Dark`: clean, minimal, strong default presentation
+- `Light`: bright, airy, and more editorial
+- `Cyber`: neon, high-contrast, and stylized
+- `Space`: sci-fi inspired, atmospheric, and cosmic
 
-## Accessibility
+## Local Development
 
-- Keyboard focus styles, skip link, semantic landmarks, and sensible contrast.
-- Respects reduced-motion preferences.
+Open the site with any static server from the project folder:
 
-## Structure
-
+```bash
+cd /Users/phyothihaoo/Documents/Playground/portfolio
+python3 -m http.server 8000
 ```
+
+Then open:
+
+```text
+http://localhost:8000
+```
+
+## Project Structure
+
+```text
 portfolio/
 ├── assets/
-│   ├── avatar.svg        # replace with your photo
-│   └── favicon.svg
-├── content.js            # your data (edit me)
-├── index.html            # layout + sections
-├── main.js               # rendering + UX
-├── styles.css            # dark theme styles
+│   ├── art/
+│   ├── fonts/
+│   ├── avatar.svg
+│   ├── favicon.svg
+│   └── resume.pdf
+├── content.js
+├── index.html
+├── main.js
+├── styles.css
+├── manifest.webmanifest
+├── sw.js
 └── README.md
 ```
 
+## Customization
+
+- Edit personal data in `content.js`
+- Adjust layout and interactions in `main.js`
+- Modify themes, typography, and visual treatments in `styles.css`
+- Replace gallery assets in `assets/art/`
+
+## Accessibility
+
+- Semantic structure and section landmarks
+- Keyboard-friendly navigation
+- Reduced-motion support for users who prefer less animation
+- Clear visual states for controls and forms
+
+## Deployment
+
+This is a static site and can be deployed easily to:
+
+- GitHub Pages
+- Netlify
+- Vercel
+- Any standard static host
+
+## Author
+
+Phyo Thiha Oo
+
+- GitHub: [https://github.com/PhyoThihaOo32](https://github.com/PhyoThihaOo32)
+- LinkedIn: [https://www.linkedin.com/in/phyo-t-oo-1990a2240/](https://www.linkedin.com/in/phyo-t-oo-1990a2240/)
+- Portfolio Repo: [https://github.com/PhyoThihaOo32/Phyo_Portfolio_Webpage](https://github.com/PhyoThihaOo32/Phyo_Portfolio_Webpage)
+
 ## License
 
-This template is yours to use. No attribution required.
+This project is published as a personal portfolio project.
