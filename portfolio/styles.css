@@ -52,13 +52,13 @@ html[data-theme="light"]{
   --text: #0c1220;
   --muted: #4b5563;
   --border: #e6e8f0;
-  --accent: #2563eb;
-  --accent-2: #10b981;
+  --accent: #a855f7;
+  --accent-2: #ffb38a;
   --shadow: 0 10px 30px rgba(0,0,0,.12);
-  --bg-pattern: radial-gradient(circle at 18% 20%, rgba(37,99,235,.12), transparent 35%), radial-gradient(circle at 82% 15%, rgba(16,185,129,.1), transparent 40%), radial-gradient(circle at 50% 80%, rgba(255,255,255,.4), transparent 45%);
+  --bg-pattern: radial-gradient(circle at 18% 20%, rgba(168,85,247,.14), transparent 35%), radial-gradient(circle at 82% 15%, rgba(255,179,138,.12), transparent 40%), radial-gradient(circle at 50% 80%, rgba(255,255,255,.4), transparent 45%);
   --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-heading: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --header-glow: linear-gradient(90deg, rgba(37,99,235,.14), rgba(16,185,129,.1));
+  --header-glow: linear-gradient(90deg, rgba(168,85,247,.16), rgba(255,179,138,.12));
 }
 
 *{box-sizing:border-box}
@@ -84,6 +84,19 @@ a:hover{color:var(--accent)}
 .btn:hover{transform: translateY(-2px); border-color: color-mix(in hsl, var(--accent) 50%, var(--border))}
 .btn.primary{background: linear-gradient(135deg, color-mix(in hsl, var(--accent) 65%, black), color-mix(in hsl, var(--accent-2) 65%, black)); border: none}
 .btn.ghost{background: transparent}
+html[data-theme="light"] .btn.primary{
+  color:#fff7ff;
+  background: linear-gradient(135deg, #a855f7 0%, #d46bff 38%, #ffb38a 100%);
+  box-shadow:
+    0 12px 28px rgba(168,85,247,.22),
+    0 8px 20px rgba(255,179,138,.2);
+}
+html[data-theme="light"] .btn.primary:hover{
+  border-color: transparent;
+  box-shadow:
+    0 16px 34px rgba(168,85,247,.26),
+    0 10px 24px rgba(255,179,138,.24);
+}
 .icon-btn{border:1px solid var(--border); background:var(--bg-elev); color:var(--text); border-radius:.6rem; padding:.5rem .6rem; cursor:pointer}
 .icon{font-size:1rem}
 

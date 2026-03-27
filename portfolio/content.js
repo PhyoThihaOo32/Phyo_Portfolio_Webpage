@@ -135,12 +135,15 @@ window.PORTFOLIO = {
 
   passions: [
     "Astronomy",
+    "Anthropology",
     "Universe",
     "Music",
     "Guitar",
     "Hiking",
     "Travel",
+    "Stargazing",
     "Spiritual",
+    "Ikigai",
     "Gaming",
     "Art",
     "Love",
@@ -151,6 +154,8 @@ window.PORTFOLIO = {
     "Sex",
     "Cats",
     "Buddha",
+    "Bars",
+    "Romance",
     "Adventure",
     "Wanderer",
     "Empathy",
@@ -158,7 +163,8 @@ window.PORTFOLIO = {
     "Fire",
     "Light",
     "Dark",
-    "Origin"
+    "Origin",
+    "Success"
   ],
 
   music: {
