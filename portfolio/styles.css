@@ -240,6 +240,9 @@ html[data-theme="space"] .about-visual span{color:#9dffba; text-shadow: 0 0 16px
 .contact-card input.invalid, .contact-card textarea.invalid{border-color:#f97316; box-shadow: 0 0 0 1px rgba(249,115,22,.35);}
 .form-status{margin-top:.6rem; font-size:.9rem;}
 .form-status.error{color:#f97316;}
+.form-status.success{color:#34d399;}
+.contact-card button[disabled]{opacity:.7; cursor:wait; filter:saturate(.8);}
+.hp-field{position:absolute !important; left:-9999px !important; width:1px; height:1px; opacity:0; pointer-events:none;}
 
 .contact-list a.discord{font-family: monospace; letter-spacing: .01em}
 

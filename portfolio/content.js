@@ -24,6 +24,11 @@ window.PORTFOLIO = {
     }
   },
 
+  contact: {
+    endpoint: "https://formsubmit.co/ajax/phyothihaoo.pto@gmail.com",
+    subjectPrefix: "Portfolio message"
+  },
+
   about: {
     background: [
       "CS student (4.0 GPA) at BMCC — focused on software systems and automation.",

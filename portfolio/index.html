@@ -151,7 +151,7 @@
       <section id="contact" class="section reveal">
         <div class="section-head">
           <h3>Contact</h3>
-          <p class="muted">Say hi — Reach out to Me.</p>
+          <p class="muted">Send a message directly from the site.</p>
         </div>
         <div class="contact-grid">
           <div>
@@ -173,15 +173,16 @@
               <button id="download-vcard" class="btn ghost">Save vCard</button>
             </div>
           </div>
-          <form class="contact-card" action="mailto:you@example.com" method="post" enctype="text/plain">
+          <form class="contact-card">
             <h4>Quick Message</h4>
+            <input class="hp-field" name="_honey" tabindex="-1" autocomplete="off" />
             <label>
               <span>Name</span>
-              <input name="name" required />
+              <input name="name" autocomplete="name" required />
             </label>
             <label>
               <span>Email</span>
-              <input type="email" name="email" required />
+              <input type="email" name="email" autocomplete="email" required />
             </label>
             <label>
               <span>Message</span>

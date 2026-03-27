@@ -281,6 +281,7 @@
 
   function renderContact(){
     const email = data.profile?.email || 'you@example.com';
+    const contactCfg = data.contact || {};
     const web = data.profile?.website || '#';
     const loc = data.profile?.location || 'City, Country';
     const resume = data.profile?.resume || 'assets/resume.pdf';
@@ -297,26 +298,74 @@
     if(formEl){
       formEl.removeAttribute('action');
       formEl.noValidate = true;
-      const status = document.createElement('div'); status.className = 'form-status muted'; formEl.appendChild(status);
-      formEl.addEventListener('submit', (e)=>{
+      const submitBtn = formEl.querySelector('button[type="submit"]');
+      let status = formEl.querySelector('.form-status');
+      if(!status){
+        status = document.createElement('div');
+        status.className = 'form-status muted';
+        status.setAttribute('aria-live', 'polite');
+        formEl.appendChild(status);
+      }
+      formEl.addEventListener('submit', async (e)=>{
         e.preventDefault();
-        const name = formEl.querySelector('input[name="name"]')?.value.trim() || '';
-        const from = formEl.querySelector('input[name="email"]')?.value.trim() || '';
-        const msg = formEl.querySelector('textarea[name="message"]')?.value.trim() || '';
-        const inputs = formEl.querySelectorAll('input, textarea');
+        const nameEl = formEl.querySelector('input[name="name"]');
+        const emailInput = formEl.querySelector('input[name="email"]');
+        const messageEl = formEl.querySelector('textarea[name="message"]');
+        const honeyEl = formEl.querySelector('input[name="_honey"]');
+        const name = nameEl?.value.trim() || '';
+        const from = emailInput?.value.trim() || '';
+        const msg = messageEl?.value.trim() || '';
+        const inputs = formEl.querySelectorAll('input:not(.hp-field), textarea');
         inputs.forEach(el=> el.classList.remove('invalid'));
+        status.classList.remove('error', 'success');
         if(!name || !from || !msg){
           status.textContent = 'Please add your name, email, and a message.';
           status.classList.add('error');
           inputs.forEach(el=>{ if(!el.value.trim()) el.classList.add('invalid'); });
           return;
         }
-        status.classList.remove('error');
-        status.textContent = 'Opening your mail app...';
-        const subject = encodeURIComponent(`Portfolio message from ${name}`);
-        const body = encodeURIComponent(`${msg}\n\n— ${name}\n${from}`);
-        const cc = encodeURIComponent(from);
-        window.location.href = `mailto:${email}?subject=${subject}&body=${body}&cc=${cc}`;
+        if(!contactCfg.endpoint){
+          status.textContent = 'Contact form is not configured yet.';
+          status.classList.add('error');
+          return;
+        }
+        submitBtn && (submitBtn.disabled = true);
+        if(submitBtn){ submitBtn.dataset.label = submitBtn.textContent; submitBtn.textContent = 'Sending...'; }
+        status.textContent = 'Sending your message...';
+
+        try{
+          const response = await fetch(contactCfg.endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              name,
+              email: from,
+              message: msg,
+              _subject: `${contactCfg.subjectPrefix || 'Portfolio message'} from ${name}`,
+              _replyto: from,
+              _captcha: 'false',
+              _honey: honeyEl?.value || ''
+            })
+          });
+
+          const result = await response.json().catch(()=> ({}));
+          if(!response.ok || result.success === false || result.success === 'false'){
+            throw new Error(result.message || 'Submission failed.');
+          }
+
+          formEl.reset();
+          status.textContent = 'Message sent successfully.';
+          status.classList.add('success');
+        } catch(err){
+          status.textContent = 'Message could not be sent right now. Please try again later.';
+          status.classList.add('error');
+        } finally {
+          submitBtn && (submitBtn.disabled = false);
+          if(submitBtn){ submitBtn.textContent = submitBtn.dataset.label || 'Send'; }
+        }
       });
     }
 
