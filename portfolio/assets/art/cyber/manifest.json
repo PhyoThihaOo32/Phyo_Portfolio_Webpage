@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Neon Control Room",
+    "artist": "Unsplash / cyberpunk",
+    "year": "2026",
+    "image": "assets/art/cyber/cyber_1.jpg",
+    "url": ""
+  },
+  {
+    "title": "Wanderer & Pup",
+    "artist": "Unsplash / illustrated",
+    "year": "2026",
+    "image": "assets/art/cyber/cyber_2.png",
+    "url": ""
+  },
+  {
+    "title": "Rainy Neon Street",
+    "artist": "Unsplash / neon city",
+    "year": "2026",
+    "image": "assets/art/cyber/cyber_3.jpg",
+    "url": ""
+  },
+  {
+    "title": "Lo-fi Rain with Cat",
+    "artist": "Animated GIF",
+    "year": "2026",
+    "image": "assets/art/cyber/cyber_4.gif",
+    "url": ""
+  },
+  {
+    "title": "Freefall",
+    "artist": "Animated GIF",
+    "year": "2026",
+    "image": "assets/art/cyber/cyber_5.gif",
+    "url": ""
+  }
+]

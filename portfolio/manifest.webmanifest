@@ -1,0 +1,12 @@
+{
+  "name": "Phyo Thiha Oo — Portfolio",
+  "short_name": "Phyo",
+  "description": "Projects, skills, and contact for Phyo Thiha Oo.",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0b0f14",
+  "background_color": "#0b0f14",
+  "icons": [
+    { "src": "assets/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
