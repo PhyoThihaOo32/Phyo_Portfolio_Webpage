@@ -363,3 +363,74 @@ pre{background: var(--bg-elev); border:1px solid var(--border); border-radius:.6
 
 /* Toolbar alignment under radio embed */
 .player-embed .row{gap:.5rem; flex-wrap:wrap}
+
+@media (max-width: 820px){
+  .site-header{flex-wrap:wrap; align-items:flex-start; gap:.8rem}
+  .brand{min-width:0; flex:1 1 auto}
+  .brand-text{min-width:0}
+  .brand-text h1{font-size:.98rem}
+  .brand-text p{font-size:.8rem; overflow-wrap:anywhere}
+  .header-actions{width:100%; justify-content:space-between; flex-wrap:wrap}
+  .theme-chooser{
+    flex:1 1 100%;
+    overflow-x:auto;
+    padding-bottom:.15rem;
+    scrollbar-width:none;
+  }
+  .theme-chooser::-webkit-scrollbar{display:none}
+  .social{margin-left:auto}
+  .section-head{align-items:flex-start; flex-direction:column}
+  .section-head .muted{max-width:none}
+  .projects-controls{width:100%}
+  .projects-controls input[type="search"]{width:100%}
+  .filters{width:100%}
+  .hero{padding: 2rem 0 1.25rem}
+  .hero .cta{width:100%}
+}
+
+@media (max-width: 640px){
+  main{padding: 1.25rem .85rem}
+  .section{padding: 1.5rem 0}
+  .site-header{padding:.75rem .85rem}
+  .avatar{width:36px; height:36px}
+  .brand-text h1{font-size:.92rem}
+  .brand-text p{font-size:.76rem}
+  .theme-chip{font-size:.8rem; padding:.34rem .52rem}
+  .hero h2{font-size: clamp(1.55rem, 7vw, 2.1rem); line-height:1.1}
+  .lead{font-size:1rem}
+  .hero .cta .btn{width:100%; text-align:center}
+  .about-card,
+  .skill-card,
+  .project-card,
+  .media-card,
+  .contact-card,
+  .timeline .item{padding:.9rem}
+  .about-visual[data-size="lg"]{min-height:138px}
+  .about-visual[data-size="sm"]{min-height:92px}
+  .about-visual span{font-size:.84rem}
+  .contact-list{grid-template-columns: 1fr; gap:.2rem}
+  .contact-list dt{margin-top:.5rem}
+  .contact-list dd{align-items:flex-start}
+  .contact-actions{display:grid; grid-template-columns:1fr; gap:.7rem}
+  .contact-actions .btn{width:100%; text-align:center}
+  .media-grid{gap:.85rem}
+  .card-head{align-items:flex-start; flex-direction:column}
+  .player-embed iframe{height:220px}
+  .gallery-art{aspect-ratio: 4/3}
+  .gallery-title{font-size:1rem}
+  .timeline li{padding-left:40px}
+  .timeline::before{left:13px}
+  .timeline li::before{left:5px}
+  .fab{right:.75rem; bottom:.75rem}
+}
+
+@media (max-width: 420px){
+  .site-header{padding:.7rem .7rem}
+  main{padding: 1rem .7rem}
+  .icon-btn{padding:.45rem .55rem}
+  .player-embed iframe{height:200px}
+  .gallery-art{aspect-ratio: 1/1}
+  .project-card .links{flex-direction:column}
+  .project-card .links .btn{width:100%; text-align:center}
+  .contact-card textarea{min-height:140px}
+}
