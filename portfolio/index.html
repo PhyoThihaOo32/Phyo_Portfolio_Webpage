@@ -23,7 +23,13 @@
     <title>Phyo Thiha Oo — Portfolio</title>
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=94" />
+    <style>
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
   </head>
 
   <body>
@@ -99,7 +105,7 @@
       <section id="passions" class="section reveal">
         <div class="section-head">
           <h3>Passions</h3>
-          <p class="muted">What energizes me outside day-to-day work.</p>
+          <p class="muted">Things That I Love.</p>
         </div>
         <ul id="passions-list" class="pill-list"></ul>
       </section>
@@ -193,6 +199,59 @@
           </form>
         </div>
       </section>
+
+      <section id="recreation" class="section reveal">
+        <div class="section-head">
+          <h3>Recreation Corner</h3>
+          <p class="muted">A small lofi game and a calm aquarium.</p>
+        </div>
+        <div class="recreation-grid">
+          <section class="recreation-card recreation-game-card">
+            <div class="card-head">
+              <div>
+                <h4>Lofi Bird</h4>
+                <p class="muted small">Press <kbd>Space</kbd>, click, or tap to flap.</p>
+              </div>
+              <div class="game-stats">
+                <span class="badge">Score <strong id="game-score">0</strong></span>
+                <span class="badge">Best <strong id="game-best">0</strong></span>
+              </div>
+            </div>
+            <div class="game-stage">
+              <canvas id="lofi-bird-canvas" width="720" height="420" aria-label="Lofi bird game"></canvas>
+              <button id="game-start" class="btn primary game-start" type="button">Start Game</button>
+            </div>
+            <div class="game-actions">
+              <button id="game-restart" class="btn ghost" type="button">Restart</button>
+              <span id="game-status" class="muted">Idle. Start when ready.</span>
+            </div>
+          </section>
+
+          <section class="recreation-card aquarium-card">
+            <div class="card-head">
+              <div>
+                <h4>Lofi Aquarium</h4>
+                <p class="muted small">Cozy desk glow, whale halls, and blue tunnel calm.</p>
+              </div>
+              <button id="aquarium-feed" class="btn ghost aquarium-feed" type="button">Feed Fish</button>
+            </div>
+            <div class="aquarium-stage">
+              <div class="aquarium-backdrop" aria-hidden="true">
+                <img class="aquarium-scene is-active" src="assets/recreation/aquarium-lofi.jpg" alt="" />
+                <img class="aquarium-scene" src="assets/recreation/aquarium-whale-1.jpg" alt="" />
+                <img class="aquarium-scene" src="assets/recreation/aquarium-whale-2.jpg" alt="" />
+              </div>
+              <canvas id="aquarium-canvas" width="560" height="420" aria-label="Animated aquarium"></canvas>
+            </div>
+            <div class="aquarium-footer">
+              <div class="row">
+                <span id="aquarium-scene-label" class="badge">Studio Tank</span>
+                <span class="badge">Creatures <strong id="aquarium-count">6</strong></span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
@@ -207,8 +266,8 @@
       <p class="muted" id="footer-copy">© <span id="year"></span> Your Name. All rights reserved.</p>
     </footer>
 
-    <script src="content.js"></script>
-    <script defer src="main.js"></script>
+    <script src="content.js?v=94"></script>
+    <script defer src="main.js?v=94"></script>
     <button id="scroll-top" class="fab" aria-label="Scroll to top" title="Scroll to top">↑</button>
   </body>
 

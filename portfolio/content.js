@@ -125,11 +125,11 @@ window.PORTFOLIO = {
       tags: ["HTML", "CSS"],
       image: "assets/projects/web-development.svg"
     },
-    "LearningCPP": {
-      name: "Learning C++",
-      summary: "Sandbox for learning modern C++: syntax basics, small algorithms, and STL usage.",
-      tags: ["C++"],
-      image: "assets/projects/learning-cpp.svg"
+    "Sunday_Hulk_Project": {
+      name: "QA Automation",
+      summary: "Browser test automation framework built with Selenium, Java, TestNG, and Cucumber for reusable test flows.",
+      tags: ["Selenium", "Java", "TestNG", "Cucumber"],
+      image: "assets/projects/test-automation.svg"
     }
   },
 
@@ -151,10 +151,9 @@ window.PORTFOLIO = {
     "Politics",
     "Novels",
     "Poetry",
-    "Sex",
-    "Cats",
+    "Petrichor",
+    "Cat",
     "Buddha",
-    "Bars",
     "Romance",
     "Adventure",
     "Wanderer",

@@ -399,6 +399,529 @@
     });
   }
 
+  function renderRecreation(){
+    const canvas = document.getElementById('lofi-bird-canvas');
+    const startBtn = document.getElementById('game-start');
+    const restartBtn = document.getElementById('game-restart');
+    const scoreEl = document.getElementById('game-score');
+    const bestEl = document.getElementById('game-best');
+    const statusEl = document.getElementById('game-status');
+    if(!canvas || !scoreEl || !bestEl || !statusEl) return;
+    const ctx = canvas.getContext('2d');
+    const BEST_KEY = 'lofiBirdBest';
+    const bird = { x: 160, y: 210, r: 16, vy: 0 };
+    const pipeWidth = 74;
+    const pipeGap = 122;
+    const groundY = canvas.height - 44;
+    const gravity = 0.38;
+    const flapPower = -6.6;
+    let raf = 0;
+    let running = false;
+    let gameOver = false;
+    let score = 0;
+    let frame = 0;
+    let lastTimestamp = 0;
+    let pointerLock = false;
+    let pipes = [];
+
+    function getBest(){
+      return Number(localStorage.getItem(BEST_KEY) || '0');
+    }
+    function setBest(next){
+      localStorage.setItem(BEST_KEY, String(next));
+      bestEl.textContent = String(next);
+    }
+    function spawnPipe(){
+      const min = 66;
+      const max = groundY - pipeGap - 66;
+      const top = Math.max(min, Math.min(max, min + Math.random() * (max - min)));
+      pipes.push({ x: canvas.width + 28, top, scored: false });
+    }
+    function resetGame(){
+      score = 0;
+      frame = 0;
+      lastTimestamp = 0;
+      pipes = [];
+      bird.y = 210;
+      bird.vy = 0;
+      running = false;
+      gameOver = false;
+      scoreEl.textContent = '0';
+      bestEl.textContent = String(getBest());
+      statusEl.textContent = 'Idle. Start when ready.';
+      if(startBtn) startBtn.hidden = false;
+      for(let i = 0; i < 3; i++) spawnPipe();
+      pipes.forEach((pipe, index)=>{ pipe.x += index * 220; });
+      draw();
+    }
+    function endGame(){
+      if(gameOver) return;
+      running = false;
+      gameOver = true;
+      cancelAnimationFrame(raf);
+      if(score > getBest()) setBest(score);
+      statusEl.textContent = `Run over. Final score: ${score}.`;
+      if(startBtn) startBtn.hidden = false;
+      draw();
+    }
+    function startGame(){
+      cancelAnimationFrame(raf);
+      resetGame();
+      running = true;
+      bird.vy = flapPower;
+      statusEl.textContent = 'Running. Flap through the gaps.';
+      if(startBtn) startBtn.hidden = true;
+      raf = requestAnimationFrame(loop);
+    }
+    function flap(){
+      if(!running && !gameOver){
+        startGame();
+        return;
+      }
+      if(gameOver) return;
+      bird.vy = flapPower;
+    }
+    function drawBackground(){
+      const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      sky.addColorStop(0, '#181d35');
+      sky.addColorStop(0.55, '#233b54');
+      sky.addColorStop(1, '#10151e');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = 'rgba(255, 207, 120, 0.08)';
+      ctx.beginPath();
+      ctx.arc(560, 86, 76, 0, Math.PI * 2);
+      ctx.fill();
+
+      for(let i = 0; i < 7; i++){
+        const x = (i * 118 + frame * 0.4) % (canvas.width + 120) - 120;
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.fillRect(x, 34 + (i % 3) * 18, 2, 24);
+      }
+
+      const hills = ctx.createLinearGradient(0, groundY - 80, 0, groundY + 8);
+      hills.addColorStop(0, 'rgba(39, 76, 82, .88)');
+      hills.addColorStop(1, 'rgba(16, 24, 36, .98)');
+      ctx.fillStyle = hills;
+      ctx.beginPath();
+      ctx.moveTo(0, groundY - 10);
+      ctx.bezierCurveTo(90, groundY - 58, 180, groundY - 28, 270, groundY - 54);
+      ctx.bezierCurveTo(370, groundY - 82, 470, groundY - 30, 640, groundY - 60);
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.lineTo(0, canvas.height);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#120f18';
+      ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+      ctx.strokeStyle = 'rgba(255,255,255,.06)';
+      ctx.beginPath();
+      ctx.moveTo(0, groundY + 0.5);
+      ctx.lineTo(canvas.width, groundY + 0.5);
+      ctx.stroke();
+    }
+    function drawBird(){
+      ctx.save();
+      ctx.translate(bird.x, bird.y);
+      ctx.rotate(Math.max(-0.45, Math.min(0.65, bird.vy * 0.06)));
+      const fill = ctx.createLinearGradient(-14, -16, 14, 16);
+      fill.addColorStop(0, '#ffd29c');
+      fill.addColorStop(1, '#ff8f70');
+      ctx.fillStyle = fill;
+      ctx.beginPath();
+      ctx.arc(0, 0, bird.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#111827';
+      ctx.beginPath();
+      ctx.arc(4, -4, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#f5f5f5';
+      ctx.fillRect(-24, -2, 12, 4);
+      ctx.restore();
+    }
+    function drawPipes(){
+      pipes.forEach(pipe=>{
+        const accent = ctx.createLinearGradient(pipe.x, 0, pipe.x + pipeWidth, 0);
+        accent.addColorStop(0, '#2dd4bf');
+        accent.addColorStop(1, '#60a5fa');
+        ctx.fillStyle = accent;
+        ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+        ctx.fillRect(pipe.x, pipe.top + pipeGap, pipeWidth, groundY - (pipe.top + pipeGap));
+        ctx.fillStyle = 'rgba(255,255,255,.15)';
+        ctx.fillRect(pipe.x + 8, pipe.top - 10, pipeWidth - 16, 10);
+        ctx.fillRect(pipe.x + 8, pipe.top + pipeGap, pipeWidth - 16, 10);
+      });
+    }
+    function drawHUD(){
+      ctx.fillStyle = 'rgba(7, 10, 18, .42)';
+      ctx.fillRect(16, 16, 160, 54);
+      ctx.strokeStyle = 'rgba(255,255,255,.08)';
+      ctx.strokeRect(16, 16, 160, 54);
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '600 15px Inter, system-ui, sans-serif';
+      ctx.fillText('LOFI BIRD', 28, 38);
+      ctx.fillStyle = '#a7f3d0';
+      ctx.font = '700 20px Inter, system-ui, sans-serif';
+      ctx.fillText(String(score), 28, 60);
+      if(!running && !gameOver){
+        ctx.fillStyle = 'rgba(8,12,20,.52)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '700 30px Inter, system-ui, sans-serif';
+        ctx.fillText('Lofi Bird', 278, 154);
+        ctx.font = '500 18px Inter, system-ui, sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText('Tap, click, or press Space to start.', 220, 188);
+      }
+      if(gameOver){
+        ctx.fillStyle = 'rgba(8,12,20,.55)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '700 28px Inter, system-ui, sans-serif';
+        ctx.fillText('Run complete', 252, 164);
+        ctx.font = '500 18px Inter, system-ui, sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(`Score ${score} • Best ${Math.max(score, getBest())}`, 255, 196);
+      }
+    }
+    function draw(){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackground();
+      drawPipes();
+      drawBird();
+      drawHUD();
+    }
+    function update(delta){
+      frame += delta * 0.06;
+      bird.vy += gravity * delta * 0.06;
+      bird.y += bird.vy * delta * 0.06;
+      const speed = 2.6 * delta * 0.06;
+      pipes.forEach(pipe=>{ pipe.x -= speed; });
+      if(pipes[0] && pipes[0].x + pipeWidth < -10){
+        pipes.shift();
+        const lastX = pipes[pipes.length - 1]?.x ?? canvas.width;
+        spawnPipe();
+        pipes[pipes.length - 1].x = lastX + 220;
+      }
+      pipes.forEach(pipe=>{
+        if(!pipe.scored && pipe.x + pipeWidth < bird.x - bird.r){
+          pipe.scored = true;
+          score += 1;
+          scoreEl.textContent = String(score);
+        }
+        const hitsX = bird.x + bird.r > pipe.x && bird.x - bird.r < pipe.x + pipeWidth;
+        const hitsY = bird.y - bird.r < pipe.top || bird.y + bird.r > pipe.top + pipeGap;
+        if(hitsX && hitsY) endGame();
+      });
+      if(bird.y + bird.r >= groundY || bird.y - bird.r <= 0) endGame();
+    }
+    function loop(timestamp){
+      if(!running) return;
+      const delta = Math.min(32, timestamp - (lastTimestamp || timestamp));
+      lastTimestamp = timestamp;
+      update(delta);
+      draw();
+      if(running) raf = requestAnimationFrame(loop);
+    }
+    function onActivate(e){
+      const tag = (document.activeElement?.tagName || '').toLowerCase();
+      if(tag === 'input' || tag === 'textarea') return;
+      if(e.type === 'keydown' && e.code !== 'Space') return;
+      if(e.type === 'keydown') e.preventDefault();
+      if(pointerLock) return;
+      pointerLock = true;
+      flap();
+      setTimeout(()=>{ pointerLock = false; }, 80);
+    }
+
+    startBtn?.addEventListener('click', startGame);
+    restartBtn?.addEventListener('click', startGame);
+    canvas.addEventListener('pointerdown', onActivate);
+    window.addEventListener('keydown', onActivate);
+
+    bestEl.textContent = String(getBest());
+    resetGame();
+  }
+
+  function renderAquarium(){
+    const canvas = document.getElementById('aquarium-canvas');
+    const feedBtn = document.getElementById('aquarium-feed');
+    const countEl = document.getElementById('aquarium-count');
+    const sceneLabelEl = document.getElementById('aquarium-scene-label');
+    const scenes = $$('.aquarium-scene');
+    if(!canvas || !feedBtn || !countEl) return;
+
+    const ctx = canvas.getContext('2d');
+    const fishCount = 6;
+    const sceneNames = ['Studio Tank', 'Whale Hall', 'Blue Tunnel'];
+    const fishPalette = [
+      { body:'#ffc487', fin:'#ffe0bb' },
+      { body:'#ff9ec2', fin:'#ffe1ed' },
+      { body:'#a7e3ff', fin:'#e1f7ff' },
+      { body:'#c9f8a6', fin:'#efffde' },
+      { body:'#ffe38d', fin:'#fff5c9' }
+    ];
+    const fishes = Array.from({ length: fishCount }, (_, i) => ({
+      x: 80 + i * 76,
+      y: 92 + (i % 3) * 72,
+      vx: (i % 2 ? 1 : -1) * (0.11 + Math.random() * 0.1),
+      vy: (Math.random() - 0.5) * 0.06,
+      size: i === fishCount - 1 ? 22 : 16 + Math.random() * 6,
+      wiggle: Math.random() * Math.PI * 2,
+      depth: .82 + Math.random() * .25,
+      type: i === fishCount - 1 ? 'jelly' : 'fish',
+      palette: fishPalette[i % fishPalette.length]
+    }));
+    const pellets = [];
+    const bubbles = [];
+    let last = 0;
+    let sceneIndex = 0;
+    let nextBubbleAt = 0;
+
+    countEl.textContent = String(fishCount);
+    if(sceneLabelEl) sceneLabelEl.textContent = sceneNames[0];
+
+    function setScene(index){
+      sceneIndex = index % sceneNames.length;
+      scenes.forEach((scene, i)=> scene.classList.toggle('is-active', i === sceneIndex));
+      if(sceneLabelEl) sceneLabelEl.textContent = sceneNames[sceneIndex];
+    }
+
+    function feedFish(){
+      for(let i = 0; i < 7; i++){
+        pellets.push({
+          x: canvas.width * (0.3 + Math.random() * 0.4),
+          y: 18 + Math.random() * 16,
+          vy: 0.5 + Math.random() * 0.25
+        });
+      }
+      for(let i = 0; i < 8; i++){
+        bubbles.push({
+          x: canvas.width * (0.28 + Math.random() * 0.44),
+          y: canvas.height - 70 + Math.random() * 18,
+          size: 3 + Math.floor(Math.random() * 3),
+          vy: 0.18 + Math.random() * 0.18,
+          drift: (Math.random() - 0.5) * 0.12,
+          sparkle: Math.random() * Math.PI * 2,
+          color: ['rgba(255,193,245,.48)','rgba(170,236,255,.46)','rgba(255,225,150,.44)','rgba(186,255,214,.42)'][i % 4]
+        });
+      }
+      if(scenes.length){
+        setScene((sceneIndex + 1) % scenes.length);
+      }
+    }
+
+    function drawBackground(time){
+      const wash = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      wash.addColorStop(0, 'rgba(118, 209, 255, .07)');
+      wash.addColorStop(.55, 'rgba(20, 74, 126, .08)');
+      wash.addColorStop(1, 'rgba(6, 15, 30, .2)');
+      ctx.fillStyle = wash;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = 'rgba(255,255,255,.045)';
+      ctx.lineWidth = 1.5;
+      for(let i = 0; i < 4; i++){
+        const y = 46 + i * 78 + Math.sin(time * 0.0007 + i) * 5;
+        ctx.beginPath();
+        ctx.moveTo(-20, y);
+        ctx.bezierCurveTo(canvas.width * .25, y + 10, canvas.width * .65, y - 10, canvas.width + 20, y + 2);
+        ctx.stroke();
+      }
+
+      const floor = ctx.createLinearGradient(0, canvas.height - 80, 0, canvas.height);
+      floor.addColorStop(0, 'rgba(13, 39, 47, .14)');
+      floor.addColorStop(1, 'rgba(5, 19, 24, .32)');
+      ctx.fillStyle = floor;
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height);
+      ctx.lineTo(0, canvas.height - 46);
+      ctx.bezierCurveTo(canvas.width * .22, canvas.height - 66, canvas.width * .42, canvas.height - 28, canvas.width * .62, canvas.height - 36);
+      ctx.bezierCurveTo(canvas.width * .8, canvas.height - 44, canvas.width * .92, canvas.height - 14, canvas.width, canvas.height - 22);
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawBubbleField(){
+      bubbles.forEach(bubble=>{
+        ctx.fillStyle = bubble.color || 'rgba(189, 233, 255, .42)';
+        ctx.fillRect(bubble.x, bubble.y, bubble.size, bubble.size);
+        if(bubble.size > 3){
+          ctx.fillStyle = 'rgba(255,255,255,.18)';
+          ctx.fillRect(bubble.x + 1, bubble.y + 1, Math.max(1, bubble.size - 2), 1);
+        }
+      });
+    }
+
+    function drawFish(fish, time){
+      if(fish.type === 'jelly'){
+        return drawJellyFish(fish, time);
+      }
+
+      const tailWag = Math.sin(time * 0.0032 + fish.wiggle) * 3;
+      ctx.save();
+      ctx.translate(fish.x, fish.y);
+      if(fish.vx < 0) ctx.scale(-1, 1);
+
+      ctx.scale(fish.depth, fish.depth);
+
+      ctx.fillStyle = fish.palette.body;
+      ctx.beginPath();
+      ctx.moveTo(-fish.size, 0);
+      ctx.quadraticCurveTo(-fish.size * 0.4, -fish.size * 0.66, fish.size * 0.4, -fish.size * 0.34);
+      ctx.quadraticCurveTo(fish.size * 1.05, 0, fish.size * 0.4, fish.size * 0.34);
+      ctx.quadraticCurveTo(-fish.size * 0.4, fish.size * 0.66, -fish.size, 0);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(-fish.size + 2, 0);
+      ctx.lineTo(-fish.size - 9, -7 + tailWag * 0.18);
+      ctx.lineTo(-fish.size - 9, 7 - tailWag * 0.18);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = fish.palette.fin;
+      ctx.beginPath();
+      ctx.ellipse(-1, -fish.size * 0.44, fish.size * 0.3, fish.size * 0.14, -.45, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(0, fish.size * 0.4, fish.size * 0.26, fish.size * 0.12, .35, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255,255,255,.34)';
+      ctx.beginPath();
+      ctx.ellipse(-1, -fish.size * 0.18, fish.size * 0.36, fish.size * 0.12, -.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#04121f';
+      ctx.beginPath();
+      ctx.arc(fish.size * 0.52, -1, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawJellyFish(fish, time){
+      const pulse = Math.sin(time * 0.0028 + fish.wiggle) * 2.5;
+      ctx.save();
+      ctx.translate(fish.x, fish.y);
+      ctx.scale(fish.depth, fish.depth);
+
+      ctx.fillStyle = 'rgba(227, 190, 255, .8)';
+      ctx.beginPath();
+      ctx.moveTo(-14, 0);
+      ctx.quadraticCurveTo(-9, -16 - pulse, 0, -18 - pulse);
+      ctx.quadraticCurveTo(9, -16 - pulse, 14, 0);
+      ctx.quadraticCurveTo(0, 8, -14, 0);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255,255,255,.18)';
+      ctx.beginPath();
+      ctx.moveTo(-7, -8);
+      ctx.quadraticCurveTo(0, -13 - pulse * 0.4, 7, -8);
+      ctx.quadraticCurveTo(0, -3, -7, -8);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(245, 226, 255, .78)';
+      ctx.lineWidth = 1.6;
+      for(let i = -9; i <= 9; i += 6){
+        ctx.beginPath();
+        ctx.moveTo(i, 6);
+        ctx.quadraticCurveTo(i + Math.sin(time * 0.0038 + i) * 3, 16, i + Math.cos(time * 0.003 + i) * 2, 28);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawPellets(){
+      ctx.fillStyle = '#f6d28d';
+      pellets.forEach(pellet=>{
+        ctx.fillRect(pellet.x - 2, pellet.y - 2, 4, 4);
+      });
+    }
+
+    function updateFish(dt, time){
+      pellets.forEach(pellet=>{ pellet.y += pellet.vy * dt * 0.06; });
+      for(let i = pellets.length - 1; i >= 0; i--){
+        if(pellets[i].y > canvas.height - 34) pellets.splice(i, 1);
+      }
+
+      if(time > nextBubbleAt){
+        bubbles.push({
+          x: 26 + Math.random() * (canvas.width - 52),
+          y: canvas.height - 34 - Math.random() * 20,
+          size: 2 + Math.floor(Math.random() * 3),
+          vy: 0.08 + Math.random() * 0.1,
+          drift: (Math.random() - 0.5) * 0.06,
+          sparkle: Math.random() * Math.PI * 2,
+          color: ['rgba(192,235,255,.34)','rgba(255,213,245,.3)','rgba(255,241,173,.28)'][Math.floor(Math.random() * 3)]
+        });
+        nextBubbleAt = time + 900 + Math.random() * 1600;
+      }
+
+      for(let i = bubbles.length - 1; i >= 0; i--){
+        const bubble = bubbles[i];
+        bubble.y -= bubble.vy * dt * 0.06;
+        bubble.x += Math.sin(time * 0.0012 + bubble.sparkle) * bubble.drift * dt;
+        if(bubble.y < -12) bubbles.splice(i, 1);
+      }
+
+      fishes.forEach(fish=>{
+        const target = pellets.reduce((closest, pellet)=>{
+          const dist = Math.hypot(pellet.x - fish.x, pellet.y - fish.y);
+          return !closest || dist < closest.dist ? { pellet, dist } : closest;
+        }, null);
+
+        if(target){
+          fish.vx += Math.sign(target.pellet.x - fish.x) * (fish.type === 'jelly' ? 0.005 : 0.008);
+          fish.vy += Math.sign(target.pellet.y - fish.y) * (fish.type === 'jelly' ? 0.004 : 0.006);
+        } else {
+          fish.vx += Math.sin(time * 0.0008 + fish.wiggle) * (fish.type === 'jelly' ? 0.0008 : 0.0011);
+          fish.vy += Math.cos(time * 0.001 + fish.wiggle) * (fish.type === 'jelly' ? 0.0006 : 0.0008);
+        }
+
+        fish.vx = Math.max(-0.52, Math.min(0.52, fish.vx));
+        fish.vy = Math.max(-0.22, Math.min(0.22, fish.vy));
+        fish.x += fish.vx * dt * 0.06;
+        fish.y += fish.vy * dt * 0.06 + Math.sin(time * (fish.type === 'jelly' ? 0.0022 : 0.0018) + fish.wiggle) * (fish.type === 'jelly' ? 0.2 : 0.12);
+
+        if(fish.x < 28 || fish.x > canvas.width - 28) fish.vx *= -1;
+        if(fish.y < 36 || fish.y > canvas.height - 56) fish.vy *= -1;
+
+        for(let i = pellets.length - 1; i >= 0; i--){
+          const pellet = pellets[i];
+          if(Math.hypot(fish.x - pellet.x, fish.y - pellet.y) < fish.size){
+            pellets.splice(i, 1);
+            break;
+          }
+        }
+      });
+    }
+
+    function draw(time){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackground(time);
+      drawBubbleField();
+      drawPellets();
+      fishes.forEach(fish=> drawFish(fish, time));
+    }
+
+    function loop(time){
+      const dt = Math.min(32, time - (last || time));
+      last = time;
+      updateFish(dt, time);
+      draw(time);
+      requestAnimationFrame(loop);
+    }
+
+    feedBtn.addEventListener('click', feedFish);
+    if(scenes.length){
+      setScene(0);
+    }
+    draw(0);
+    requestAnimationFrame(loop);
+  }
+
   function projectCard(p){
     const card = document.createElement('article'); card.className='project-card reveal';
     const thumb = document.createElement('div'); thumb.className='thumb';
@@ -462,14 +985,36 @@
 
   function revealOnScroll(){
     const obs = new IntersectionObserver((entries)=>{
-      for(const e of entries){ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } }
+      for(const e of entries){
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          obs.unobserve(e.target);
+        }
+      }
     }, {threshold: .12});
     $$('.reveal').forEach(el=> obs.observe(el));
+    // Fallback: ensure content is visible even if observer fails
+    setTimeout(()=> {
+      const pending = $$('.reveal:not(.in)');
+      if(pending.length){
+        pending.forEach(el=> el.classList.add('in'));
+        document.documentElement.classList.add('reveal-fallback');
+      }
+    }, 1200);
     try { window.__revealObserver = obs; } catch {}
   }
 
+  function safeRun(label, fn){
+    try{
+      return fn();
+    } catch(err){
+      console.error(`[portfolio] ${label} failed`, err);
+      return undefined;
+    }
+  }
+
   function scrollSpy(){
-    const sections = ['about','skills','projects','passions','timeline','contact'];
+    const sections = ['about','skills','projects','passions','timeline','contact','recreation'];
     const navLinks = sections.map(id=> ({id, el: document.querySelector(`.top-nav a[href="#${id}"]`)}));
     const spy = new IntersectionObserver((entries)=>{
       entries.forEach(e=>{
@@ -503,19 +1048,21 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    initTheme();
-    renderHeader();
-    renderAbout();
-    renderSkills();
-    renderProjects();
-    renderPassions();
-    renderRadio();
-    renderDailyGallery();
-    renderTimeline();
-    renderContact();
-    revealOnScroll();
-    scrollSpy();
-    injectJsonLd();
+    safeRun('initTheme', initTheme);
+    safeRun('renderHeader', renderHeader);
+    safeRun('renderAbout', renderAbout);
+    safeRun('renderSkills', renderSkills);
+    safeRun('renderProjects', renderProjects);
+    safeRun('renderPassions', renderPassions);
+    safeRun('renderRadio', renderRadio);
+    safeRun('renderDailyGallery', () => { void renderDailyGallery(); });
+    safeRun('renderTimeline', renderTimeline);
+    safeRun('renderContact', renderContact);
+    safeRun('renderRecreation', renderRecreation);
+    safeRun('renderAquarium', renderAquarium);
+    safeRun('revealOnScroll', revealOnScroll);
+    safeRun('scrollSpy', scrollSpy);
+    safeRun('injectJsonLd', injectJsonLd);
 
     // Expose minimal API for enhancement hooks before we import
     try { window.__portfolioAPI = { rerenderProjects: renderProjects }; } catch {}
@@ -549,7 +1096,16 @@
 
     // PWA: register service worker (best-effort)
     try {
-      if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
+      const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      if('serviceWorker' in navigator){
+        if(isLocal){
+          navigator.serviceWorker.getRegistrations().then(regs=>{
+            regs.forEach(r=> r.unregister());
+          });
+        } else {
+          navigator.serviceWorker.register('sw.js');
+        }
+      }
     } catch {}
   });
 })();
@@ -860,7 +1416,7 @@ async function renderDailyGallery(){
   const theme = document.documentElement.getAttribute('data-theme');
   if(theme === 'burmese'){
     try{
-      const manifestUrl = new URL('assets/art/burmese/manifest.json?v=1', location.href).toString();
+      const manifestUrl = new URL('assets/art/burmese/manifest.json?v=2', location.href).toString();
       const res = await fetch(manifestUrl, {cache:'no-store'});
       if(res.ok){
         const imgs = await res.json();
@@ -875,7 +1431,7 @@ async function renderDailyGallery(){
   }
   if(theme === 'cyber'){
     try{
-      const manifestUrl = new URL('assets/art/cyber/manifest.json?v=5', location.href).toString();
+      const manifestUrl = new URL('assets/art/cyber/manifest.json?v=6', location.href).toString();
       const res = await fetch(manifestUrl, {cache:'no-store'});
       if(res.ok){
         const imgs = await res.json();
