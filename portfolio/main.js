@@ -653,7 +653,7 @@
     if(!canvas || !feedBtn || !countEl) return;
 
     const ctx = canvas.getContext('2d');
-    const fishCount = 6;
+    const fishCount = 7;
     const sceneNames = [
       'Studio Tank',
       'Whale Hall',
@@ -675,11 +675,24 @@
       y: 92 + (i % 3) * 72,
       vx: (i % 2 ? 1 : -1) * (0.11 + Math.random() * 0.1),
       vy: (Math.random() - 0.5) * 0.06,
-      size: i === fishCount - 1 ? 26 : 19 + Math.random() * 7,
+      size: i >= fishCount - 2 ? 24 + Math.random() * 4 : 19 + Math.random() * 7,
       wiggle: Math.random() * Math.PI * 2,
       depth: .92 + Math.random() * .18,
-      type: i === fishCount - 1 ? 'jelly' : 'fish',
-      palette: fishPalette[i % fishPalette.length]
+      type: i >= fishCount - 2 ? 'jelly' : 'fish',
+      palette: fishPalette[i % fishPalette.length],
+      jelly: i === fishCount - 1
+        ? {
+            glow: 'rgba(124, 230, 255, .65)',
+            body: 'rgba(166, 242, 255, .88)',
+            stroke: 'rgba(207, 247, 255, .82)'
+          }
+        : i === fishCount - 2
+          ? {
+              glow: 'rgba(227, 190, 255, .6)',
+              body: 'rgba(235, 204, 255, .86)',
+              stroke: 'rgba(245, 226, 255, .78)'
+            }
+          : null
     }));
     const pellets = [];
     const bubbles = [];
@@ -818,9 +831,15 @@
       ctx.translate(fish.x, fish.y);
       ctx.scale(fish.depth, fish.depth);
 
-      ctx.shadowColor = 'rgba(227, 190, 255, .6)';
+      const jelly = fish.jelly || {
+        glow: 'rgba(227, 190, 255, .6)',
+        body: 'rgba(235, 204, 255, .86)',
+        stroke: 'rgba(245, 226, 255, .78)'
+      };
+
+      ctx.shadowColor = jelly.glow;
       ctx.shadowBlur = 10;
-      ctx.fillStyle = 'rgba(235, 204, 255, .86)';
+      ctx.fillStyle = jelly.body;
       ctx.beginPath();
       ctx.moveTo(-14, 0);
       ctx.quadraticCurveTo(-9, -16 - pulse, 0, -18 - pulse);
@@ -836,7 +855,7 @@
       ctx.quadraticCurveTo(0, -3, -7, -8);
       ctx.fill();
 
-      ctx.strokeStyle = 'rgba(245, 226, 255, .78)';
+      ctx.strokeStyle = jelly.stroke;
       ctx.lineWidth = 1.6;
       for(let i = -9; i <= 9; i += 6){
         ctx.beginPath();
