@@ -654,7 +654,15 @@
 
     const ctx = canvas.getContext('2d');
     const fishCount = 6;
-    const sceneNames = ['Studio Tank', 'Whale Hall', 'Blue Tunnel'];
+    const sceneNames = [
+      'Studio Tank',
+      'Whale Hall',
+      'Blue Tunnel',
+      'Sunken Garden',
+      'Moon Dock',
+      'Jelly Cave',
+      'Deep Drift'
+    ];
     const fishPalette = [
       { body:'#ffc487', fin:'#ffe0bb' },
       { body:'#ff9ec2', fin:'#ffe1ed' },
