@@ -664,20 +664,20 @@
       'Deep Drift'
     ];
     const fishPalette = [
-      { body:'#ffc487', fin:'#ffe0bb' },
-      { body:'#ff9ec2', fin:'#ffe1ed' },
-      { body:'#a7e3ff', fin:'#e1f7ff' },
-      { body:'#c9f8a6', fin:'#efffde' },
-      { body:'#ffe38d', fin:'#fff5c9' }
+      { body:'#ffd09c', fin:'#fff0d6' },
+      { body:'#ffb0d0', fin:'#fff0f6' },
+      { body:'#b8ecff', fin:'#f0fbff' },
+      { body:'#d5ffb7', fin:'#f7ffe9' },
+      { body:'#ffeaa2', fin:'#fff9d9' }
     ];
     const fishes = Array.from({ length: fishCount }, (_, i) => ({
       x: 80 + i * 76,
       y: 92 + (i % 3) * 72,
       vx: (i % 2 ? 1 : -1) * (0.11 + Math.random() * 0.1),
       vy: (Math.random() - 0.5) * 0.06,
-      size: i === fishCount - 1 ? 22 : 16 + Math.random() * 6,
+      size: i === fishCount - 1 ? 26 : 19 + Math.random() * 7,
       wiggle: Math.random() * Math.PI * 2,
-      depth: .82 + Math.random() * .25,
+      depth: .92 + Math.random() * .18,
       type: i === fishCount - 1 ? 'jelly' : 'fish',
       palette: fishPalette[i % fishPalette.length]
     }));
@@ -712,7 +712,7 @@
           vy: 0.18 + Math.random() * 0.18,
           drift: (Math.random() - 0.5) * 0.12,
           sparkle: Math.random() * Math.PI * 2,
-          color: ['rgba(255,193,245,.48)','rgba(170,236,255,.46)','rgba(255,225,150,.44)','rgba(186,255,214,.42)'][i % 4]
+          color: ['rgba(255,193,245,.56)','rgba(170,236,255,.54)','rgba(255,225,150,.5)','rgba(186,255,214,.48)'][i % 4]
         });
       }
       if(scenes.length){
@@ -775,6 +775,8 @@
 
       ctx.scale(fish.depth, fish.depth);
 
+      ctx.shadowColor = fish.palette.body;
+      ctx.shadowBlur = 10;
       ctx.fillStyle = fish.palette.body;
       ctx.beginPath();
       ctx.moveTo(-fish.size, 0);
@@ -791,6 +793,7 @@
       ctx.fill();
 
       ctx.fillStyle = fish.palette.fin;
+      ctx.shadowBlur = 0;
       ctx.beginPath();
       ctx.ellipse(-1, -fish.size * 0.44, fish.size * 0.3, fish.size * 0.14, -.45, 0, Math.PI * 2);
       ctx.fill();
@@ -798,7 +801,7 @@
       ctx.ellipse(0, fish.size * 0.4, fish.size * 0.26, fish.size * 0.12, .35, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = 'rgba(255,255,255,.34)';
+      ctx.fillStyle = 'rgba(255,255,255,.4)';
       ctx.beginPath();
       ctx.ellipse(-1, -fish.size * 0.18, fish.size * 0.36, fish.size * 0.12, -.3, 0, Math.PI * 2);
       ctx.fill();
@@ -815,7 +818,9 @@
       ctx.translate(fish.x, fish.y);
       ctx.scale(fish.depth, fish.depth);
 
-      ctx.fillStyle = 'rgba(227, 190, 255, .8)';
+      ctx.shadowColor = 'rgba(227, 190, 255, .6)';
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = 'rgba(235, 204, 255, .86)';
       ctx.beginPath();
       ctx.moveTo(-14, 0);
       ctx.quadraticCurveTo(-9, -16 - pulse, 0, -18 - pulse);
@@ -824,6 +829,7 @@
       ctx.fill();
 
       ctx.fillStyle = 'rgba(255,255,255,.18)';
+      ctx.shadowBlur = 0;
       ctx.beginPath();
       ctx.moveTo(-7, -8);
       ctx.quadraticCurveTo(0, -13 - pulse * 0.4, 7, -8);
@@ -862,7 +868,7 @@
           vy: 0.08 + Math.random() * 0.1,
           drift: (Math.random() - 0.5) * 0.06,
           sparkle: Math.random() * Math.PI * 2,
-          color: ['rgba(192,235,255,.34)','rgba(255,213,245,.3)','rgba(255,241,173,.28)'][Math.floor(Math.random() * 3)]
+          color: ['rgba(192,235,255,.42)','rgba(255,213,245,.38)','rgba(255,241,173,.34)'][Math.floor(Math.random() * 3)]
         });
         nextBubbleAt = time + 900 + Math.random() * 1600;
       }
@@ -888,8 +894,8 @@
           fish.vy += Math.cos(time * 0.001 + fish.wiggle) * (fish.type === 'jelly' ? 0.0006 : 0.0008);
         }
 
-        fish.vx = Math.max(-0.52, Math.min(0.52, fish.vx));
-        fish.vy = Math.max(-0.22, Math.min(0.22, fish.vy));
+        fish.vx = Math.max(-0.56, Math.min(0.56, fish.vx));
+        fish.vy = Math.max(-0.24, Math.min(0.24, fish.vy));
         fish.x += fish.vx * dt * 0.06;
         fish.y += fish.vy * dt * 0.06 + Math.sin(time * (fish.type === 'jelly' ? 0.0022 : 0.0018) + fish.wiggle) * (fish.type === 'jelly' ? 0.2 : 0.12);
 
