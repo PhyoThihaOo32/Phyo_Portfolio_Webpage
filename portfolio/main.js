@@ -3,7 +3,7 @@
   const THEMES = ['dark', 'light', 'cyber', 'space', 'burmese'];
   const THEME_LABELS = {
     dark: 'Dark',
-    light: 'Soft',
+    light: 'Light',
     cyber: 'Cyber',
     space: 'Space',
     burmese: 'Burmese'
@@ -175,6 +175,9 @@
     const filtersEl = document.getElementById('project-filters');
     const searchEl = document.getElementById('project-search');
     const grid = document.getElementById('projects-grid');
+    if ((!Array.isArray(data.projects) || data.projects.length === 0) && data.projectOverrides && Object.keys(data.projectOverrides).length) {
+      data.projects = buildProjectsFromOverrides(data);
+    }
     const projects = (data.projects || []).slice();
 
     const allTags = Array.from(new Set(projects.flatMap(p => p.tags || []))).sort();
@@ -214,7 +217,7 @@
       filtersEl.appendChild(makeFilter('All'));
       allTags.forEach(t => filtersEl.appendChild(makeFilter(t)));
     }
-    searchEl && searchEl.addEventListener('input', apply);
+    if (searchEl) searchEl.oninput = apply;
 
     apply();
   }
@@ -1165,7 +1168,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js');
+          navigator.serviceWorker.register('sw.js?v=100');
         }
       }
     } catch { }
@@ -1316,35 +1319,48 @@ function parseGithubUsername(url) {
 }
 
 function ensureProjectsHydrated() {
-  // If after a short delay there are no cards, fall back to overrides
-  setTimeout(async () => {
+  // Retry a few times so projects appear even if network hydration is slow.
+  const maxAttempts = 4;
+  let attempt = 0;
+  const run = () => {
+    attempt += 1;
     const grid = document.getElementById('projects-grid');
     if (!grid) return;
     const hasCards = grid.children.length > 0;
     if (hasCards) return;
     const data = window.PORTFOLIO || {};
-    const overrides = data.projectOverrides || {};
-    const gh = data.profile?.social?.github || data.profile?.website || '';
-    const username = parseGithubUsername(gh) || 'PhyoThihaOo32';
-    const keys = Object.keys(overrides);
-    if (!keys.length) return;
-    const fallback = keys.map(k => ({
-      name: overrides[k].name || k,
-      year: '',
-      summary: overrides[k].summary || '',
-      tags: overrides[k].tags || [],
-      links: { demo: overrides[k].demo || '', repo: `https://github.com/${username}/${k}` },
-      image: overrides[k].image || '',
-      featured: !!overrides[k].featured,
-      stars: 0
-    }));
+    const fallback = buildProjectsFromOverrides(data);
     if (fallback.length) {
       data.projects = fallback;
       if (window.__portfolioAPI && typeof window.__portfolioAPI.rerenderProjects === 'function') {
         window.__portfolioAPI.rerenderProjects();
       }
+      return;
     }
-  }, 1800);
+    if (attempt < maxAttempts) {
+      setTimeout(run, 900);
+    }
+  };
+  setTimeout(run, 900);
+}
+
+function buildProjectsFromOverrides(dataObj) {
+  const data = dataObj || {};
+  const overrides = data.projectOverrides || {};
+  const keys = Object.keys(overrides);
+  if (!keys.length) return [];
+  const gh = data.profile?.social?.github || data.profile?.website || '';
+  const username = parseGithubUsername(gh) || 'PhyoThihaOo32';
+  return keys.map(k => ({
+    name: overrides[k].name || k,
+    year: '',
+    summary: overrides[k].summary || '',
+    tags: overrides[k].tags || [],
+    links: { demo: overrides[k].demo || '', repo: `https://github.com/${username}/${k}` },
+    image: overrides[k].image || '',
+    featured: !!overrides[k].featured,
+    stars: 0
+  }));
 }
 
 // --- Radio (Apple Music embed) ---------------------------------------------
@@ -1445,7 +1461,6 @@ function renderRadio() {
 }
 
 async function renderDailyGallery() {
-  try { if (window.__gallerySource === 'masters') return; } catch { }
   const data = window.PORTFOLIO || {};
   const items = data.gallery || [];
   const artEl = document.getElementById('gallery-art');
@@ -1467,6 +1482,7 @@ async function renderDailyGallery() {
         const masters = await res.json();
         if (Array.isArray(masters) && masters.length) {
           renderLocalDaily(masters, artEl, titleEl, bylineEl, descEl);
+          wireGalleryFit();
           try { window.__gallerySource = 'masters'; } catch { }
           bindKenBurns();
           return;
@@ -1484,6 +1500,7 @@ async function renderDailyGallery() {
         const imgs = await res.json();
         if (Array.isArray(imgs) && imgs.length) {
           renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl);
+          wireGalleryFit();
           try { window.__gallerySource = 'burmese'; } catch { }
           bindKenBurns();
           return;
@@ -1499,6 +1516,7 @@ async function renderDailyGallery() {
         const imgs = await res.json();
         if (Array.isArray(imgs) && imgs.length) {
           renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl);
+          wireGalleryFit();
           try { window.__gallerySource = 'cyber'; } catch { }
           bindKenBurns();
           return;
@@ -1510,10 +1528,12 @@ async function renderDailyGallery() {
   if (data.remoteGallery?.enabled !== false && data.remoteGallery?.source === 'met') {
     await renderMetDaily(items, artEl, titleEl, bylineEl).then(() => { try { window.__gallerySource = 'met'; } catch { }; }).catch(() => {
       renderLocalDaily(items.length ? items : [], artEl, titleEl, bylineEl);
+      wireGalleryFit();
       try { window.__gallerySource = 'local'; } catch { }
     });
   } else {
     renderLocalDaily(items, artEl, titleEl, bylineEl, descEl);
+    wireGalleryFit();
     try { window.__gallerySource = 'local'; } catch { }
   }
   bindKenBurns();
@@ -1532,11 +1552,12 @@ function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl) {
     const img = document.getElementById('gallery-img');
     if (img) {
       showSpinner(artEl, true);
-      setGalleryImage(img, it.image);
       img.alt = `${it.title || 'Artwork'} — ${it.artist || ''}`.trim();
       img.classList.add('kenburns');
-      img.onload = () => { trySetAccentFromImage(img); showSpinner(artEl, false); attempts = 0; };
-      img.onerror = () => { attempts++; idx++; apply(); };
+      setGalleryImage(img, it.image, {
+        onLoad: () => { trySetAccentFromImage(img); showSpinner(artEl, false); attempts = 0; },
+        onError: () => { showSpinner(artEl, false); attempts++; idx++; apply(); }
+      });
     }
     else { artEl.style.backgroundImage = `url(${it.image})`; }
     if (it.title) { titleEl.textContent = it.title; }
@@ -1545,8 +1566,10 @@ function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl) {
     sessionStorage.setItem('galleryIndex', idx);
   }
   apply();
-  document.getElementById('gallery-prev')?.addEventListener('click', () => { idx--; apply(); });
-  document.getElementById('gallery-next')?.addEventListener('click', () => { idx++; apply(); });
+  wireGalleryNav(
+    () => { idx--; apply(); },
+    () => { idx++; apply(); }
+  );
 }
 
 async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl) {
@@ -1576,11 +1599,12 @@ async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl) {
     const img = document.getElementById('gallery-img');
     if (img) {
       showSpinner(artEl, true);
-      setGalleryImage(img, obj.image);
       img.alt = `${obj.title || 'Artwork'} — ${obj.artist || ''}`.trim();
       img.classList.add('kenburns');
-      img.onload = () => { trySetAccentFromImage(img); showSpinner(artEl, false); };
-      img.onerror = () => { showSpinner(artEl, false); img.removeAttribute('src'); };
+      setGalleryImage(img, obj.image, {
+        onLoad: () => { trySetAccentFromImage(img); showSpinner(artEl, false); },
+        onError: () => { showSpinner(artEl, false); img.removeAttribute('src'); }
+      });
     }
     else { artEl.style.backgroundImage = `url(${obj.image})`; }
     titleEl.innerHTML = obj.url ? `<a href="${obj.url}" target="_blank" rel="noreferrer">${escapeHtml(obj.title)}</a>` : escapeHtml(obj.title);
@@ -1590,18 +1614,11 @@ async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl) {
 
   function bindNav(loader) {
     let offset = 0;
-    document.getElementById('gallery-prev')?.addEventListener('click', async () => { offset--; await loader(offset); });
-    document.getElementById('gallery-next')?.addEventListener('click', async () => { offset++; await loader(offset); });
-    const fitBtn = document.getElementById('gallery-fit');
-    const art = document.getElementById('gallery-art');
-    if (art) {
-      const pref = localStorage.getItem('galleryFit') || 'fit';
-      art.classList.toggle('fill', pref === 'fill');
-      fitBtn?.addEventListener('click', () => {
-        const isFill = art.classList.toggle('fill');
-        localStorage.setItem('galleryFit', isFill ? 'fill' : 'fit');
-      });
-    }
+    wireGalleryNav(
+      async () => { offset--; await loader(offset); },
+      async () => { offset++; await loader(offset); }
+    );
+    wireGalleryFit();
   }
 }
 
@@ -1657,9 +1674,11 @@ function trySetAccentFromImage(img) {
     r = Math.round(r / count); g = Math.round(g / count); b = Math.round(b / count);
     const accent = `rgb(${r}, ${g}, ${b})`;
     const accent2 = `rgb(${Math.min(255, r + 20)}, ${Math.min(255, g + 20)}, ${Math.min(255, b + 20)})`;
-    const root = document.documentElement;
-    root.style.setProperty('--accent', accent);
-    root.style.setProperty('--accent-2', accent2);
+    const listenSection = document.getElementById('listen');
+    if (listenSection) {
+      listenSection.style.setProperty('--accent', accent);
+      listenSection.style.setProperty('--accent-2', accent2);
+    }
   } catch { /* cross-origin may block */ }
 }
 
@@ -1685,8 +1704,29 @@ function parseDate(str) {
   return isNaN(d) ? null : d;
 }
 
+function wireGalleryNav(onPrev, onNext) {
+  const prevBtn = document.getElementById('gallery-prev');
+  const nextBtn = document.getElementById('gallery-next');
+  if (prevBtn) prevBtn.onclick = (e) => { e.preventDefault(); onPrev && onPrev(); };
+  if (nextBtn) nextBtn.onclick = (e) => { e.preventDefault(); onNext && onNext(); };
+}
+
+function wireGalleryFit() {
+  const fitBtn = document.getElementById('gallery-fit');
+  const art = document.getElementById('gallery-art');
+  if (!art) return;
+  const pref = localStorage.getItem('galleryFit') || 'fit';
+  art.classList.toggle('fill', pref === 'fill');
+  if (fitBtn) {
+    fitBtn.onclick = () => {
+      const isFill = art.classList.toggle('fill');
+      localStorage.setItem('galleryFit', isFill ? 'fill' : 'fit');
+    };
+  }
+}
+
 // Robust image setter with fallbacks for relative/absolute paths
-function setGalleryImage(img, url) {
+function setGalleryImage(img, url, handlers = {}) {
   try { img.removeAttribute('crossorigin'); } catch { }
   const bust = (u) => u ? u + (u.includes('?') ? '&' : '?') + 'v=5' : u;
   const candidates = [];
@@ -1694,8 +1734,28 @@ function setGalleryImage(img, url) {
   try { candidates.push(bust(new URL(url, location.href).toString())); } catch { }
   const base = (location.pathname.endsWith('/') ? location.pathname : location.pathname.replace(/[^/]+$/, ''));
   if (url && !url.startsWith(base)) candidates.push(bust(base + url.replace(/^\//, '')));
-  let i = 0; const tryNext = () => { if (i >= candidates.length) return; img.src = candidates[i++]; };
-  img.onerror = tryNext; tryNext();
+  let i = 0;
+  let finished = false;
+  const onLoad = typeof handlers.onLoad === 'function' ? handlers.onLoad : null;
+  const onError = typeof handlers.onError === 'function' ? handlers.onError : null;
+  const tryNext = () => {
+    if (i >= candidates.length) {
+      if (!finished) {
+        finished = true;
+        onError && onError();
+      }
+      return;
+    }
+    img.src = candidates[i++];
+  };
+  img.onload = () => {
+    if (!finished) {
+      finished = true;
+      onLoad && onLoad();
+    }
+  };
+  img.onerror = tryNext;
+  tryNext();
 }
 
 function showSpinner(container, on) {

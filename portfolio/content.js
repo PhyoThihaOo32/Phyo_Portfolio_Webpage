@@ -2,8 +2,8 @@
 window.PORTFOLIO = {
   profile: {
     name: "Phyo Thiha Oo",
-    role: "Software Engineer • CS Student",
-    location: "New York, NY, USA",
+    role: "Software Engineer",
+    location: "Queens, NY, USA",
     email: "phyothihaoo.pto@gmail.com",
     phone: "", // optional
     website: "https://github.com/PhyoThihaOo32",

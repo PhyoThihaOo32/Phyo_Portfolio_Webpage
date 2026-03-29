@@ -1,7 +1,8 @@
-const CACHE = 'portfolio-static-v99';
+const CACHE = 'portfolio-static-v100';
 const OFFLINE_FIRST_EXT = [
   '.css', '.js', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif', '.woff2', '.woff', '.ttf', '.otf', '.json', '.webmanifest', '.pdf'
 ];
+const NETWORK_FIRST_EXT = ['.css', '.js', '.json', '.webmanifest'];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -20,10 +21,22 @@ self.addEventListener('fetch', (event) => {
   if(req.method !== 'GET'){ return; }
   const url = new URL(req.url);
   const isAsset = OFFLINE_FIRST_EXT.some(ext => url.pathname.endsWith(ext));
+  const isNetworkFirstAsset = NETWORK_FIRST_EXT.some(ext => url.pathname.endsWith(ext));
 
   if(isAsset){
     event.respondWith((async () => {
       const cache = await caches.open(CACHE);
+      if(isNetworkFirstAsset){
+        try{
+          const fresh = await fetch(req);
+          if(fresh && fresh.ok){ cache.put(req, fresh.clone()); }
+          return fresh;
+        } catch {
+          const cached = await cache.match(req);
+          if(cached) return cached;
+          return new Response('Offline', {status: 503, statusText: 'Offline'});
+        }
+      }
       const cached = await cache.match(req);
       if(cached){
         // Refresh in background when possible
