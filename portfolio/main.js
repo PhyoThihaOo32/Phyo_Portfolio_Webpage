@@ -180,6 +180,13 @@
     }
     const projects = (data.projects || []).slice();
 
+    if (searchEl && !searchEl.dataset.initialized) {
+      searchEl.value = '';
+      searchEl.autocomplete = 'off';
+      searchEl.spellcheck = false;
+      searchEl.dataset.initialized = '1';
+    }
+
     const allTags = Array.from(new Set(projects.flatMap(p => p.tags || []))).sort();
     let activeTag = 'All';
 
@@ -1261,6 +1268,7 @@ async function enhanceFromGitHub() {
     const filtered = repos.filter(r => !r.fork && !r.archived);
     filtered.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
     const top = filtered.slice(0, 12).map(r => ({
+      repoName: r.name,
       name: r.name,
       year: (r.created_at ? new Date(r.created_at).getFullYear() : ''),
       summary: r.description || '',
@@ -1289,13 +1297,13 @@ async function enhanceFromGitHub() {
     // Apply overrides from content.js if provided
     const overrides = (window.PORTFOLIO && window.PORTFOLIO.projectOverrides) || {};
     for (const p of top) {
-      const ov = overrides[p.name];
+      const ov = overrides[p.repoName];
       if (ov) { Object.assign(p, ov); }
     }
 
-    // Merge: keep any existing explicit featured projects at the top (after overrides)
-    const current = Array.isArray(data.projects) ? data.projects.filter(p => p.featured) : [];
-    data.projects = [...current, ...top];
+    // Merge fetched repos with curated local projects instead of replacing them.
+    const localProjects = buildProjectsFromOverrides(data);
+    data.projects = mergeProjects(localProjects, top);
     const grid = document.getElementById('projects-grid'); if (grid) { grid.innerHTML = ''; }
     const filters = document.getElementById('project-filters'); if (filters) { filters.innerHTML = ''; }
     const search = document.getElementById('project-search'); if (search) { search.value = ''; }
@@ -1352,6 +1360,7 @@ function buildProjectsFromOverrides(dataObj) {
   const gh = data.profile?.social?.github || data.profile?.website || '';
   const username = parseGithubUsername(gh) || 'PhyoThihaOo32';
   return keys.map(k => ({
+    repoName: k,
     name: overrides[k].name || k,
     year: '',
     summary: overrides[k].summary || '',
@@ -1361,6 +1370,21 @@ function buildProjectsFromOverrides(dataObj) {
     featured: !!overrides[k].featured,
     stars: 0
   }));
+}
+
+function mergeProjects(primary, secondary) {
+  const merged = [];
+  const seen = new Set();
+  const push = (project) => {
+    if (!project) return;
+    const key = project.repoName || project.links?.repo || project.name;
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    merged.push(project);
+  };
+  (primary || []).forEach(push);
+  (secondary || []).forEach(push);
+  return merged;
 }
 
 // --- Radio (Apple Music embed) ---------------------------------------------
