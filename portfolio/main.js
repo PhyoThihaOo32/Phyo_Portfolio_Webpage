@@ -1,20 +1,20 @@
-(function(){
+(function () {
   const data = window.PORTFOLIO || {};
-  const THEMES = ['dark','light','cyber','space','burmese'];
+  const THEMES = ['dark', 'light', 'cyber', 'space', 'burmese'];
   const THEME_LABELS = {
-    dark:'Dark',
-    light:'Light',
-    cyber:'Cyber',
-    space:'Space',
-    burmese:'Burmese'
+    dark: 'Dark',
+    light: 'Soft',
+    cyber: 'Cyber',
+    space: 'Space',
+    burmese: 'Burmese'
   };
 
-  const $ = (sel, parent=document) => parent.querySelector(sel);
-  const $$ = (sel, parent=document) => Array.from(parent.querySelectorAll(sel));
+  const $ = (sel, parent = document) => parent.querySelector(sel);
+  const $$ = (sel, parent = document) => Array.from(parent.querySelectorAll(sel));
 
-  function setText(id, text){ const el = document.getElementById(id); if(el) el.textContent = text; }
+  function setText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
 
-  function initTheme(){
+  function initTheme() {
     const root = document.documentElement;
     const stored = localStorage.getItem('theme');
     const preferred = THEMES.includes(stored) ? stored : (data.preferences && THEMES.includes(data.preferences.theme) ? data.preferences.theme : 'dark');
@@ -22,48 +22,48 @@
     const btn = document.getElementById('theme-toggle');
     const icon = btn && btn.querySelector('.icon');
     const chooser = document.getElementById('theme-chooser');
-    function iconFor(theme){
+    function iconFor(theme) {
       return ({
-        dark:'☾', light:'☼', cyber:'⚡', space:'✦'
+        dark: '☾', light: '☼', cyber: '⚡', space: '✦'
       })[theme] || '◎';
     }
-    function updateIcon(){ if(icon) icon.textContent = iconFor(root.getAttribute('data-theme')); }
-    function updateThemeMetaColor(){
+    function updateIcon() { if (icon) icon.textContent = iconFor(root.getAttribute('data-theme')); }
+    function updateThemeMetaColor() {
       const palette = {
-        dark:'#0b0f14',
-        light:'#f7f8fb',
-        cyber:'#0c0b1a',
-        space:'#070b17',
-        burmese:'#23120b'
+        dark: '#0b0f14',
+        light: '#f7f8fb',
+        cyber: '#0c0b1a',
+        space: '#070b17',
+        burmese: '#23120b'
       };
       const m = document.querySelector('meta[name="theme-color"]');
       const theme = root.getAttribute('data-theme');
-      if(m){ m.setAttribute('content', palette[theme] || palette.dark); }
+      if (m) { m.setAttribute('content', palette[theme] || palette.dark); }
     }
     updateIcon();
     updateThemeMetaColor();
-    if(chooser){
+    if (chooser) {
       chooser.innerHTML = '';
-      THEMES.forEach(t=>{
+      THEMES.forEach(t => {
         const chip = document.createElement('button');
-        chip.type='button';
-        chip.className='theme-chip';
+        chip.type = 'button';
+        chip.className = 'theme-chip';
         chip.dataset.theme = t;
         chip.textContent = THEME_LABELS[t] || t;
         chip.title = `Switch to ${THEME_LABELS[t] || t} theme`;
-        chip.addEventListener('click', ()=>{
+        chip.addEventListener('click', () => {
           root.setAttribute('data-theme', t);
           localStorage.setItem('theme', t);
           updateIcon();
           updateThemeMetaColor();
           updateChooser();
-          try{ renderDailyGallery(); }catch{}
+          try { renderDailyGallery(); } catch { }
         });
         chooser.appendChild(chip);
       });
-      function updateChooser(){
+      function updateChooser() {
         const current = root.getAttribute('data-theme');
-        chooser.querySelectorAll('.theme-chip').forEach(ch=>{
+        chooser.querySelectorAll('.theme-chip').forEach(ch => {
           ch.classList.toggle('active', ch.dataset.theme === current);
         });
       }
@@ -77,32 +77,32 @@
       localStorage.setItem('theme', next);
       updateIcon();
       updateThemeMetaColor();
-      try{ renderDailyGallery(); }catch{}
-      if(chooser){
-        chooser.querySelectorAll('.theme-chip').forEach(ch=>{
+      try { renderDailyGallery(); } catch { }
+      if (chooser) {
+        chooser.querySelectorAll('.theme-chip').forEach(ch => {
           ch.classList.toggle('active', ch.dataset.theme === next);
         });
       }
     });
   }
 
-  function renderHeader(){
+  function renderHeader() {
     setText('brand-name', data.profile?.name || 'Your Name');
     setText('brand-role', data.profile?.role || 'Your Role');
     setText('year', new Date().getFullYear());
-    try{
+    try {
       const fc = document.getElementById('footer-copy');
-      if(fc && data.profile?.name){ fc.innerHTML = `© <span id="year">${new Date().getFullYear()}</span> ${escapeHtml(data.profile.name)}. All rights reserved.`; }
-    }catch{}
+      if (fc && data.profile?.name) { fc.innerHTML = `© <span id="year">${new Date().getFullYear()}</span> ${escapeHtml(data.profile.name)}. All rights reserved.`; }
+    } catch { }
     const heroTitle = document.getElementById('hero-title');
-    if(heroTitle && data.profile?.name){
+    if (heroTitle && data.profile?.name) {
       heroTitle.innerHTML = `Hello, I’m <span class="accent">${escapeHtml(data.profile.name)}</span>.`;
     }
     const subtitle = document.getElementById('hero-subtitle');
-    if(subtitle && data.profile?.summary){ subtitle.textContent = data.profile.summary; }
+    if (subtitle && data.profile?.summary) { subtitle.textContent = data.profile.summary; }
 
     const avatar = document.querySelector('.avatar');
-    if(avatar && data.profile?.headshot){ avatar.src = data.profile.headshot; }
+    if (avatar && data.profile?.headshot) { avatar.src = data.profile.headshot; }
 
     const social = document.getElementById('social-links');
     const map = {
@@ -114,11 +114,11 @@
       devto: svg('devto'),
       youtube: svg('youtube')
     };
-    if(social && data.profile?.social){
+    if (social && data.profile?.social) {
       Object.entries(data.profile.social).forEach(([k, url]) => {
-        if(url){
+        if (url) {
           const a = document.createElement('a');
-          a.href = url; a.target = '_blank'; a.rel='noreferrer noopener'; a.title = k;
+          a.href = url; a.target = '_blank'; a.rel = 'noreferrer noopener'; a.title = k;
           a.innerHTML = map[k] || '↗';
           social.appendChild(a);
         }
@@ -126,9 +126,9 @@
     }
   }
 
-  function renderAbout(){
+  function renderAbout() {
     const container = document.getElementById('about-content');
-    if(!container) return;
+    if (!container) return;
     container.innerHTML = '';
 
     const backgrounds = data.about?.background || [];
@@ -149,20 +149,20 @@
     container.append(left, right);
   }
 
-  function renderSkills(){
+  function renderSkills() {
     const grid = document.getElementById('skills-content');
-    if(!grid) return;
-    grid.innerHTML='';
-    (data.skills || []).forEach(group =>{
+    if (!grid) return;
+    grid.innerHTML = '';
+    (data.skills || []).forEach(group => {
       const c = document.createElement('div');
       c.className = 'skill-card';
       const h = document.createElement('h4'); h.textContent = group.category; c.appendChild(h);
-      const tagWrap = document.createElement('div'); tagWrap.className='skill-tags';
-      (group.items||[]).forEach(item=>{
-        const tag = document.createElement('span'); tag.className='tag';
+      const tagWrap = document.createElement('div'); tagWrap.className = 'skill-tags';
+      (group.items || []).forEach(item => {
+        const tag = document.createElement('span'); tag.className = 'tag';
         tag.innerHTML = `<span>${escapeHtml(item.label)}</span>`;
-        const meter = document.createElement('span'); meter.className='meter';
-        const fill = document.createElement('span'); fill.style.width = Math.max(5, Math.min(100, +item.level||0))+'%';
+        const meter = document.createElement('span'); meter.className = 'meter';
+        const fill = document.createElement('span'); fill.style.width = Math.max(5, Math.min(100, +item.level || 0)) + '%';
         meter.appendChild(fill); tag.appendChild(meter);
         tagWrap.appendChild(tag);
       });
@@ -171,61 +171,61 @@
     });
   }
 
-  function renderProjects(){
+  function renderProjects() {
     const filtersEl = document.getElementById('project-filters');
     const searchEl = document.getElementById('project-search');
     const grid = document.getElementById('projects-grid');
     const projects = (data.projects || []).slice();
 
-    const allTags = Array.from(new Set(projects.flatMap(p=>p.tags||[]))).sort();
+    const allTags = Array.from(new Set(projects.flatMap(p => p.tags || []))).sort();
     let activeTag = 'All';
 
-    function apply(){
-      const q = (searchEl.value||'').toLowerCase();
-      grid.innerHTML='';
+    function apply() {
+      const q = (searchEl.value || '').toLowerCase();
+      grid.innerHTML = '';
       const shown = projects
-        .filter(p => activeTag==='All' || (p.tags||[]).includes(activeTag))
-        .filter(p => !q || [p.name, p.summary, ...(p.tags||[])].join(' ').toLowerCase().includes(q))
-      shown.forEach(p=> grid.appendChild(projectCard(p)));
+        .filter(p => activeTag === 'All' || (p.tags || []).includes(activeTag))
+        .filter(p => !q || [p.name, p.summary, ...(p.tags || [])].join(' ').toLowerCase().includes(q))
+      shown.forEach(p => grid.appendChild(projectCard(p)));
       const countEl = document.getElementById('projects-count');
-      if(countEl){
-        if(window.__projectsLoading){ countEl.textContent = 'Loading…'; }
-        else { countEl.textContent = `${shown.length} project${shown.length===1?'':'s'}`; }
+      if (countEl) {
+        if (window.__projectsLoading) { countEl.textContent = 'Loading…'; }
+        else { countEl.textContent = `${shown.length} project${shown.length === 1 ? '' : 's'}`; }
       }
 
       // Re-bind reveal observer for dynamically added cards
-      try{
+      try {
         const obs = window.__revealObserver;
-        if(obs){ $$('.reveal:not(.in)', grid).forEach(el=> obs.observe(el)); }
-        else { $$('.reveal', grid).forEach(el=> el.classList.add('in')); }
-      } catch {}
+        if (obs) { $$('.reveal:not(.in)', grid).forEach(el => obs.observe(el)); }
+        else { $$('.reveal', grid).forEach(el => el.classList.add('in')); }
+      } catch { }
     }
 
-    function makeFilter(tag){
+    function makeFilter(tag) {
       const btn = document.createElement('button');
       btn.className = 'btn ghost';
-      btn.textContent = tag; btn.setAttribute('aria-pressed', tag===activeTag);
-      btn.addEventListener('click', ()=>{ activeTag = tag; $$('.filters button', filtersEl).forEach(b=>b.setAttribute('aria-pressed', b.textContent===tag)); apply(); });
+      btn.textContent = tag; btn.setAttribute('aria-pressed', tag === activeTag);
+      btn.addEventListener('click', () => { activeTag = tag; $$('.filters button', filtersEl).forEach(b => b.setAttribute('aria-pressed', b.textContent === tag)); apply(); });
       return btn;
     }
 
-    if(filtersEl){
-      filtersEl.innerHTML='';
+    if (filtersEl) {
+      filtersEl.innerHTML = '';
       filtersEl.appendChild(makeFilter('All'));
-      allTags.forEach(t=> filtersEl.appendChild(makeFilter(t)));
+      allTags.forEach(t => filtersEl.appendChild(makeFilter(t)));
     }
     searchEl && searchEl.addEventListener('input', apply);
 
     apply();
   }
 
-  function renderPassions(){
+  function renderPassions() {
     const listEl = document.getElementById('passions-list');
-    if(!listEl) return;
-    listEl.innerHTML='';
-    (data.passions||[]).forEach((p, idx)=>{
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    (data.passions || []).forEach((p, idx) => {
       const li = document.createElement('li');
-      li.className='pill glow';
+      li.className = 'pill glow';
       li.textContent = p;
       li.style.setProperty('--hue', (idx * 27 % 360) + 'deg');
       li.title = p;
@@ -233,82 +233,124 @@
     });
   }
 
-  function renderTimeline(){
+  function renderTimeline() {
     const list = document.getElementById('timeline-list');
-    if(!list) return; list.innerHTML='';
+    if (!list) return; list.innerHTML = '';
 
     const items = [];
-    (data.experience||[]).forEach(e=> items.push({
-      type:'work',
-      title:`${e.role} · ${e.company}`,
-      start:e.start, end:e.end, location:e.location,
-      summary:e.summary, highlights:e.highlights
+    (data.experience || []).forEach(e => items.push({
+      type: 'work',
+      title: `${e.role} · ${e.company}`,
+      start: e.start, end: e.end, location: e.location,
+      summary: e.summary, highlights: e.highlights
     }));
-    (data.education||[]).forEach(ed=> items.push({
-      type:'edu',
-      title:`${ed.degree} · ${ed.school}`,
-      start:ed.start, end:ed.end, location:ed.location,
-      gpa: ed.gpa, summary:'', highlights:[]
+    (data.education || []).forEach(ed => items.push({
+      type: 'edu',
+      title: `${ed.degree} · ${ed.school}`,
+      start: ed.start, end: ed.end, location: ed.location,
+      gpa: ed.gpa, summary: '', highlights: []
     }));
 
-    items.forEach(it=>{
+    items.forEach(it => {
       const li = document.createElement('li');
-      const card = document.createElement('div'); card.className='item';
+      const card = document.createElement('div'); card.className = 'item';
 
       // Header with icon + title
-      const header = document.createElement('div'); header.className='tl-header';
-      const icn = document.createElement('span'); icn.className='tl-icn'; icn.innerHTML = it.type==='edu' ? svg('hat') : svg('briefcase');
-      const title = document.createElement('div'); title.className='tl-title';
+      const header = document.createElement('div'); header.className = 'tl-header';
+      const icn = document.createElement('span'); icn.className = 'tl-icn'; icn.innerHTML = it.type === 'edu' ? svg('hat') : svg('briefcase');
+      const title = document.createElement('div'); title.className = 'tl-title';
       const strong = document.createElement('strong'); strong.textContent = it.title;
       title.appendChild(strong);
 
-      const badges = document.createElement('div'); badges.className='tl-badges';
-      if(it.gpa){ const b=document.createElement('span'); b.className='badge'; b.textContent = `GPA ${it.gpa}`; badges.appendChild(b); }
+      const badges = document.createElement('div'); badges.className = 'tl-badges';
+      if (it.gpa) { const b = document.createElement('span'); b.className = 'badge'; b.textContent = `GPA ${it.gpa}`; badges.appendChild(b); }
       header.append(icn, title, badges);
 
       // When + location
-      const when = document.createElement('div'); when.className='when';
+      const when = document.createElement('div'); when.className = 'when';
       const dur = humanDuration(it.start, it.end);
       when.textContent = `${it.start || ''} — ${it.end || ''}${dur ? ' • ' + dur : ''}`.trim();
 
-      const loc = document.createElement('div'); loc.className='location muted';
-      if(it.location){ loc.innerHTML = `${svg('pin')}<span>${escapeHtml(it.location)}</span>`; }
+      const loc = document.createElement('div'); loc.className = 'location muted';
+      if (it.location) { loc.innerHTML = `${svg('pin')}<span>${escapeHtml(it.location)}</span>`; }
 
       const sum = document.createElement('p'); sum.textContent = it.summary || '';
-      const ul = document.createElement('ul'); (it.highlights||[]).forEach(h=>{ const li=document.createElement('li'); li.textContent = h; ul.appendChild(li); });
+      const ul = document.createElement('ul'); (it.highlights || []).forEach(h => { const li = document.createElement('li'); li.textContent = h; ul.appendChild(li); });
 
       card.append(header, when, loc, sum, ul); li.appendChild(card); list.appendChild(li);
     });
   }
 
-  function renderContact(){
+  function renderContact() {
     const email = data.profile?.email || 'you@example.com';
     const contactCfg = data.contact || {};
     const web = data.profile?.website || '#';
     const loc = data.profile?.location || 'City, Country';
     const resume = data.profile?.resume || 'assets/resume.pdf';
 
-    const emailEl = document.getElementById('contact-email'); if(emailEl){ emailEl.textContent=email; emailEl.href = `mailto:${email}`; }
-    const locEl = document.getElementById('contact-location'); if(locEl){ locEl.textContent = loc; }
-    const webEl = document.getElementById('contact-website'); if(webEl){ webEl.textContent = web.replace(/^https?:\/\//,''); webEl.href = web; }
+    const emailEl = document.getElementById('contact-email'); if (emailEl) { emailEl.textContent = email; emailEl.href = `mailto:${email}`; }
+    const locEl = document.getElementById('contact-location'); if (locEl) { locEl.textContent = loc; }
+    const webEl = document.getElementById('contact-website'); if (webEl) { webEl.textContent = web.replace(/^https?:\/\//, ''); webEl.href = web; }
     const instaEl = document.getElementById('contact-instagram');
-    if(instaEl && data.profile?.instagram){ instaEl.href = data.profile.instagram; instaEl.textContent = '@' + data.profile.instagram.replace(/^.*\//,''); }
+    if (instaEl && data.profile?.instagram) { instaEl.href = data.profile.instagram; instaEl.textContent = '@' + data.profile.instagram.replace(/^.*\//, ''); }
     const discEl = document.getElementById('contact-discord');
-    if(discEl && data.profile?.discord){ discEl.textContent = data.profile.discord; discEl.href = `https://discordapp.com/users/${encodeURIComponent(data.profile.discord)}`; }
-    const resEl = document.getElementById('download-resume'); if(resEl){ resEl.href = resume; }
+    if (discEl && data.profile?.discord) { discEl.textContent = data.profile.discord; discEl.href = `https://discordapp.com/users/${encodeURIComponent(data.profile.discord)}`; }
+    const resEl = document.getElementById('download-resume'); if (resEl) { resEl.href = resume; }
     const formEl = document.querySelector('.contact-card');
-    if(formEl){
+    if (formEl) {
       formEl.removeAttribute('action');
       formEl.noValidate = true;
       const submitBtn = formEl.querySelector('button[type="submit"]');
       let status = formEl.querySelector('.form-status');
-      if(!status){
+      let statusTimer = null;
+      if (!status) {
         status = document.createElement('div');
         status.className = 'form-status muted';
         status.setAttribute('aria-live', 'polite');
         formEl.appendChild(status);
       }
-      formEl.addEventListener('submit', async (e)=>{
+      function setFormStatus(text, type = '', timeoutMs = 0) {
+        if (statusTimer) {
+          clearTimeout(statusTimer);
+          statusTimer = null;
+        }
+        status.textContent = text;
+        status.classList.remove('error', 'success');
+        if (type) status.classList.add(type);
+        if (timeoutMs > 0) {
+          statusTimer = setTimeout(() => {
+            status.textContent = '';
+            status.classList.remove('error', 'success');
+            statusTimer = null;
+          }, timeoutMs);
+        }
+      }
+      async function postContactMessage(endpoint, payload) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        try {
+          const formData = new FormData();
+          Object.entries(payload).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) formData.append(key, String(value));
+          });
+
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: formData,
+            signal: controller.signal
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || result.success === false || result.success === 'false') {
+            throw new Error(result.message || 'Submission failed.');
+          }
+          return result;
+        } finally {
+          clearTimeout(timeoutId);
+        }
+      }
+
+      formEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nameEl = formEl.querySelector('input[name="name"]');
         const emailInput = formEl.querySelector('input[name="email"]');
@@ -318,95 +360,80 @@
         const from = emailInput?.value.trim() || '';
         const msg = messageEl?.value.trim() || '';
         const inputs = formEl.querySelectorAll('input:not(.hp-field), textarea');
-        inputs.forEach(el=> el.classList.remove('invalid'));
-        status.classList.remove('error', 'success');
-        if(!name || !from || !msg){
-          status.textContent = 'Please add your name, email, and a message.';
-          status.classList.add('error');
-          inputs.forEach(el=>{ if(!el.value.trim()) el.classList.add('invalid'); });
+        inputs.forEach(el => el.classList.remove('invalid'));
+        if (!name || !from || !msg) {
+          setFormStatus('Please add your name, email, and a message.', 'error', 4500);
+          inputs.forEach(el => { if (!el.value.trim()) el.classList.add('invalid'); });
           return;
         }
-        if(!contactCfg.endpoint){
-          status.textContent = 'Contact form is not configured yet.';
-          status.classList.add('error');
+        if (!contactCfg.endpoint) {
+          setFormStatus('Contact form is not configured yet.', 'error', 4500);
           return;
         }
-        if(honeyEl && honeyEl.value.trim()){
+        if (honeyEl && honeyEl.value.trim()) {
           // Honeypot filled; treat as success without sending
           formEl.reset();
-          status.textContent = 'Message sent successfully.';
-          status.classList.add('success');
+          setFormStatus('Message sent successfully.', 'success', 3500);
           return;
         }
         submitBtn && (submitBtn.disabled = true);
-        if(submitBtn){ submitBtn.dataset.label = submitBtn.textContent; submitBtn.textContent = 'Sending...'; }
-        status.textContent = 'Sending your message...';
+        if (submitBtn) { submitBtn.dataset.label = submitBtn.textContent; submitBtn.textContent = 'Sending...'; }
+        setFormStatus('Sending your message...');
 
-        try{
-          const response = await fetch(contactCfg.endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-              name,
-              email: from,
-              message: msg,
-              _subject: `${contactCfg.subjectPrefix || 'Portfolio message'} from ${name}`,
-              _replyto: from,
-              _captcha: 'false',
-              _honey: honeyEl?.value || ''
-            })
+        try {
+          await postContactMessage(contactCfg.endpoint, {
+            name,
+            email: from,
+            message: msg,
+            _subject: `${contactCfg.subjectPrefix || 'Portfolio message'} from ${name}`,
+            _replyto: from,
+            _captcha: 'false',
+            _honey: honeyEl?.value || ''
           });
 
-          const result = await response.json().catch(()=> ({}));
-          if(!response.ok || result.success === false || result.success === 'false'){
-            throw new Error(result.message || 'Submission failed.');
-          }
-
           formEl.reset();
-          status.textContent = 'Message sent successfully.';
-          status.classList.add('success');
-        } catch(err){
-          status.textContent = 'Message could not be sent right now. Please try again later.';
-          status.classList.add('error');
+          setFormStatus('Message sent successfully.', 'success', 3500);
+        } catch (err) {
+          const errorMessage = (err && err.name === 'AbortError')
+            ? 'Message timed out. Please try again.'
+            : 'Message could not be sent. Check inbox/spam for FormSubmit activation, then try again.';
+          setFormStatus(errorMessage, 'error', 7000);
         } finally {
           submitBtn && (submitBtn.disabled = false);
-          if(submitBtn){ submitBtn.textContent = submitBtn.dataset.label || 'Send'; }
+          if (submitBtn) { submitBtn.textContent = submitBtn.dataset.label || 'Send'; }
         }
       });
     }
 
     const copyBtn = document.getElementById('copy-email');
-    copyBtn && copyBtn.addEventListener('click', async ()=>{
-      try { await navigator.clipboard.writeText(email); copyBtn.textContent = '✓'; setTimeout(()=>copyBtn.textContent='⧉', 1200);} catch {}
+    copyBtn && copyBtn.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(email); copyBtn.textContent = '✓'; setTimeout(() => copyBtn.textContent = '⧉', 1200); } catch { }
     });
 
     const vbtn = document.getElementById('download-vcard');
-    vbtn && vbtn.addEventListener('click', ()=>{
+    vbtn && vbtn.addEventListener('click', () => {
       const vcf = [
         'BEGIN:VCARD', 'VERSION:3.0',
-        `FN:${data.profile?.name||'Your Name'}`,
+        `FN:${data.profile?.name || 'Your Name'}`,
         `EMAIL;TYPE=INTERNET:${email}`,
         data.profile?.phone ? `TEL;TYPE=CELL:${data.profile.phone}` : null,
         data.profile?.website ? `URL:${data.profile.website}` : null,
-        `NOTE:${data.profile?.role||''}`,
-        'END:VCARD' ].filter(Boolean).join('\n');
-      const blob = new Blob([vcf], {type:'text/vcard'});
+        `NOTE:${data.profile?.role || ''}`,
+        'END:VCARD'].filter(Boolean).join('\n');
+      const blob = new Blob([vcf], { type: 'text/vcard' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'contact.vcf'; a.click(); setTimeout(()=> URL.revokeObjectURL(url), 1500);
+      const a = document.createElement('a'); a.href = url; a.download = 'contact.vcf'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1500);
     });
   }
 
-  function renderRecreation(){
+  function renderRecreation() {
     const canvas = document.getElementById('lofi-bird-canvas');
     const startBtn = document.getElementById('game-start');
     const restartBtn = document.getElementById('game-restart');
     const scoreEl = document.getElementById('game-score');
     const bestEl = document.getElementById('game-best');
     const statusEl = document.getElementById('game-status');
-    if(!canvas || !scoreEl || !bestEl || !statusEl) return;
+    if (!canvas || !scoreEl || !bestEl || !statusEl) return;
     const ctx = canvas.getContext('2d');
     const BEST_KEY = 'lofiBirdBest';
     const bird = { x: 160, y: 210, r: 16, vy: 0 };
@@ -424,20 +451,20 @@
     let pointerLock = false;
     let pipes = [];
 
-    function getBest(){
+    function getBest() {
       return Number(localStorage.getItem(BEST_KEY) || '0');
     }
-    function setBest(next){
+    function setBest(next) {
       localStorage.setItem(BEST_KEY, String(next));
       bestEl.textContent = String(next);
     }
-    function spawnPipe(){
+    function spawnPipe() {
       const min = 66;
       const max = groundY - pipeGap - 66;
       const top = Math.max(min, Math.min(max, min + Math.random() * (max - min)));
       pipes.push({ x: canvas.width + 28, top, scored: false });
     }
-    function resetGame(){
+    function resetGame() {
       score = 0;
       frame = 0;
       lastTimestamp = 0;
@@ -449,39 +476,39 @@
       scoreEl.textContent = '0';
       bestEl.textContent = String(getBest());
       statusEl.textContent = 'Idle. Start when ready.';
-      if(startBtn) startBtn.hidden = false;
-      for(let i = 0; i < 3; i++) spawnPipe();
-      pipes.forEach((pipe, index)=>{ pipe.x += index * 220; });
+      if (startBtn) startBtn.hidden = false;
+      for (let i = 0; i < 3; i++) spawnPipe();
+      pipes.forEach((pipe, index) => { pipe.x += index * 220; });
       draw();
     }
-    function endGame(){
-      if(gameOver) return;
+    function endGame() {
+      if (gameOver) return;
       running = false;
       gameOver = true;
       cancelAnimationFrame(raf);
-      if(score > getBest()) setBest(score);
+      if (score > getBest()) setBest(score);
       statusEl.textContent = `Run over. Final score: ${score}.`;
-      if(startBtn) startBtn.hidden = false;
+      if (startBtn) startBtn.hidden = false;
       draw();
     }
-    function startGame(){
+    function startGame() {
       cancelAnimationFrame(raf);
       resetGame();
       running = true;
       bird.vy = flapPower;
       statusEl.textContent = 'Running. Flap through the gaps.';
-      if(startBtn) startBtn.hidden = true;
+      if (startBtn) startBtn.hidden = true;
       raf = requestAnimationFrame(loop);
     }
-    function flap(){
-      if(!running && !gameOver){
+    function flap() {
+      if (!running && !gameOver) {
         startGame();
         return;
       }
-      if(gameOver) return;
+      if (gameOver) return;
       bird.vy = flapPower;
     }
-    function drawBackground(){
+    function drawBackground() {
       const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
       sky.addColorStop(0, '#181d35');
       sky.addColorStop(0.55, '#233b54');
@@ -494,7 +521,7 @@
       ctx.arc(560, 86, 76, 0, Math.PI * 2);
       ctx.fill();
 
-      for(let i = 0; i < 7; i++){
+      for (let i = 0; i < 7; i++) {
         const x = (i * 118 + frame * 0.4) % (canvas.width + 120) - 120;
         ctx.fillStyle = 'rgba(255,255,255,0.08)';
         ctx.fillRect(x, 34 + (i % 3) * 18, 2, 24);
@@ -521,7 +548,7 @@
       ctx.lineTo(canvas.width, groundY + 0.5);
       ctx.stroke();
     }
-    function drawBird(){
+    function drawBird() {
       ctx.save();
       ctx.translate(bird.x, bird.y);
       ctx.rotate(Math.max(-0.45, Math.min(0.65, bird.vy * 0.06)));
@@ -540,8 +567,8 @@
       ctx.fillRect(-24, -2, 12, 4);
       ctx.restore();
     }
-    function drawPipes(){
-      pipes.forEach(pipe=>{
+    function drawPipes() {
+      pipes.forEach(pipe => {
         const accent = ctx.createLinearGradient(pipe.x, 0, pipe.x + pipeWidth, 0);
         accent.addColorStop(0, '#2dd4bf');
         accent.addColorStop(1, '#60a5fa');
@@ -553,7 +580,7 @@
         ctx.fillRect(pipe.x + 8, pipe.top + pipeGap, pipeWidth - 16, 10);
       });
     }
-    function drawHUD(){
+    function drawHUD() {
       ctx.fillStyle = 'rgba(7, 10, 18, .42)';
       ctx.fillRect(16, 16, 160, 54);
       ctx.strokeStyle = 'rgba(255,255,255,.08)';
@@ -564,7 +591,7 @@
       ctx.fillStyle = '#a7f3d0';
       ctx.font = '700 20px Inter, system-ui, sans-serif';
       ctx.fillText(String(score), 28, 60);
-      if(!running && !gameOver){
+      if (!running && !gameOver) {
         ctx.fillStyle = 'rgba(8,12,20,.52)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#f8fafc';
@@ -574,7 +601,7 @@
         ctx.fillStyle = '#cbd5e1';
         ctx.fillText('Tap, click, or press Space to start.', 220, 188);
       }
-      if(gameOver){
+      if (gameOver) {
         ctx.fillStyle = 'rgba(8,12,20,.55)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#f8fafc';
@@ -585,54 +612,54 @@
         ctx.fillText(`Score ${score} • Best ${Math.max(score, getBest())}`, 255, 196);
       }
     }
-    function draw(){
+    function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
       drawPipes();
       drawBird();
       drawHUD();
     }
-    function update(delta){
+    function update(delta) {
       frame += delta * 0.06;
       bird.vy += gravity * delta * 0.06;
       bird.y += bird.vy * delta * 0.06;
       const speed = 2.6 * delta * 0.06;
-      pipes.forEach(pipe=>{ pipe.x -= speed; });
-      if(pipes[0] && pipes[0].x + pipeWidth < -10){
+      pipes.forEach(pipe => { pipe.x -= speed; });
+      if (pipes[0] && pipes[0].x + pipeWidth < -10) {
         pipes.shift();
         const lastX = pipes[pipes.length - 1]?.x ?? canvas.width;
         spawnPipe();
         pipes[pipes.length - 1].x = lastX + 220;
       }
-      pipes.forEach(pipe=>{
-        if(!pipe.scored && pipe.x + pipeWidth < bird.x - bird.r){
+      pipes.forEach(pipe => {
+        if (!pipe.scored && pipe.x + pipeWidth < bird.x - bird.r) {
           pipe.scored = true;
           score += 1;
           scoreEl.textContent = String(score);
         }
         const hitsX = bird.x + bird.r > pipe.x && bird.x - bird.r < pipe.x + pipeWidth;
         const hitsY = bird.y - bird.r < pipe.top || bird.y + bird.r > pipe.top + pipeGap;
-        if(hitsX && hitsY) endGame();
+        if (hitsX && hitsY) endGame();
       });
-      if(bird.y + bird.r >= groundY || bird.y - bird.r <= 0) endGame();
+      if (bird.y + bird.r >= groundY || bird.y - bird.r <= 0) endGame();
     }
-    function loop(timestamp){
-      if(!running) return;
+    function loop(timestamp) {
+      if (!running) return;
       const delta = Math.min(32, timestamp - (lastTimestamp || timestamp));
       lastTimestamp = timestamp;
       update(delta);
       draw();
-      if(running) raf = requestAnimationFrame(loop);
+      if (running) raf = requestAnimationFrame(loop);
     }
-    function onActivate(e){
+    function onActivate(e) {
       const tag = (document.activeElement?.tagName || '').toLowerCase();
-      if(tag === 'input' || tag === 'textarea') return;
-      if(e.type === 'keydown' && e.code !== 'Space') return;
-      if(e.type === 'keydown') e.preventDefault();
-      if(pointerLock) return;
+      if (tag === 'input' || tag === 'textarea') return;
+      if (e.type === 'keydown' && e.code !== 'Space') return;
+      if (e.type === 'keydown') e.preventDefault();
+      if (pointerLock) return;
       pointerLock = true;
       flap();
-      setTimeout(()=>{ pointerLock = false; }, 80);
+      setTimeout(() => { pointerLock = false; }, 80);
     }
 
     startBtn?.addEventListener('click', startGame);
@@ -644,13 +671,13 @@
     resetGame();
   }
 
-  function renderAquarium(){
+  function renderAquarium() {
     const canvas = document.getElementById('aquarium-canvas');
     const feedBtn = document.getElementById('aquarium-feed');
     const countEl = document.getElementById('aquarium-count');
     const sceneLabelEl = document.getElementById('aquarium-scene-label');
     const scenes = $$('.aquarium-scene');
-    if(!canvas || !feedBtn || !countEl) return;
+    if (!canvas || !feedBtn || !countEl) return;
 
     const ctx = canvas.getContext('2d');
     const fishCount = 7;
@@ -664,11 +691,11 @@
       'Deep Drift'
     ];
     const fishPalette = [
-      { body:'#ffd09c', fin:'#fff0d6' },
-      { body:'#ffb0d0', fin:'#fff0f6' },
-      { body:'#b8ecff', fin:'#f0fbff' },
-      { body:'#d5ffb7', fin:'#f7ffe9' },
-      { body:'#ffeaa2', fin:'#fff9d9' }
+      { body: '#ffd09c', fin: '#fff0d6' },
+      { body: '#ffb0d0', fin: '#fff0f6' },
+      { body: '#b8ecff', fin: '#f0fbff' },
+      { body: '#d5ffb7', fin: '#f7ffe9' },
+      { body: '#ffeaa2', fin: '#fff9d9' }
     ];
     const fishes = Array.from({ length: fishCount }, (_, i) => ({
       x: 80 + i * 76,
@@ -682,16 +709,16 @@
       palette: fishPalette[i % fishPalette.length],
       jelly: i === fishCount - 1
         ? {
-            glow: 'rgba(124, 230, 255, .65)',
-            body: 'rgba(166, 242, 255, .88)',
-            stroke: 'rgba(207, 247, 255, .82)'
-          }
+          glow: 'rgba(124, 230, 255, .65)',
+          body: 'rgba(166, 242, 255, .88)',
+          stroke: 'rgba(207, 247, 255, .82)'
+        }
         : i === fishCount - 2
           ? {
-              glow: 'rgba(227, 190, 255, .6)',
-              body: 'rgba(235, 204, 255, .86)',
-              stroke: 'rgba(245, 226, 255, .78)'
-            }
+            glow: 'rgba(227, 190, 255, .6)',
+            body: 'rgba(235, 204, 255, .86)',
+            stroke: 'rgba(245, 226, 255, .78)'
+          }
           : null
     }));
     const pellets = [];
@@ -702,24 +729,24 @@
     const sceneTotal = Math.min(sceneNames.length, scenes.length);
 
     countEl.textContent = String(fishCount);
-    if(sceneLabelEl && sceneTotal) sceneLabelEl.textContent = sceneNames[0];
+    if (sceneLabelEl && sceneTotal) sceneLabelEl.textContent = sceneNames[0];
 
-    function setScene(index){
-      if(!sceneTotal) return;
+    function setScene(index) {
+      if (!sceneTotal) return;
       sceneIndex = ((index % sceneTotal) + sceneTotal) % sceneTotal;
-      scenes.forEach((scene, i)=> scene.classList.toggle('is-active', i === sceneIndex));
-      if(sceneLabelEl) sceneLabelEl.textContent = sceneNames[sceneIndex];
+      scenes.forEach((scene, i) => scene.classList.toggle('is-active', i === sceneIndex));
+      if (sceneLabelEl) sceneLabelEl.textContent = sceneNames[sceneIndex];
     }
 
-    function feedFish(){
-      for(let i = 0; i < 7; i++){
+    function feedFish() {
+      for (let i = 0; i < 7; i++) {
         pellets.push({
           x: canvas.width * (0.3 + Math.random() * 0.4),
           y: 18 + Math.random() * 16,
           vy: 0.5 + Math.random() * 0.25
         });
       }
-      for(let i = 0; i < 8; i++){
+      for (let i = 0; i < 8; i++) {
         bubbles.push({
           x: canvas.width * (0.28 + Math.random() * 0.44),
           y: canvas.height - 70 + Math.random() * 18,
@@ -727,15 +754,15 @@
           vy: 0.18 + Math.random() * 0.18,
           drift: (Math.random() - 0.5) * 0.12,
           sparkle: Math.random() * Math.PI * 2,
-          color: ['rgba(255,193,245,.56)','rgba(170,236,255,.54)','rgba(255,225,150,.5)','rgba(186,255,214,.48)'][i % 4]
+          color: ['rgba(255,193,245,.56)', 'rgba(170,236,255,.54)', 'rgba(255,225,150,.5)', 'rgba(186,255,214,.48)'][i % 4]
         });
       }
-      if(sceneTotal){
+      if (sceneTotal) {
         setScene((sceneIndex + 1) % sceneTotal);
       }
     }
 
-    function drawBackground(time){
+    function drawBackground(time) {
       const wash = ctx.createLinearGradient(0, 0, 0, canvas.height);
       wash.addColorStop(0, 'rgba(118, 209, 255, .07)');
       wash.addColorStop(.55, 'rgba(20, 74, 126, .08)');
@@ -745,7 +772,7 @@
 
       ctx.strokeStyle = 'rgba(255,255,255,.045)';
       ctx.lineWidth = 1.5;
-      for(let i = 0; i < 4; i++){
+      for (let i = 0; i < 4; i++) {
         const y = 46 + i * 78 + Math.sin(time * 0.0007 + i) * 5;
         ctx.beginPath();
         ctx.moveTo(-20, y);
@@ -767,26 +794,26 @@
       ctx.fill();
     }
 
-    function drawBubbleField(){
-      bubbles.forEach(bubble=>{
+    function drawBubbleField() {
+      bubbles.forEach(bubble => {
         ctx.fillStyle = bubble.color || 'rgba(189, 233, 255, .42)';
         ctx.fillRect(bubble.x, bubble.y, bubble.size, bubble.size);
-        if(bubble.size > 3){
+        if (bubble.size > 3) {
           ctx.fillStyle = 'rgba(255,255,255,.18)';
           ctx.fillRect(bubble.x + 1, bubble.y + 1, Math.max(1, bubble.size - 2), 1);
         }
       });
     }
 
-    function drawFish(fish, time){
-      if(fish.type === 'jelly'){
+    function drawFish(fish, time) {
+      if (fish.type === 'jelly') {
         return drawJellyFish(fish, time);
       }
 
       const tailWag = Math.sin(time * 0.0032 + fish.wiggle) * 3;
       ctx.save();
       ctx.translate(fish.x, fish.y);
-      if(fish.vx < 0) ctx.scale(-1, 1);
+      if (fish.vx < 0) ctx.scale(-1, 1);
 
       ctx.scale(fish.depth, fish.depth);
 
@@ -827,7 +854,7 @@
       ctx.restore();
     }
 
-    function drawJellyFish(fish, time){
+    function drawJellyFish(fish, time) {
       const pulse = Math.sin(time * 0.0028 + fish.wiggle) * 2.5;
       ctx.save();
       ctx.translate(fish.x, fish.y);
@@ -859,7 +886,7 @@
 
       ctx.strokeStyle = jelly.stroke;
       ctx.lineWidth = 1.6;
-      for(let i = -9; i <= 9; i += 6){
+      for (let i = -9; i <= 9; i += 6) {
         ctx.beginPath();
         ctx.moveTo(i, 6);
         ctx.quadraticCurveTo(i + Math.sin(time * 0.0038 + i) * 3, 16, i + Math.cos(time * 0.003 + i) * 2, 28);
@@ -868,20 +895,20 @@
       ctx.restore();
     }
 
-    function drawPellets(){
+    function drawPellets() {
       ctx.fillStyle = '#f6d28d';
-      pellets.forEach(pellet=>{
+      pellets.forEach(pellet => {
         ctx.fillRect(pellet.x - 2, pellet.y - 2, 4, 4);
       });
     }
 
-    function updateFish(dt, time){
-      pellets.forEach(pellet=>{ pellet.y += pellet.vy * dt * 0.06; });
-      for(let i = pellets.length - 1; i >= 0; i--){
-        if(pellets[i].y > canvas.height - 34) pellets.splice(i, 1);
+    function updateFish(dt, time) {
+      pellets.forEach(pellet => { pellet.y += pellet.vy * dt * 0.06; });
+      for (let i = pellets.length - 1; i >= 0; i--) {
+        if (pellets[i].y > canvas.height - 34) pellets.splice(i, 1);
       }
 
-      if(time > nextBubbleAt){
+      if (time > nextBubbleAt) {
         bubbles.push({
           x: 26 + Math.random() * (canvas.width - 52),
           y: canvas.height - 34 - Math.random() * 20,
@@ -889,25 +916,25 @@
           vy: 0.08 + Math.random() * 0.1,
           drift: (Math.random() - 0.5) * 0.06,
           sparkle: Math.random() * Math.PI * 2,
-          color: ['rgba(192,235,255,.42)','rgba(255,213,245,.38)','rgba(255,241,173,.34)'][Math.floor(Math.random() * 3)]
+          color: ['rgba(192,235,255,.42)', 'rgba(255,213,245,.38)', 'rgba(255,241,173,.34)'][Math.floor(Math.random() * 3)]
         });
         nextBubbleAt = time + 900 + Math.random() * 1600;
       }
 
-      for(let i = bubbles.length - 1; i >= 0; i--){
+      for (let i = bubbles.length - 1; i >= 0; i--) {
         const bubble = bubbles[i];
         bubble.y -= bubble.vy * dt * 0.06;
         bubble.x += Math.sin(time * 0.0012 + bubble.sparkle) * bubble.drift * dt;
-        if(bubble.y < -12) bubbles.splice(i, 1);
+        if (bubble.y < -12) bubbles.splice(i, 1);
       }
 
-      fishes.forEach(fish=>{
-        const target = pellets.reduce((closest, pellet)=>{
+      fishes.forEach(fish => {
+        const target = pellets.reduce((closest, pellet) => {
           const dist = Math.hypot(pellet.x - fish.x, pellet.y - fish.y);
           return !closest || dist < closest.dist ? { pellet, dist } : closest;
         }, null);
 
-        if(target){
+        if (target) {
           fish.vx += Math.sign(target.pellet.x - fish.x) * (fish.type === 'jelly' ? 0.005 : 0.008);
           fish.vy += Math.sign(target.pellet.y - fish.y) * (fish.type === 'jelly' ? 0.004 : 0.006);
         } else {
@@ -920,12 +947,12 @@
         fish.x += fish.vx * dt * 0.06;
         fish.y += fish.vy * dt * 0.06 + Math.sin(time * (fish.type === 'jelly' ? 0.0022 : 0.0018) + fish.wiggle) * (fish.type === 'jelly' ? 0.2 : 0.12);
 
-        if(fish.x < 28 || fish.x > canvas.width - 28) fish.vx *= -1;
-        if(fish.y < 36 || fish.y > canvas.height - 56) fish.vy *= -1;
+        if (fish.x < 28 || fish.x > canvas.width - 28) fish.vx *= -1;
+        if (fish.y < 36 || fish.y > canvas.height - 56) fish.vy *= -1;
 
-        for(let i = pellets.length - 1; i >= 0; i--){
+        for (let i = pellets.length - 1; i >= 0; i--) {
           const pellet = pellets[i];
-          if(Math.hypot(fish.x - pellet.x, fish.y - pellet.y) < fish.size){
+          if (Math.hypot(fish.x - pellet.x, fish.y - pellet.y) < fish.size) {
             pellets.splice(i, 1);
             break;
           }
@@ -933,15 +960,15 @@
       });
     }
 
-    function draw(time){
+    function draw(time) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground(time);
       drawBubbleField();
       drawPellets();
-      fishes.forEach(fish=> drawFish(fish, time));
+      fishes.forEach(fish => drawFish(fish, time));
     }
 
-    function loop(time){
+    function loop(time) {
       const dt = Math.min(32, time - (last || time));
       last = time;
       updateFish(dt, time);
@@ -950,52 +977,52 @@
     }
 
     feedBtn.addEventListener('click', feedFish);
-    if(sceneTotal){
+    if (sceneTotal) {
       setScene(0);
     }
     draw(0);
     requestAnimationFrame(loop);
   }
 
-  function projectCard(p){
-    const card = document.createElement('article'); card.className='project-card reveal';
-    const thumb = document.createElement('div'); thumb.className='thumb';
-    const imgUrl = p.image || abstractThumb(p.name, (p.tags||[])[0]);
-    if(imgUrl){ const img = new Image(); img.alt = p.name; img.src = imgUrl; img.loading='lazy'; img.decoding='async'; img.style.borderRadius = '.6rem'; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img); }
+  function projectCard(p) {
+    const card = document.createElement('article'); card.className = 'project-card reveal';
+    const thumb = document.createElement('div'); thumb.className = 'thumb';
+    const imgUrl = p.image || abstractThumb(p.name, (p.tags || [])[0]);
+    if (imgUrl) { const img = new Image(); img.alt = p.name; img.src = imgUrl; img.loading = 'lazy'; img.decoding = 'async'; img.style.borderRadius = '.6rem'; img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover'; thumb.appendChild(img); }
 
     const title = document.createElement('h4'); title.textContent = humanizeRepoName(p.name || '');
-    const meta = document.createElement('div'); meta.className='meta';
-    const left = document.createElement('span'); left.className='muted'; left.textContent = `${p.year || ''}${(p.tags||[]).length ? ' · ' : ''}${(p.tags||[]).join(' • ')}`;
+    const meta = document.createElement('div'); meta.className = 'meta';
+    const left = document.createElement('span'); left.className = 'muted'; left.textContent = `${p.year || ''}${(p.tags || []).length ? ' · ' : ''}${(p.tags || []).join(' • ')}`;
     meta.appendChild(left);
-    if(typeof p.stars === 'number' && p.stars > 0){
-      const star = document.createElement('span'); star.className='star'; star.innerHTML = svg('star') + String(p.stars);
+    if (typeof p.stars === 'number' && p.stars > 0) {
+      const star = document.createElement('span'); star.className = 'star'; star.innerHTML = svg('star') + String(p.stars);
       meta.appendChild(star);
     }
     const sum = document.createElement('p'); sum.textContent = p.summary || '';
-    const chips = document.createElement('div'); chips.className='chips';
-    (p.tags||[]).slice(0,4).forEach(t=>{ const c=document.createElement('span'); c.className='chip'; c.textContent=t; chips.appendChild(c); });
-    const links = document.createElement('div'); links.className='links';
-    if(p.links?.demo){ const a=document.createElement('a'); a.className='btn'; a.href=p.links.demo; a.target='_blank'; a.rel='noreferrer'; a.textContent='Demo'; links.appendChild(a); }
-    if(p.links?.repo){ const a=document.createElement('a'); a.className='btn ghost'; a.href=p.links.repo; a.target='_blank'; a.rel='noreferrer'; a.textContent='Code'; links.appendChild(a); }
+    const chips = document.createElement('div'); chips.className = 'chips';
+    (p.tags || []).slice(0, 4).forEach(t => { const c = document.createElement('span'); c.className = 'chip'; c.textContent = t; chips.appendChild(c); });
+    const links = document.createElement('div'); links.className = 'links';
+    if (p.links?.demo) { const a = document.createElement('a'); a.className = 'btn'; a.href = p.links.demo; a.target = '_blank'; a.rel = 'noreferrer'; a.textContent = 'Demo'; links.appendChild(a); }
+    if (p.links?.repo) { const a = document.createElement('a'); a.className = 'btn ghost'; a.href = p.links.repo; a.target = '_blank'; a.rel = 'noreferrer'; a.textContent = 'Code'; links.appendChild(a); }
     card.append(thumb, title, meta, sum, chips, links);
     return card;
   }
 
-  function card(title, content){
-    const c = document.createElement('section'); c.className='about-card';
+  function card(title, content) {
+    const c = document.createElement('section'); c.className = 'about-card';
     const h = document.createElement('h4'); h.textContent = title; c.appendChild(h);
     c.appendChild(content);
     return c;
   }
 
-  function addCodeRain(cardEl, size='md', lines=[]){
-    if(!cardEl || !lines.length) return;
+  function addCodeRain(cardEl, size = 'md', lines = []) {
+    if (!cardEl || !lines.length) return;
     const rows = [...lines];
     const wrap = document.createElement('div');
     wrap.className = 'about-visual';
-    if(document.documentElement.getAttribute('data-theme') === 'space'){ wrap.classList.add('space-bg'); }
+    if (document.documentElement.getAttribute('data-theme') === 'space') { wrap.classList.add('space-bg'); }
     wrap.dataset.size = size;
-    rows.forEach((txt, idx)=>{
+    rows.forEach((txt, idx) => {
       const span = document.createElement('span');
       span.textContent = txt;
       span.style.setProperty('--i', idx);
@@ -1004,11 +1031,11 @@
     cardEl.appendChild(wrap);
   }
 
-  function list(items){
+  function list(items) {
     const ul = document.createElement('ul');
-    items.forEach((i, idx)=>{
-      const li=document.createElement('li');
-      li.textContent=i;
+    items.forEach((i, idx) => {
+      const li = document.createElement('li');
+      li.textContent = i;
       li.classList.add('type-line');
       li.style.setProperty('--delay', `${idx * 0.12}s`);
       ul.appendChild(li);
@@ -1016,69 +1043,69 @@
     return ul;
   }
 
-  function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[s])); }
+  function escapeHtml(str) { return String(str).replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[s])); }
 
-  function revealOnScroll(){
-    const obs = new IntersectionObserver((entries)=>{
-      for(const e of entries){
-        if(e.isIntersecting){
+  function revealOnScroll() {
+    const obs = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
           e.target.classList.add('in');
           obs.unobserve(e.target);
         }
       }
-    }, {threshold: .12});
-    $$('.reveal').forEach(el=> obs.observe(el));
+    }, { threshold: .12 });
+    $$('.reveal').forEach(el => obs.observe(el));
     // Fallback: ensure content is visible even if observer fails
-    setTimeout(()=> {
+    setTimeout(() => {
       const pending = $$('.reveal:not(.in)');
-      if(pending.length){
-        pending.forEach(el=> el.classList.add('in'));
+      if (pending.length) {
+        pending.forEach(el => el.classList.add('in'));
         document.documentElement.classList.add('reveal-fallback');
       }
     }, 1200);
-    try { window.__revealObserver = obs; } catch {}
+    try { window.__revealObserver = obs; } catch { }
   }
 
-  function safeRun(label, fn){
-    try{
+  function safeRun(label, fn) {
+    try {
       return fn();
-    } catch(err){
+    } catch (err) {
       console.error(`[portfolio] ${label} failed`, err);
       return undefined;
     }
   }
 
-  function scrollSpy(){
-    const sections = ['about','skills','projects','passions','timeline','contact','recreation'];
-    const navLinks = sections.map(id=> ({id, el: document.querySelector(`.top-nav a[href="#${id}"]`)}));
-    const spy = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
+  function scrollSpy() {
+    const sections = ['about', 'skills', 'projects', 'passions', 'timeline', 'contact', 'recreation'];
+    const navLinks = sections.map(id => ({ id, el: document.querySelector(`.top-nav a[href="#${id}"]`) }));
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
           const id = e.target.id;
-          navLinks.forEach(n=>{
-            if(!n?.el) return;
-            const active = n.id===id;
+          navLinks.forEach(n => {
+            if (!n?.el) return;
+            const active = n.id === id;
             n.el.classList.toggle('active', active);
-            if(active) n.el.setAttribute('aria-current','page'); else n.el.removeAttribute('aria-current');
+            if (active) n.el.setAttribute('aria-current', 'page'); else n.el.removeAttribute('aria-current');
           });
         }
       });
-    }, {rootMargin: '-40% 0px -50% 0px', threshold: 0});
-    sections.forEach(id=>{ const el = document.getElementById(id); if(el) spy.observe(el); });
+    }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+    sections.forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
   }
 
-  function injectJsonLd(){
-    if(!data.profile?.name) return;
+  function injectJsonLd() {
+    if (!data.profile?.name) return;
     const ld = {
-      '@context':'https://schema.org', '@type':'Person',
+      '@context': 'https://schema.org', '@type': 'Person',
       name: data.profile.name,
       jobTitle: data.profile.role,
       url: data.profile.website,
       email: data.profile.email,
       image: data.profile.headshot,
-      sameAs: Object.values(data.profile.social||{}).filter(Boolean)
+      sameAs: Object.values(data.profile.social || {}).filter(Boolean)
     };
-    const s = document.createElement('script'); s.type='application/ld+json'; s.textContent = JSON.stringify(ld);
+    const s = document.createElement('script'); s.type = 'application/ld+json'; s.textContent = JSON.stringify(ld);
     document.head.appendChild(s);
   }
 
@@ -1100,52 +1127,52 @@
     safeRun('injectJsonLd', injectJsonLd);
 
     // Expose minimal API for enhancement hooks before we import
-    try { window.__portfolioAPI = { rerenderProjects: renderProjects }; } catch {}
+    try { window.__portfolioAPI = { rerenderProjects: renderProjects }; } catch { }
     // Progressive enhancement: auto-hydrate from GitHub if profile link exists
-    try { enhanceFromGitHub(); } catch {}
-    try { ensureProjectsHydrated(); } catch {}
+    try { enhanceFromGitHub(); } catch { }
+    try { ensureProjectsHydrated(); } catch { }
 
     // Keyboard shortcuts
     try {
       document.addEventListener('keydown', (e) => {
-        const tag = (e.target && (e.target.tagName||'')).toLowerCase();
+        const tag = (e.target && (e.target.tagName || '')).toLowerCase();
         const isTyping = tag === 'input' || tag === 'textarea';
-        if(e.key === '/' && !isTyping){ e.preventDefault(); const s=document.getElementById('project-search'); if(s){ s.focus(); s.select?.(); }}
-        if((e.key === 't' || e.key === 'T') && !isTyping){ e.preventDefault(); document.getElementById('theme-toggle')?.click(); }
+        if (e.key === '/' && !isTyping) { e.preventDefault(); const s = document.getElementById('project-search'); if (s) { s.focus(); s.select?.(); } }
+        if ((e.key === 't' || e.key === 'T') && !isTyping) { e.preventDefault(); document.getElementById('theme-toggle')?.click(); }
       });
-    } catch {}
+    } catch { }
 
     // Scroll-to-top
     try {
       const fab = document.getElementById('scroll-top');
-      const rootObs = new IntersectionObserver((entries)=>{
-        for(const ent of entries){
-          if(!fab) return;
-          if(ent.isIntersecting){ fab.classList.remove('show'); }
+      const rootObs = new IntersectionObserver((entries) => {
+        for (const ent of entries) {
+          if (!fab) return;
+          if (ent.isIntersecting) { fab.classList.remove('show'); }
           else { fab.classList.add('show'); }
         }
-      }, {rootMargin: '-10% 0px 0px 0px'});
-      const hero = document.getElementById('hero'); if(hero) rootObs.observe(hero);
-      fab && fab.addEventListener('click', ()=> window.scrollTo({top:0, behavior: 'smooth'}));
-    } catch {}
+      }, { rootMargin: '-10% 0px 0px 0px' });
+      const hero = document.getElementById('hero'); if (hero) rootObs.observe(hero);
+      fab && fab.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    } catch { }
 
     // PWA: register service worker (best-effort)
     try {
       const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-      if('serviceWorker' in navigator){
-        if(isLocal){
-          navigator.serviceWorker.getRegistrations().then(regs=>{
-            regs.forEach(r=> r.unregister());
+      if ('serviceWorker' in navigator) {
+        if (isLocal) {
+          navigator.serviceWorker.getRegistrations().then(regs => {
+            regs.forEach(r => r.unregister());
           });
         } else {
           navigator.serviceWorker.register('sw.js');
         }
       }
-    } catch {}
+    } catch { }
   });
 })();
 
-function svg(name){
+function svg(name) {
   const icons = {
     briefcase: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 6V5a2 2 0 0 0-2-2h-0a2 2 0 0 0-2 2v1H5a2 2 0 0 0-2 2v3h18V8a2 2 0 0 0-2-2h-5zm-2-1a1 1 0 0 1 1 1v1h-2V6a1 1 0 0 1 1-1z"/><path d="M21 12H3v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6zM9 14h6v2H9v-2z"/></svg>',
     hat: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/><path d="M4 12v5c0 1.66 3.58 3 8 3s8-1.34 8-3v-5l-8 4.36L4 12z"/></svg>',
@@ -1162,74 +1189,74 @@ function svg(name){
   return icons[name] || '';
 }
 
-function humanizeRepoName(name){
-  if(!name) return '';
+function humanizeRepoName(name) {
+  if (!name) return '';
   // Keep overrides like C++ intact if present in display text elsewhere
-  const s = name.replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
-  return s.split(' ').map(w=> w.length>2 ? w[0].toUpperCase()+w.slice(1) : w.toUpperCase()).join(' ');
+  const s = name.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
+  return s.split(' ').map(w => w.length > 2 ? w[0].toUpperCase() + w.slice(1) : w.toUpperCase()).join(' ');
 }
 
-function abstractThumb(seed, subtitle){
+function abstractThumb(seed, subtitle) {
   const colors = [
-    ['#7C3AED','#10B981'],
-    ['#0EA5E9','#7C3AED'],
-    ['#22D3EE','#6366F1'],
-    ['#F472B6','#7C3AED'],
-    ['#14B8A6','#84CC16']
+    ['#7C3AED', '#10B981'],
+    ['#0EA5E9', '#7C3AED'],
+    ['#22D3EE', '#6366F1'],
+    ['#F472B6', '#7C3AED'],
+    ['#14B8A6', '#84CC16']
   ];
   const i = Math.abs(hash(seed)) % colors.length;
-  const [c1,c2] = colors[i];
-  const text = escapeHtml((seed||'').slice(0,3).toUpperCase());
-  const svg = `<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="640" height="360" fill="#0b0f14"/><circle cx="520" cy="300" r="180" fill="url(#g)" opacity="0.22"/><circle cx="140" cy="80" r="120" fill="url(#g)" opacity="0.16"/><rect x="24" y="24" width="592" height="312" rx="18" fill="url(#g)" opacity="0.10"/><text x="40" y="70" fill="#e6edf3" font-family="Inter, system-ui" font-size="28" font-weight="700">${text}</text><text x="40" y="100" fill="#96a2b3" font-family="Inter, system-ui" font-size="14">${escapeHtml(subtitle||'')}</text></svg>`;
+  const [c1, c2] = colors[i];
+  const text = escapeHtml((seed || '').slice(0, 3).toUpperCase());
+  const svg = `<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="640" height="360" fill="#0b0f14"/><circle cx="520" cy="300" r="180" fill="url(#g)" opacity="0.22"/><circle cx="140" cy="80" r="120" fill="url(#g)" opacity="0.16"/><rect x="24" y="24" width="592" height="312" rx="18" fill="url(#g)" opacity="0.10"/><text x="40" y="70" fill="#e6edf3" font-family="Inter, system-ui" font-size="28" font-weight="700">${text}</text><text x="40" y="100" fill="#96a2b3" font-family="Inter, system-ui" font-size="14">${escapeHtml(subtitle || '')}</text></svg>`;
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 
-function hash(str){
-  let h=0; for(let i=0;i<str.length;i++){ h=(h<<5)-h + str.charCodeAt(i); h|=0; }
+function hash(str) {
+  let h = 0; for (let i = 0; i < str.length; i++) { h = (h << 5) - h + str.charCodeAt(i); h |= 0; }
   return h;
 }
 
 // --- Progressive enhancement: GitHub auto-import ---------------------------
-async function enhanceFromGitHub(){
+async function enhanceFromGitHub() {
   const data = window.PORTFOLIO || {};
   const gh = data.profile?.social?.github || data.profile?.website || '';
   const username = parseGithubUsername(gh);
-  if(!username) return;
-  try{ window.__projectsLoading = true; }catch{}
+  if (!username) return;
+  try { window.__projectsLoading = true; } catch { }
 
-  const headers = { 'Accept':'application/vnd.github+json' };
-  try{
+  const headers = { 'Accept': 'application/vnd.github+json' };
+  try {
     const t = (window.PORTFOLIO && window.PORTFOLIO.integrations && window.PORTFOLIO.integrations.githubToken) || '';
-    if(t){ headers['Authorization'] = `Bearer ${t}`; }
-  }catch{}
+    if (t) { headers['Authorization'] = `Bearer ${t}`; }
+  } catch { }
   const apiBase = `https://api.github.com/users/${encodeURIComponent(username)}`;
 
   // Fetch user for location/bio (best-effort)
   try {
     const ures = await fetch(apiBase, { headers });
-    if(ures.ok){
+    if (ures.ok) {
       const u = await ures.json();
-      if(u?.location && (!data.profile.location || data.profile.location === '')){
+      if (u?.location && (!data.profile.location || data.profile.location === '')) {
         data.profile.location = u.location;
         const locEl = document.getElementById('contact-location');
-        if(locEl) locEl.textContent = u.location;
+        if (locEl) locEl.textContent = u.location;
       }
-      if(u?.bio && (!data.profile.summary || data.profile.summary.includes('I design and ship'))){
+      if (u?.bio && (!data.profile.summary || data.profile.summary.includes('I design and ship'))) {
         // Use GitHub bio only if summary is default-ish
         const subtitle = document.getElementById('hero-subtitle');
         data.profile.summary = u.bio;
-        if(subtitle) subtitle.textContent = u.bio;
+        if (subtitle) subtitle.textContent = u.bio;
       }
     }
-  } catch {}
+  } catch { }
 
   // Fetch repositories and populate projects
   try {
     const rres = await fetch(`${apiBase}/repos?per_page=100&sort=updated`, { headers });
-    if(!rres.ok) return;
+    if (!rres.ok) return;
     const repos = (await rres.json()) || [];
     const filtered = repos.filter(r => !r.fork && !r.archived);
-    filtered.sort((a,b) => (b.stargazers_count||0) - (a.stargazers_count||0));
+    filtered.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0));
     const top = filtered.slice(0, 12).map(r => ({
       name: r.name,
       year: (r.created_at ? new Date(r.created_at).getFullYear() : ''),
@@ -1242,65 +1269,65 @@ async function enhanceFromGitHub(){
     }));
 
     // Augment with top languages (best-effort)
-    for (let i = 0; i < top.length; i++){
+    for (let i = 0; i < top.length; i++) {
       const repo = filtered[i];
-      if(!repo || !repo.languages_url) continue;
-      try{
+      if (!repo || !repo.languages_url) continue;
+      try {
         const lres = await fetch(repo.languages_url, { headers });
-        if(lres.ok){
+        if (lres.ok) {
           const langs = await lres.json();
-          const pairs = Object.entries(langs).sort((a,b)=> b[1]-a[1]).slice(0,2).map(([k])=>k);
-          const uniq = Array.from(new Set([...(top[i].tags||[]), ...pairs].filter(Boolean)));
+          const pairs = Object.entries(langs).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k]) => k);
+          const uniq = Array.from(new Set([...(top[i].tags || []), ...pairs].filter(Boolean)));
           top[i].tags = uniq;
         }
-      }catch{}
+      } catch { }
     }
 
     // Apply overrides from content.js if provided
     const overrides = (window.PORTFOLIO && window.PORTFOLIO.projectOverrides) || {};
-    for (const p of top){
+    for (const p of top) {
       const ov = overrides[p.name];
-      if(ov){ Object.assign(p, ov); }
+      if (ov) { Object.assign(p, ov); }
     }
 
     // Merge: keep any existing explicit featured projects at the top (after overrides)
     const current = Array.isArray(data.projects) ? data.projects.filter(p => p.featured) : [];
     data.projects = [...current, ...top];
-    const grid = document.getElementById('projects-grid'); if(grid){ grid.innerHTML=''; }
-    const filters = document.getElementById('project-filters'); if(filters){ filters.innerHTML=''; }
-    const search = document.getElementById('project-search'); if(search){ search.value=''; }
+    const grid = document.getElementById('projects-grid'); if (grid) { grid.innerHTML = ''; }
+    const filters = document.getElementById('project-filters'); if (filters) { filters.innerHTML = ''; }
+    const search = document.getElementById('project-search'); if (search) { search.value = ''; }
     // Re-render with new data
-    if(typeof window !== 'undefined' && window.__portfolioAPI && typeof window.__portfolioAPI.rerenderProjects === 'function'){
+    if (typeof window !== 'undefined' && window.__portfolioAPI && typeof window.__portfolioAPI.rerenderProjects === 'function') {
       window.__portfolioAPI.rerenderProjects();
     }
-  } catch {}
-  finally { try{ window.__projectsLoading = false; }catch{} }
+  } catch { }
+  finally { try { window.__projectsLoading = false; } catch { } }
 }
 
-function parseGithubUsername(url){
-  try{
-    if(!url) return '';
+function parseGithubUsername(url) {
+  try {
+    if (!url) return '';
     // Accept forms: https://github.com/user, http://github.com/user/, github.com/user
     const u = new URL(url.includes('http') ? url : `https://${url}`);
-    if(!u.hostname.includes('github.com')) return '';
+    if (!u.hostname.includes('github.com')) return '';
     const parts = u.pathname.split('/').filter(Boolean);
     return parts[0] || '';
-  }catch{ return ''; }
+  } catch { return ''; }
 }
 
-function ensureProjectsHydrated(){
+function ensureProjectsHydrated() {
   // If after a short delay there are no cards, fall back to overrides
   setTimeout(async () => {
     const grid = document.getElementById('projects-grid');
-    if(!grid) return;
+    if (!grid) return;
     const hasCards = grid.children.length > 0;
-    if(hasCards) return;
+    if (hasCards) return;
     const data = window.PORTFOLIO || {};
     const overrides = data.projectOverrides || {};
     const gh = data.profile?.social?.github || data.profile?.website || '';
     const username = parseGithubUsername(gh) || 'PhyoThihaOo32';
     const keys = Object.keys(overrides);
-    if(!keys.length) return;
+    if (!keys.length) return;
     const fallback = keys.map(k => ({
       name: overrides[k].name || k,
       year: '',
@@ -1311,9 +1338,9 @@ function ensureProjectsHydrated(){
       featured: !!overrides[k].featured,
       stars: 0
     }));
-    if(fallback.length){
+    if (fallback.length) {
       data.projects = fallback;
-      if(window.__portfolioAPI && typeof window.__portfolioAPI.rerenderProjects==='function'){
+      if (window.__portfolioAPI && typeof window.__portfolioAPI.rerenderProjects === 'function') {
         window.__portfolioAPI.rerenderProjects();
       }
     }
@@ -1321,15 +1348,15 @@ function ensureProjectsHydrated(){
 }
 
 // --- Radio (Apple Music embed) ---------------------------------------------
-function renderRadio(){
+function renderRadio() {
   const data = window.PORTFOLIO || {};
   const wrap = document.getElementById('radio-embed');
-  if(!wrap) return;
+  if (!wrap) return;
   wrap.innerHTML = '';
 
   // If an external radio URL is provided, embed it directly
   const ext = (data.music && data.music.externalEmbedUrl) || '';
-  if(ext){
+  if (ext) {
     const iframe = document.createElement('iframe');
     iframe.src = ext;
     iframe.title = 'Lofi Radio';
@@ -1340,8 +1367,8 @@ function renderRadio(){
     // No sandbox to avoid blocking audio on some stations
     wrap.appendChild(iframe);
 
-    const tools = document.createElement('div'); tools.className='row'; tools.style.marginTop = '.6rem';
-    const openLink = document.createElement('a'); openLink.className='btn'; openLink.textContent='Open lofi.cafe ↗'; openLink.href = ext; openLink.target='_blank'; openLink.rel='noreferrer';
+    const tools = document.createElement('div'); tools.className = 'row'; tools.style.marginTop = '.6rem';
+    const openLink = document.createElement('a'); openLink.className = 'btn'; openLink.textContent = 'Open lofi.cafe ↗'; openLink.href = ext; openLink.target = '_blank'; openLink.rel = 'noreferrer';
     tools.append(openLink); wrap.appendChild(tools);
     return;
   }
@@ -1350,7 +1377,7 @@ function renderRadio(){
   const stored = localStorage.getItem('applePlaylistUrl');
   let url = (data.music && data.music.applePlaylistUrl) || stored || '';
 
-  if(!url){
+  if (!url) {
     const box = document.createElement('div');
     box.className = 'muted';
     box.innerHTML = `
@@ -1363,27 +1390,27 @@ function renderRadio(){
       <div class="row" id="apple-presets"></div>`;
     wrap.appendChild(box);
     const save = document.getElementById('apple-save');
-    save?.addEventListener('click', ()=>{
+    save?.addEventListener('click', () => {
       const v = document.getElementById('apple-url').value.trim();
-      if(v){ localStorage.setItem('applePlaylistUrl', v); (data.music ||= {}).applePlaylistUrl = v; renderRadio(); }
+      if (v) { localStorage.setItem('applePlaylistUrl', v); (data.music ||= {}).applePlaylistUrl = v; renderRadio(); }
     });
-    document.getElementById('apple-lofi')?.addEventListener('click', ()=>{
+    document.getElementById('apple-lofi')?.addEventListener('click', () => {
       const lofi = (data.music && data.music.defaultLofi) || '';
-      if(lofi){ localStorage.setItem('applePlaylistUrl', lofi); (data.music ||= {}).applePlaylistUrl = lofi; renderRadio(); }
+      if (lofi) { localStorage.setItem('applePlaylistUrl', lofi); (data.music ||= {}).applePlaylistUrl = lofi; renderRadio(); }
     });
-    try{
+    try {
       const presets = (data.music && data.music.presets) || [];
       const row = document.getElementById('apple-presets');
-      presets.forEach(p=>{
-        const b = document.createElement('button'); b.className='btn ghost'; b.textContent = p.label; b.addEventListener('click', ()=>{ localStorage.setItem('applePlaylistUrl', p.url); (data.music ||= {}).applePlaylistUrl = p.url; renderRadio(); }); row.appendChild(b);
+      presets.forEach(p => {
+        const b = document.createElement('button'); b.className = 'btn ghost'; b.textContent = p.label; b.addEventListener('click', () => { localStorage.setItem('applePlaylistUrl', p.url); (data.music ||= {}).applePlaylistUrl = p.url; renderRadio(); }); row.appendChild(b);
       });
-    }catch{}
+    } catch { }
     return;
   }
 
   // Build embed src
   // Apple links look like: https://music.apple.com/us/playlist/...; embed domain is https://embed.music.apple.com
-  try{
+  try {
     const u = new URL(url);
     const country = u.pathname.split('/')[1] || (data.music?.country || 'us');
     const embed = new URL(url.replace('://music.apple.com', '://embed.music.apple.com'));
@@ -1400,177 +1427,177 @@ function renderRadio(){
     wrap.appendChild(iframe);
 
     // Controls row: Change / Lofi / Clear
-    const tools = document.createElement('div'); tools.className='row'; tools.style.marginTop = '.6rem';
-    const changeBtn = document.createElement('button'); changeBtn.className='btn ghost'; changeBtn.textContent='Change playlist';
-    const lofiBtn = document.createElement('button'); lofiBtn.className='btn ghost'; lofiBtn.textContent='Use Lofi';
-    const clearBtn = document.createElement('button'); clearBtn.className='btn ghost'; clearBtn.textContent='Clear';
-    const openLink = document.createElement('a'); openLink.className='btn'; openLink.textContent='Open in Apple Music ↗'; openLink.href = url; openLink.target='_blank'; openLink.rel='noreferrer';
+    const tools = document.createElement('div'); tools.className = 'row'; tools.style.marginTop = '.6rem';
+    const changeBtn = document.createElement('button'); changeBtn.className = 'btn ghost'; changeBtn.textContent = 'Change playlist';
+    const lofiBtn = document.createElement('button'); lofiBtn.className = 'btn ghost'; lofiBtn.textContent = 'Use Lofi';
+    const clearBtn = document.createElement('button'); clearBtn.className = 'btn ghost'; clearBtn.textContent = 'Clear';
+    const openLink = document.createElement('a'); openLink.className = 'btn'; openLink.textContent = 'Open in Apple Music ↗'; openLink.href = url; openLink.target = '_blank'; openLink.rel = 'noreferrer';
     tools.append(changeBtn, lofiBtn, clearBtn, openLink); wrap.appendChild(tools);
-    changeBtn.addEventListener('click', ()=>{ localStorage.removeItem('applePlaylistUrl'); (data.music ||= {}).applePlaylistUrl=''; renderRadio(); });
-    lofiBtn.addEventListener('click', ()=>{ const l=(data.music && data.music.defaultLofi)||''; if(l){ localStorage.setItem('applePlaylistUrl', l); (data.music ||= {}).applePlaylistUrl=l; renderRadio(); }});
-    clearBtn.addEventListener('click', ()=>{ localStorage.removeItem('applePlaylistUrl'); (data.music ||= {}).applePlaylistUrl=''; renderRadio(); });
+    changeBtn.addEventListener('click', () => { localStorage.removeItem('applePlaylistUrl'); (data.music ||= {}).applePlaylistUrl = ''; renderRadio(); });
+    lofiBtn.addEventListener('click', () => { const l = (data.music && data.music.defaultLofi) || ''; if (l) { localStorage.setItem('applePlaylistUrl', l); (data.music ||= {}).applePlaylistUrl = l; renderRadio(); } });
+    clearBtn.addEventListener('click', () => { localStorage.removeItem('applePlaylistUrl'); (data.music ||= {}).applePlaylistUrl = ''; renderRadio(); });
   } catch {
-    const err = document.createElement('p'); err.className='muted'; err.textContent = 'Invalid Apple Music URL.'; wrap.appendChild(err);
+    const err = document.createElement('p'); err.className = 'muted'; err.textContent = 'Invalid Apple Music URL.'; wrap.appendChild(err);
   }
 
   // Render the gallery side
-  try { renderDailyGallery(); } catch {}
+  try { renderDailyGallery(); } catch { }
 }
 
-async function renderDailyGallery(){
-  try { if(window.__gallerySource === 'masters') return; } catch {}
+async function renderDailyGallery() {
+  try { if (window.__gallerySource === 'masters') return; } catch { }
   const data = window.PORTFOLIO || {};
   const items = data.gallery || [];
   const artEl = document.getElementById('gallery-art');
   const titleEl = document.getElementById('gallery-title');
   const bylineEl = document.getElementById('gallery-byline');
   const descEl = document.getElementById('gallery-desc');
-  if(!artEl || !titleEl || !bylineEl) return;
+  if (!artEl || !titleEl || !bylineEl) return;
 
   // First, try local bundled masters if present (multiple fallbacks for paths)
   const manifestCandidates = [
     'assets/art/masters/masters.json?v=6',
     '/portfolio/assets/art/masters/masters.json?v=6'
   ];
-  for(const m of manifestCandidates){
-    try{
+  for (const m of manifestCandidates) {
+    try {
       const manifestUrl = new URL(m, location.href).toString();
-      const res = await fetch(manifestUrl, {cache:'no-store'});
-      if(res.ok){
+      const res = await fetch(manifestUrl, { cache: 'no-store' });
+      if (res.ok) {
         const masters = await res.json();
-        if(Array.isArray(masters) && masters.length){
+        if (Array.isArray(masters) && masters.length) {
           renderLocalDaily(masters, artEl, titleEl, bylineEl, descEl);
-          try { window.__gallerySource = 'masters'; } catch {}
+          try { window.__gallerySource = 'masters'; } catch { }
           bindKenBurns();
           return;
         }
       }
-    }catch{}
-  }
-  
-  const theme = document.documentElement.getAttribute('data-theme');
-  if(theme === 'burmese'){
-    try{
-      const manifestUrl = new URL('assets/art/burmese/manifest.json?v=2', location.href).toString();
-      const res = await fetch(manifestUrl, {cache:'no-store'});
-      if(res.ok){
-        const imgs = await res.json();
-        if(Array.isArray(imgs) && imgs.length){
-          renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl);
-          try{ window.__gallerySource = 'burmese'; }catch{}
-          bindKenBurns();
-          return;
-        }
-      }
-    }catch{}
-  }
-  if(theme === 'cyber'){
-    try{
-      const manifestUrl = new URL('assets/art/cyber/manifest.json?v=6', location.href).toString();
-      const res = await fetch(manifestUrl, {cache:'no-store'});
-      if(res.ok){
-        const imgs = await res.json();
-        if(Array.isArray(imgs) && imgs.length){
-          renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl);
-          try{ window.__gallerySource = 'cyber'; }catch{}
-          bindKenBurns();
-          return;
-        }
-      }
-    }catch{}
+    } catch { }
   }
 
-  if(data.remoteGallery?.enabled !== false && data.remoteGallery?.source === 'met'){
-    await renderMetDaily(items, artEl, titleEl, bylineEl).then(()=>{ try{ window.__gallerySource = 'met'; }catch{}; }).catch(()=>{
-      renderLocalDaily(items.length?items:[], artEl, titleEl, bylineEl);
-      try{ window.__gallerySource = 'local'; }catch{}
+  const theme = document.documentElement.getAttribute('data-theme');
+  if (theme === 'burmese') {
+    try {
+      const manifestUrl = new URL('assets/art/burmese/manifest.json?v=2', location.href).toString();
+      const res = await fetch(manifestUrl, { cache: 'no-store' });
+      if (res.ok) {
+        const imgs = await res.json();
+        if (Array.isArray(imgs) && imgs.length) {
+          renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl);
+          try { window.__gallerySource = 'burmese'; } catch { }
+          bindKenBurns();
+          return;
+        }
+      }
+    } catch { }
+  }
+  if (theme === 'cyber') {
+    try {
+      const manifestUrl = new URL('assets/art/cyber/manifest.json?v=6', location.href).toString();
+      const res = await fetch(manifestUrl, { cache: 'no-store' });
+      if (res.ok) {
+        const imgs = await res.json();
+        if (Array.isArray(imgs) && imgs.length) {
+          renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl);
+          try { window.__gallerySource = 'cyber'; } catch { }
+          bindKenBurns();
+          return;
+        }
+      }
+    } catch { }
+  }
+
+  if (data.remoteGallery?.enabled !== false && data.remoteGallery?.source === 'met') {
+    await renderMetDaily(items, artEl, titleEl, bylineEl).then(() => { try { window.__gallerySource = 'met'; } catch { }; }).catch(() => {
+      renderLocalDaily(items.length ? items : [], artEl, titleEl, bylineEl);
+      try { window.__gallerySource = 'local'; } catch { }
     });
   } else {
     renderLocalDaily(items, artEl, titleEl, bylineEl, descEl);
-    try{ window.__gallerySource = 'local'; }catch{}
+    try { window.__gallerySource = 'local'; } catch { }
   }
   bindKenBurns();
 }
 
-  function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl){
-    const today = new Date();
-    const day = Math.floor((Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(today.getFullYear(),0,0)) / 86400000);
-    let idx = Number(sessionStorage.getItem('galleryIndex'));
-    if(!Number.isInteger(idx)) idx = items.length ? day % items.length : 0;
-    let attempts = 0;
-    function apply(){
-      if(attempts > items.length + 2){ showSpinner(artEl, false); return; }
-      const it = items.length ? items[((idx%items.length)+items.length)%items.length] : null;
-      if(!it || !it.image){ return; }
-      const img = document.getElementById('gallery-img');
-      if(img){
-        showSpinner(artEl, true);
-        setGalleryImage(img, it.image);
-        img.alt = `${it.title||'Artwork'} — ${it.artist||''}`.trim();
-        img.classList.add('kenburns');
-        img.onload = ()=>{ trySetAccentFromImage(img); showSpinner(artEl, false); attempts=0; };
-        img.onerror = ()=>{ attempts++; idx++; apply(); };
-      }
-      else { artEl.style.backgroundImage = `url(${it.image})`; }
-      if(it.title){ titleEl.textContent = it.title; }
-      if(it.artist || it.year){ bylineEl.textContent = [it.artist,it.year].filter(Boolean).join(' · '); }
-      if(descEl){ descEl.textContent = it.desc || 'Public‑domain artwork, courtesy of The Met.'; }
-      sessionStorage.setItem('galleryIndex', idx);
+function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl) {
+  const today = new Date();
+  const day = Math.floor((Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(today.getFullYear(), 0, 0)) / 86400000);
+  let idx = Number(sessionStorage.getItem('galleryIndex'));
+  if (!Number.isInteger(idx)) idx = items.length ? day % items.length : 0;
+  let attempts = 0;
+  function apply() {
+    if (attempts > items.length + 2) { showSpinner(artEl, false); return; }
+    const it = items.length ? items[((idx % items.length) + items.length) % items.length] : null;
+    if (!it || !it.image) { return; }
+    const img = document.getElementById('gallery-img');
+    if (img) {
+      showSpinner(artEl, true);
+      setGalleryImage(img, it.image);
+      img.alt = `${it.title || 'Artwork'} — ${it.artist || ''}`.trim();
+      img.classList.add('kenburns');
+      img.onload = () => { trySetAccentFromImage(img); showSpinner(artEl, false); attempts = 0; };
+      img.onerror = () => { attempts++; idx++; apply(); };
     }
+    else { artEl.style.backgroundImage = `url(${it.image})`; }
+    if (it.title) { titleEl.textContent = it.title; }
+    if (it.artist || it.year) { bylineEl.textContent = [it.artist, it.year].filter(Boolean).join(' · '); }
+    if (descEl) { descEl.textContent = it.desc || 'Public‑domain artwork, courtesy of The Met.'; }
+    sessionStorage.setItem('galleryIndex', idx);
+  }
   apply();
-  document.getElementById('gallery-prev')?.addEventListener('click', ()=>{ idx--; apply(); });
-  document.getElementById('gallery-next')?.addEventListener('click', ()=>{ idx++; apply(); });
+  document.getElementById('gallery-prev')?.addEventListener('click', () => { idx--; apply(); });
+  document.getElementById('gallery-next')?.addEventListener('click', () => { idx++; apply(); });
 }
 
-async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl){
-  const storeKey = `dailyArt-${new Date().toISOString().slice(0,10)}`;
-  try{
+async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl) {
+  const storeKey = `dailyArt-${new Date().toISOString().slice(0, 10)}`;
+  try {
     const cached = localStorage.getItem(storeKey);
-    if(cached){
+    if (cached) {
       const it = JSON.parse(cached);
-      if(it?.image){ apply(it); bindNav(loadByOffset); return; }
+      if (it?.image) { apply(it); bindNav(loadByOffset); return; }
     }
-  }catch{}
+  } catch { }
 
   const ids = await getMetIds();
-  if(!ids || !ids.length) throw new Error('No MET ids');
+  if (!ids || !ids.length) throw new Error('No MET ids');
   const baseIdx = dayOfYear() % ids.length;
   const it = await getMetObject(ids[baseIdx]);
   apply(it); bindNav(loadByOffset);
-  try{ localStorage.setItem(storeKey, JSON.stringify(it)); }catch{}
+  try { localStorage.setItem(storeKey, JSON.stringify(it)); } catch { }
 
-  async function loadByOffset(delta){
+  async function loadByOffset(delta) {
     const i = ((baseIdx + delta) % ids.length + ids.length) % ids.length;
     const item = await getMetObject(ids[i]);
     apply(item);
   }
 
-  function apply(obj){
+  function apply(obj) {
     const img = document.getElementById('gallery-img');
-    if(img){
+    if (img) {
       showSpinner(artEl, true);
       setGalleryImage(img, obj.image);
-      img.alt = `${obj.title||'Artwork'} — ${obj.artist||''}`.trim();
+      img.alt = `${obj.title || 'Artwork'} — ${obj.artist || ''}`.trim();
       img.classList.add('kenburns');
-      img.onload = ()=>{ trySetAccentFromImage(img); showSpinner(artEl, false); };
-      img.onerror = ()=>{ showSpinner(artEl, false); img.removeAttribute('src'); };
+      img.onload = () => { trySetAccentFromImage(img); showSpinner(artEl, false); };
+      img.onerror = () => { showSpinner(artEl, false); img.removeAttribute('src'); };
     }
     else { artEl.style.backgroundImage = `url(${obj.image})`; }
     titleEl.innerHTML = obj.url ? `<a href="${obj.url}" target="_blank" rel="noreferrer">${escapeHtml(obj.title)}</a>` : escapeHtml(obj.title);
     bylineEl.textContent = `${obj.artist || 'Unknown'} · ${obj.year || ''}`;
-    const descEl = document.getElementById('gallery-desc'); if(descEl){ descEl.textContent = obj.desc || ''; }
+    const descEl = document.getElementById('gallery-desc'); if (descEl) { descEl.textContent = obj.desc || ''; }
   }
 
-  function bindNav(loader){
-    let offset = 0; 
-    document.getElementById('gallery-prev')?.addEventListener('click', async ()=>{ offset--; await loader(offset); });
-    document.getElementById('gallery-next')?.addEventListener('click', async ()=>{ offset++; await loader(offset); });
+  function bindNav(loader) {
+    let offset = 0;
+    document.getElementById('gallery-prev')?.addEventListener('click', async () => { offset--; await loader(offset); });
+    document.getElementById('gallery-next')?.addEventListener('click', async () => { offset++; await loader(offset); });
     const fitBtn = document.getElementById('gallery-fit');
     const art = document.getElementById('gallery-art');
-    if(art){
+    if (art) {
       const pref = localStorage.getItem('galleryFit') || 'fit';
       art.classList.toggle('fill', pref === 'fill');
-      fitBtn?.addEventListener('click', ()=>{
+      fitBtn?.addEventListener('click', () => {
         const isFill = art.classList.toggle('fill');
         localStorage.setItem('galleryFit', isFill ? 'fill' : 'fit');
       });
@@ -1578,30 +1605,30 @@ async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl){
   }
 }
 
-async function getMetIds(){
+async function getMetIds() {
   const cached = sessionStorage.getItem('metObjectIDs');
-  if(cached){ try { return JSON.parse(cached); } catch {}}
+  if (cached) { try { return JSON.parse(cached); } catch { } }
   const cfg = (window.PORTFOLIO && window.PORTFOLIO.remoteGallery) || {};
-  const params = new URLSearchParams({ hasImages:'true', q: cfg.query || '*' });
-  if(cfg.departmentId){ params.set('departmentId', String(cfg.departmentId)); }
+  const params = new URLSearchParams({ hasImages: 'true', q: cfg.query || '*' });
+  if (cfg.departmentId) { params.set('departmentId', String(cfg.departmentId)); }
   const url = `https://collectionapi.metmuseum.org/public/collection/v1/search?${params.toString()}`;
   const res = await fetch(url);
-  if(!res.ok) throw new Error('met search failed');
+  if (!res.ok) throw new Error('met search failed');
   const data = await res.json();
   const ids = (data.objectIDs || []).filter(Boolean).slice(0, 500);
   sessionStorage.setItem('metObjectIDs', JSON.stringify(ids));
   return ids;
 }
 
-async function getMetObject(id){
+async function getMetObject(id) {
   const res = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
-  if(!res.ok) throw new Error('met object failed');
+  if (!res.ok) throw new Error('met object failed');
   const o = await res.json();
   const parts = [];
-  if(o.medium) parts.push(o.medium);
-  if(o.culture) parts.push(o.culture);
-  if(o.classification) parts.push(o.classification);
-  if(o.artistDisplayBio) parts.push(o.artistDisplayBio);
+  if (o.medium) parts.push(o.medium);
+  if (o.culture) parts.push(o.culture);
+  if (o.classification) parts.push(o.classification);
+  if (o.artistDisplayBio) parts.push(o.artistDisplayBio);
   const desc = parts.filter(Boolean).join(' • ');
   return {
     title: o.title || 'Artwork',
@@ -1613,82 +1640,82 @@ async function getMetObject(id){
   };
 }
 
-function dayOfYear(d=new Date()){
-  return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(),0,0))/86400000);
+function dayOfYear(d = new Date()) {
+  return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 0)) / 86400000);
 }
 
 // Palette extraction
-function trySetAccentFromImage(img){
-  try{
+function trySetAccentFromImage(img) {
+  try {
     const c = document.createElement('canvas');
-    const w = c.width = 32; const h = c.height = 32; const ctx = c.getContext('2d', {willReadFrequently:true});
+    const w = c.width = 32; const h = c.height = 32; const ctx = c.getContext('2d', { willReadFrequently: true });
     ctx.drawImage(img, 0, 0, w, h);
-    const data = ctx.getImageData(0,0,w,h).data;
-    let r=0,g=0,b=0,count=0;
-    for(let i=0;i<data.length;i+=4){ const a=data[i+3]; if(a<200) continue; r+=data[i]; g+=data[i+1]; b+=data[i+2]; count++; }
-    if(!count) return;
-    r=Math.round(r/count); g=Math.round(g/count); b=Math.round(b/count);
+    const data = ctx.getImageData(0, 0, w, h).data;
+    let r = 0, g = 0, b = 0, count = 0;
+    for (let i = 0; i < data.length; i += 4) { const a = data[i + 3]; if (a < 200) continue; r += data[i]; g += data[i + 1]; b += data[i + 2]; count++; }
+    if (!count) return;
+    r = Math.round(r / count); g = Math.round(g / count); b = Math.round(b / count);
     const accent = `rgb(${r}, ${g}, ${b})`;
-    const accent2 = `rgb(${Math.min(255, r+20)}, ${Math.min(255, g+20)}, ${Math.min(255, b+20)})`;
+    const accent2 = `rgb(${Math.min(255, r + 20)}, ${Math.min(255, g + 20)}, ${Math.min(255, b + 20)})`;
     const root = document.documentElement;
     root.style.setProperty('--accent', accent);
     root.style.setProperty('--accent-2', accent2);
-  }catch{ /* cross-origin may block */ }
+  } catch { /* cross-origin may block */ }
 }
 
 // Duration helper for timeline
-function humanDuration(startStr, endStr){
-  if(!startStr) return '';
-  const s = parseDate(startStr); if(!s) return '';
+function humanDuration(startStr, endStr) {
+  if (!startStr) return '';
+  const s = parseDate(startStr); if (!s) return '';
   const e = (!endStr || /present/i.test(endStr)) ? new Date() : parseDate(endStr);
-  if(!e) return '';
-  let months = (e.getFullYear()-s.getFullYear())*12 + (e.getMonth()-s.getMonth());
+  if (!e) return '';
+  let months = (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
   months = Math.max(0, months);
-  const years = Math.floor(months/12);
+  const years = Math.floor(months / 12);
   const rem = months % 12;
   const parts = [];
-  if(years) parts.push(`${years} yr${years>1?'s':''}`);
-  if(rem) parts.push(`${rem} mo${rem>1?'s':''}`);
+  if (years) parts.push(`${years} yr${years > 1 ? 's' : ''}`);
+  if (rem) parts.push(`${rem} mo${rem > 1 ? 's' : ''}`);
   return parts.join(' ');
 }
 
-function parseDate(str){
+function parseDate(str) {
   // Accept formats like 'Mar 2026', '2024', '2024-01'
   const d = new Date(str);
   return isNaN(d) ? null : d;
 }
 
 // Robust image setter with fallbacks for relative/absolute paths
-function setGalleryImage(img, url){
-  try{ img.removeAttribute('crossorigin'); }catch{}
-  const bust = (u)=> u ? u + (u.includes('?') ? '&' : '?') + 'v=5' : u;
+function setGalleryImage(img, url) {
+  try { img.removeAttribute('crossorigin'); } catch { }
+  const bust = (u) => u ? u + (u.includes('?') ? '&' : '?') + 'v=5' : u;
   const candidates = [];
-  if(url) candidates.push(bust(url));
-  try{ candidates.push(bust(new URL(url, location.href).toString())); }catch{}
+  if (url) candidates.push(bust(url));
+  try { candidates.push(bust(new URL(url, location.href).toString())); } catch { }
   const base = (location.pathname.endsWith('/') ? location.pathname : location.pathname.replace(/[^/]+$/, ''));
-  if(url && !url.startsWith(base)) candidates.push(bust(base + url.replace(/^\//,'')));
-  let i = 0; const tryNext = ()=>{ if(i >= candidates.length) return; img.src = candidates[i++]; };
+  if (url && !url.startsWith(base)) candidates.push(bust(base + url.replace(/^\//, '')));
+  let i = 0; const tryNext = () => { if (i >= candidates.length) return; img.src = candidates[i++]; };
   img.onerror = tryNext; tryNext();
 }
 
-function showSpinner(container, on){
+function showSpinner(container, on) {
   let s = container.querySelector('.spinner');
-  if(on){
-    if(!s){ s = document.createElement('div'); s.className='spinner'; s.style.position='absolute'; s.style.inset='0'; s.style.display='grid'; s.style.placeItems='center'; s.innerHTML = '<div style="width:24px;height:24px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:var(--accent);animation:spin 1s linear infinite"></div>'; container.appendChild(s); }
+  if (on) {
+    if (!s) { s = document.createElement('div'); s.className = 'spinner'; s.style.position = 'absolute'; s.style.inset = '0'; s.style.display = 'grid'; s.style.placeItems = 'center'; s.innerHTML = '<div style="width:24px;height:24px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:var(--accent);animation:spin 1s linear infinite"></div>'; container.appendChild(s); }
   } else { s && s.remove(); }
 }
 
 // Choose a station the browser can play
-function pickSupportedStation(url, audio){
-  try{
-    const test = (u)=>{
-      if(!u) return '';
+function pickSupportedStation(url, audio) {
+  try {
+    const test = (u) => {
+      if (!u) return '';
       const lower = u.toLowerCase();
       const type = lower.endsWith('.mp3') ? 'audio/mpeg' : lower.endsWith('.aac') ? 'audio/aac' : (lower.endsWith('.ogg') || lower.includes('.opus')) ? 'audio/ogg' : '';
-      if(!type) return u; // unknown, try anyway
+      if (!type) return u; // unknown, try anyway
       return audio.canPlayType(type) ? u : '';
     };
-    const t = test(url); if(t) return t;
-  }catch{}
+    const t = test(url); if (t) return t;
+  } catch { }
   return url;
 }
