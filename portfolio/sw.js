@@ -1,6 +1,6 @@
-const CACHE = 'portfolio-static-v97';
+const CACHE = 'portfolio-static-v99';
 const OFFLINE_FIRST_EXT = [
-  '.css', '.js', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.woff2', '.woff', '.ttf', '.otf', '.json', '.webmanifest', '.pdf'
+  '.css', '.js', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif', '.woff2', '.woff', '.ttf', '.otf', '.json', '.webmanifest', '.pdf'
 ];
 
 self.addEventListener('install', (event) => {

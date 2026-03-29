@@ -699,12 +699,14 @@
     let last = 0;
     let sceneIndex = 0;
     let nextBubbleAt = 0;
+    const sceneTotal = Math.min(sceneNames.length, scenes.length);
 
     countEl.textContent = String(fishCount);
-    if(sceneLabelEl) sceneLabelEl.textContent = sceneNames[0];
+    if(sceneLabelEl && sceneTotal) sceneLabelEl.textContent = sceneNames[0];
 
     function setScene(index){
-      sceneIndex = index % sceneNames.length;
+      if(!sceneTotal) return;
+      sceneIndex = ((index % sceneTotal) + sceneTotal) % sceneTotal;
       scenes.forEach((scene, i)=> scene.classList.toggle('is-active', i === sceneIndex));
       if(sceneLabelEl) sceneLabelEl.textContent = sceneNames[sceneIndex];
     }
@@ -728,8 +730,8 @@
           color: ['rgba(255,193,245,.56)','rgba(170,236,255,.54)','rgba(255,225,150,.5)','rgba(186,255,214,.48)'][i % 4]
         });
       }
-      if(scenes.length){
-        setScene((sceneIndex + 1) % scenes.length);
+      if(sceneTotal){
+        setScene((sceneIndex + 1) % sceneTotal);
       }
     }
 
@@ -948,7 +950,7 @@
     }
 
     feedBtn.addEventListener('click', feedFish);
-    if(scenes.length){
+    if(sceneTotal){
       setScene(0);
     }
     draw(0);

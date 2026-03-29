@@ -23,7 +23,7 @@
     <title>Phyo Thiha Oo — Portfolio</title>
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=97" />
+    <link rel="stylesheet" href="styles.css?v=103" />
     <style>
       .reveal {
         opacity: 1 !important;
@@ -91,17 +91,15 @@
       <section id="projects" class="section reveal">
         <div class="section-head">
           <h3>Projects</h3>
-          <div class="projects-controls">
-            <input id="project-search" type="search" placeholder="Search projects (press /)"
-              aria-label="Search projects" />
-            <div id="project-filters" class="filters" role="group" aria-label="Project filters"></div>
-            <span id="projects-count" class="muted" aria-live="polite"></span>
-          </div>
           <p class="muted">Selected work and experiments.</p>
+          <div class="projects-controls">
+            <input id="project-search" type="search" placeholder="Search projects" aria-label="Search projects" />
+            <div id="project-filters" class="filters" role="group" aria-label="Project filters"></div>
+          </div>
+
         </div>
         <div id="projects-grid" class="projects-grid"></div>
       </section>
-
       <section id="passions" class="section reveal">
         <div class="section-head">
           <h3>Passions</h3>
@@ -223,7 +221,7 @@
             </div>
             <div class="game-actions">
               <button id="game-restart" class="btn ghost" type="button">Restart</button>
-              <span id="game-status" class="muted">Idle. Start when ready.</span>
+              <span id="game-status" class="muted">Not Flapping.</span>
             </div>
           </section>
 
@@ -231,7 +229,7 @@
             <div class="card-head">
               <div>
                 <h4>Dream Aquarium</h4>
-                <p class="muted small">Desk glow, whale halls, blue tunnel- and timeless thoughts.</p>
+                <p class="muted small">Desk glow, whale halls, blue tunnel - timeless thoughts.</p>
               </div>
               <button id="aquarium-feed" class="btn ghost aquarium-feed" type="button">Feed</button>
             </div>
@@ -256,6 +254,36 @@
           </section>
         </div>
       </section>
+
+      <section id="credits" class="section reveal credits-section">
+        <div class="section-head">
+          <h3>Credits</h3>
+          <p class="muted">Acknowledgements for the media and sources used across the portfolio.</p>
+        </div>
+        <div class="credits-grid">
+          <article class="credit-card">
+            <span class="credit-kicker">Art Gallery</span>
+            <h4>The Met Collection</h4>
+            <p class="muted">Public-domain artwork featured in the non-cyber gallery views.</p>
+            <a href="https://www.metmuseum.org/art/collection" target="_blank" rel="noreferrer">Explore The Met ↗</a>
+          </article>
+          <article class="credit-card">
+            <span class="credit-kicker">Atmosphere</span>
+            <h4>Music & Radio</h4>
+            <p class="muted">Ambient listening is powered by Apple Music embeds and lofi.cafe when enabled.</p>
+            <div class="credit-links">
+              <a href="https://music.apple.com/" target="_blank" rel="noreferrer">Apple Music ↗</a>
+              <a href="https://www.lofi.cafe/" target="_blank" rel="noreferrer">lofi.cafe ↗</a>
+            </div>
+          </article>
+          <article class="credit-card">
+            <span class="credit-kicker">Visual Assets</span>
+            <h4>Media and Images</h4>
+            <p class="muted">Cyber, Burmese, and aquarium image sets are curated from the portfolio owner’s selected
+              references and local assets.</p>
+          </article>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
@@ -270,8 +298,8 @@
       <p class="muted" id="footer-copy">© <span id="year"></span> Your Name. All rights reserved.</p>
     </footer>
 
-    <script src="content.js?v=97"></script>
-    <script defer src="main.js?v=97"></script>
+    <script src="content.js?v=98"></script>
+    <script defer src="main.js?v=98"></script>
     <button id="scroll-top" class="fab" aria-label="Scroll to top" title="Scroll to top">↑</button>
   </body>
 
