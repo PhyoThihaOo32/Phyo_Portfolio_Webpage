@@ -1480,8 +1480,6 @@ function renderRadio() {
     const err = document.createElement('p'); err.className = 'muted'; err.textContent = 'Invalid Apple Music URL.'; wrap.appendChild(err);
   }
 
-  // Render the gallery side
-  try { renderDailyGallery(); } catch { }
 }
 
 async function renderDailyGallery() {
@@ -1492,38 +1490,19 @@ async function renderDailyGallery() {
   const bylineEl = document.getElementById('gallery-byline');
   const descEl = document.getElementById('gallery-desc');
   if (!artEl || !titleEl || !bylineEl) return;
-
-  // First, try local bundled masters if present (multiple fallbacks for paths)
-  const manifestCandidates = [
-    'assets/art/masters/masters.json?v=6',
-    '/portfolio/assets/art/masters/masters.json?v=6'
-  ];
-  for (const m of manifestCandidates) {
-    try {
-      const manifestUrl = new URL(m, location.href).toString();
-      const res = await fetch(manifestUrl, { cache: 'no-store' });
-      if (res.ok) {
-        const masters = await res.json();
-        if (Array.isArray(masters) && masters.length) {
-          renderLocalDaily(masters, artEl, titleEl, bylineEl, descEl);
-          wireGalleryFit();
-          try { window.__gallerySource = 'masters'; } catch { }
-          bindKenBurns();
-          return;
-        }
-      }
-    } catch { }
-  }
+  const renderToken = nextGalleryRenderToken();
 
   const theme = document.documentElement.getAttribute('data-theme');
   if (theme === 'burmese') {
     try {
       const manifestUrl = new URL('assets/art/burmese/manifest.json?v=2', location.href).toString();
       const res = await fetch(manifestUrl, { cache: 'no-store' });
+      if (!isGalleryRenderCurrent(renderToken)) return;
       if (res.ok) {
         const imgs = await res.json();
+        if (!isGalleryRenderCurrent(renderToken)) return;
         if (Array.isArray(imgs) && imgs.length) {
-          renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl);
+          renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl, renderToken);
           wireGalleryFit();
           try { window.__gallerySource = 'burmese'; } catch { }
           bindKenBurns();
@@ -1536,10 +1515,12 @@ async function renderDailyGallery() {
     try {
       const manifestUrl = new URL('assets/art/cyber/manifest.json?v=6', location.href).toString();
       const res = await fetch(manifestUrl, { cache: 'no-store' });
+      if (!isGalleryRenderCurrent(renderToken)) return;
       if (res.ok) {
         const imgs = await res.json();
+        if (!isGalleryRenderCurrent(renderToken)) return;
         if (Array.isArray(imgs) && imgs.length) {
-          renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl);
+          renderLocalDaily(imgs, artEl, titleEl, bylineEl, descEl, renderToken);
           wireGalleryFit();
           try { window.__gallerySource = 'cyber'; } catch { }
           bindKenBurns();
@@ -1549,37 +1530,74 @@ async function renderDailyGallery() {
     } catch { }
   }
 
+  // Dark/light/space fallback to bundled public-domain masters first.
+  const manifestCandidates = [
+    'assets/art/masters/masters.json?v=6',
+    '/portfolio/assets/art/masters/masters.json?v=6'
+  ];
+  for (const m of manifestCandidates) {
+    try {
+      const manifestUrl = new URL(m, location.href).toString();
+      const res = await fetch(manifestUrl, { cache: 'no-store' });
+      if (!isGalleryRenderCurrent(renderToken)) return;
+      if (res.ok) {
+        const masters = await res.json();
+        if (!isGalleryRenderCurrent(renderToken)) return;
+        if (Array.isArray(masters) && masters.length) {
+          renderLocalDaily(masters, artEl, titleEl, bylineEl, descEl, renderToken);
+          wireGalleryFit();
+          try { window.__gallerySource = 'masters'; } catch { }
+          bindKenBurns();
+          return;
+        }
+      }
+    } catch { }
+  }
+
   if (data.remoteGallery?.enabled !== false && data.remoteGallery?.source === 'met') {
-    await renderMetDaily(items, artEl, titleEl, bylineEl).then(() => { try { window.__gallerySource = 'met'; } catch { }; }).catch(() => {
-      renderLocalDaily(items.length ? items : [], artEl, titleEl, bylineEl);
+    await renderMetDaily(items, artEl, titleEl, bylineEl, renderToken).then(() => {
+      if (!isGalleryRenderCurrent(renderToken)) return;
+      try { window.__gallerySource = 'met'; } catch { }
+    }).catch(() => {
+      if (!isGalleryRenderCurrent(renderToken)) return;
+      renderLocalDaily(items.length ? items : [], artEl, titleEl, bylineEl, descEl, renderToken);
       wireGalleryFit();
       try { window.__gallerySource = 'local'; } catch { }
     });
   } else {
-    renderLocalDaily(items, artEl, titleEl, bylineEl, descEl);
+    renderLocalDaily(items, artEl, titleEl, bylineEl, descEl, renderToken);
     wireGalleryFit();
     try { window.__gallerySource = 'local'; } catch { }
   }
+  if (!isGalleryRenderCurrent(renderToken)) return;
   bindKenBurns();
 }
 
-function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl) {
+function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl, renderToken) {
+  if (!isGalleryRenderCurrent(renderToken)) return;
   const today = new Date();
   const day = Math.floor((Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(today.getFullYear(), 0, 0)) / 86400000);
+  const usableItems = (Array.isArray(items) ? items : []).filter((it) => it && it.image);
   let idx = Number(sessionStorage.getItem('galleryIndex'));
-  if (!Number.isInteger(idx)) idx = items.length ? day % items.length : 0;
+  if (!Number.isInteger(idx)) idx = usableItems.length ? day % usableItems.length : 0;
   let attempts = 0;
   function apply() {
-    if (attempts > items.length + 2) { showSpinner(artEl, false); return; }
-    const it = items.length ? items[((idx % items.length) + items.length) % items.length] : null;
+    if (!isGalleryRenderCurrent(renderToken)) return;
+    if (attempts > usableItems.length + 2) { showSpinner(artEl, false); return; }
+    const it = usableItems.length ? usableItems[((idx % usableItems.length) + usableItems.length) % usableItems.length] : null;
     if (!it || !it.image) { return; }
     const img = document.getElementById('gallery-img');
     if (img) {
       showSpinner(artEl, true);
       img.alt = `${it.title || 'Artwork'} — ${it.artist || ''}`.trim();
-      img.classList.add('kenburns');
       setGalleryImage(img, it.image, {
-        onLoad: () => { trySetAccentFromImage(img); showSpinner(artEl, false); attempts = 0; },
+        onLoad: () => {
+          if (!isGalleryRenderCurrent(renderToken)) return;
+          trySetAccentFromImage(img);
+          bindKenBurns();
+          showSpinner(artEl, false);
+          attempts = 0;
+        },
         onError: () => { showSpinner(artEl, false); attempts++; idx++; apply(); }
       });
     }
@@ -1589,14 +1607,17 @@ function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl) {
     if (descEl) { descEl.textContent = it.desc || 'Public‑domain artwork, courtesy of The Met.'; }
     sessionStorage.setItem('galleryIndex', idx);
   }
+  window.__galleryNav = {
+    prev: usableItems.length > 1 ? () => { idx--; apply(); } : null,
+    next: usableItems.length > 1 ? () => { idx++; apply(); } : null,
+    count: usableItems.length
+  };
+  wireGalleryNav();
   apply();
-  wireGalleryNav(
-    () => { idx--; apply(); },
-    () => { idx++; apply(); }
-  );
 }
 
-async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl) {
+async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl, renderToken) {
+  if (!isGalleryRenderCurrent(renderToken)) return;
   const storeKey = `dailyArt-${new Date().toISOString().slice(0, 10)}`;
   try {
     const cached = localStorage.getItem(storeKey);
@@ -1607,26 +1628,34 @@ async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl) {
   } catch { }
 
   const ids = await getMetIds();
+  if (!isGalleryRenderCurrent(renderToken)) return;
   if (!ids || !ids.length) throw new Error('No MET ids');
   const baseIdx = dayOfYear() % ids.length;
   const it = await getMetObject(ids[baseIdx]);
+  if (!isGalleryRenderCurrent(renderToken)) return;
   apply(it); bindNav(loadByOffset);
   try { localStorage.setItem(storeKey, JSON.stringify(it)); } catch { }
 
   async function loadByOffset(delta) {
     const i = ((baseIdx + delta) % ids.length + ids.length) % ids.length;
     const item = await getMetObject(ids[i]);
+    if (!isGalleryRenderCurrent(renderToken)) return;
     apply(item);
   }
 
   function apply(obj) {
+    if (!isGalleryRenderCurrent(renderToken)) return;
     const img = document.getElementById('gallery-img');
     if (img) {
       showSpinner(artEl, true);
       img.alt = `${obj.title || 'Artwork'} — ${obj.artist || ''}`.trim();
-      img.classList.add('kenburns');
       setGalleryImage(img, obj.image, {
-        onLoad: () => { trySetAccentFromImage(img); showSpinner(artEl, false); },
+        onLoad: () => {
+          if (!isGalleryRenderCurrent(renderToken)) return;
+          trySetAccentFromImage(img);
+          bindKenBurns();
+          showSpinner(artEl, false);
+        },
         onError: () => { showSpinner(artEl, false); img.removeAttribute('src'); }
       });
     }
@@ -1637,11 +1666,14 @@ async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl) {
   }
 
   function bindNav(loader) {
+    if (!isGalleryRenderCurrent(renderToken)) return;
     let offset = 0;
-    wireGalleryNav(
-      async () => { offset--; await loader(offset); },
-      async () => { offset++; await loader(offset); }
-    );
+    window.__galleryNav = {
+      prev: async () => { offset--; await loader(offset); },
+      next: async () => { offset++; await loader(offset); },
+      count: 999
+    };
+    wireGalleryNav();
     wireGalleryFit();
   }
 }
@@ -1683,6 +1715,16 @@ async function getMetObject(id) {
 
 function dayOfYear(d = new Date()) {
   return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 0)) / 86400000);
+}
+
+function nextGalleryRenderToken() {
+  const next = (window.__galleryRenderToken || 0) + 1;
+  window.__galleryRenderToken = next;
+  return next;
+}
+
+function isGalleryRenderCurrent(token) {
+  return window.__galleryRenderToken === token;
 }
 
 // Palette extraction
@@ -1728,11 +1770,30 @@ function parseDate(str) {
   return isNaN(d) ? null : d;
 }
 
-function wireGalleryNav(onPrev, onNext) {
+function wireGalleryNav() {
   const prevBtn = document.getElementById('gallery-prev');
   const nextBtn = document.getElementById('gallery-next');
-  if (prevBtn) prevBtn.onclick = (e) => { e.preventDefault(); onPrev && onPrev(); };
-  if (nextBtn) nextBtn.onclick = (e) => { e.preventDefault(); onNext && onNext(); };
+  const nav = window.__galleryNav || {};
+  if (prevBtn) {
+    prevBtn.type = 'button';
+    prevBtn.disabled = !nav.prev;
+    prevBtn.setAttribute('aria-disabled', String(!nav.prev));
+    prevBtn.onclick = (e) => {
+      e.preventDefault();
+      if (!window.__galleryNav?.prev) return;
+      void window.__galleryNav.prev();
+    };
+  }
+  if (nextBtn) {
+    nextBtn.type = 'button';
+    nextBtn.disabled = !nav.next;
+    nextBtn.setAttribute('aria-disabled', String(!nav.next));
+    nextBtn.onclick = (e) => {
+      e.preventDefault();
+      if (!window.__galleryNav?.next) return;
+      void window.__galleryNav.next();
+    };
+  }
 }
 
 function wireGalleryFit() {
@@ -1742,11 +1803,20 @@ function wireGalleryFit() {
   const pref = localStorage.getItem('galleryFit') || 'fit';
   art.classList.toggle('fill', pref === 'fill');
   if (fitBtn) {
+    fitBtn.type = 'button';
     fitBtn.onclick = () => {
       const isFill = art.classList.toggle('fill');
       localStorage.setItem('galleryFit', isFill ? 'fill' : 'fit');
     };
   }
+}
+
+function bindKenBurns() {
+  const img = document.getElementById('gallery-img');
+  if (!img) return;
+  img.classList.remove('kenburns');
+  void img.offsetWidth;
+  img.classList.add('kenburns');
 }
 
 // Robust image setter with fallbacks for relative/absolute paths
