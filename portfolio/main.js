@@ -95,8 +95,8 @@
       if (fc && data.profile?.name) { fc.innerHTML = `© <span id="year">${new Date().getFullYear()}</span> ${escapeHtml(data.profile.name)}. All rights reserved.`; }
     } catch { }
     const heroTitle = document.getElementById('hero-title');
-    if (heroTitle && data.profile?.name) {
-      heroTitle.innerHTML = `Hello, I’m <span class="accent">${escapeHtml(data.profile.name)}</span>.`;
+    if (heroTitle && data.profile?.heroLead && data.profile?.heroAccent) {
+      heroTitle.innerHTML = `${escapeHtml(data.profile.heroLead)} <span class="accent">${escapeHtml(data.profile.heroAccent)}</span>`;
     }
     const subtitle = document.getElementById('hero-subtitle');
     if (subtitle && data.profile?.summary) { subtitle.textContent = data.profile.summary; }
@@ -161,9 +161,11 @@
       (group.items || []).forEach(item => {
         const tag = document.createElement('span'); tag.className = 'tag';
         tag.innerHTML = `<span>${escapeHtml(item.label)}</span>`;
-        const meter = document.createElement('span'); meter.className = 'meter';
-        const fill = document.createElement('span'); fill.style.width = Math.max(5, Math.min(100, +item.level || 0)) + '%';
-        meter.appendChild(fill); tag.appendChild(meter);
+        if (Number.isFinite(Number(item.level))) {
+          const meter = document.createElement('span'); meter.className = 'meter';
+          const fill = document.createElement('span'); fill.style.width = Math.max(5, Math.min(100, Number(item.level))) + '%';
+          meter.appendChild(fill); tag.appendChild(meter);
+        }
         tagWrap.appendChild(tag);
       });
       c.appendChild(tagWrap);
@@ -306,6 +308,7 @@
     const discEl = document.getElementById('contact-discord');
     if (discEl && data.profile?.discord) { discEl.textContent = data.profile.discord; discEl.href = `https://discordapp.com/users/${encodeURIComponent(data.profile.discord)}`; }
     const resEl = document.getElementById('download-resume'); if (resEl) { resEl.href = resume; }
+    const heroResumeEl = document.getElementById('cta-secondary'); if (heroResumeEl) { heroResumeEl.href = resume; }
     const formEl = document.querySelector('.contact-card');
     if (formEl) {
       formEl.removeAttribute('action');
@@ -996,9 +999,16 @@
 
   function projectCard(p) {
     const card = document.createElement('article'); card.className = 'project-card reveal';
+    if (p.featured) card.classList.add('featured');
     const thumb = document.createElement('div'); thumb.className = 'thumb';
     const imgUrl = p.image || abstractThumb(p.name, (p.tags || [])[0]);
     if (imgUrl) { const img = new Image(); img.alt = p.name; img.src = imgUrl; img.loading = 'lazy'; img.decoding = 'async'; img.style.borderRadius = '.6rem'; img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover'; thumb.appendChild(img); }
+    if (p.featured) {
+      const badge = document.createElement('span');
+      badge.className = 'featured-badge';
+      badge.textContent = 'Featured';
+      thumb.appendChild(badge);
+    }
 
     const title = document.createElement('h4'); title.textContent = humanizeRepoName(p.name || '');
     const meta = document.createElement('div'); meta.className = 'meta';
@@ -1136,8 +1146,10 @@
 
     // Expose minimal API for enhancement hooks before we import
     try { window.__portfolioAPI = { rerenderProjects: renderProjects }; } catch { }
-    // Progressive enhancement: auto-hydrate from GitHub if profile link exists
-    try { enhanceFromGitHub(); } catch { }
+    // Optional enhancement. Curated projects remain the stable default.
+    if (data.integrations?.githubSync === true) {
+      try { enhanceFromGitHub(); } catch { }
+    }
     try { ensureProjectsHydrated(); } catch { }
 
     // Keyboard shortcuts
@@ -1173,7 +1185,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js?v=100');
+          navigator.serviceWorker.register('sw.js?v=111');
         }
       }
     } catch { }
@@ -1251,12 +1263,8 @@ async function enhanceFromGitHub() {
         const locEl = document.getElementById('contact-location');
         if (locEl) locEl.textContent = u.location;
       }
-      if (u?.bio && (!data.profile.summary || data.profile.summary.includes('I design and ship'))) {
-        // Use GitHub bio only if summary is default-ish
-        const subtitle = document.getElementById('hero-subtitle');
-        data.profile.summary = u.bio;
-        if (subtitle) subtitle.textContent = u.bio;
-      }
+      // Keep the portfolio's curated professional summary stable. The GitHub
+      // bio can be intentionally more personal and should not replace hero copy.
     }
   } catch { }
 

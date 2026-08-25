@@ -7,7 +7,7 @@
 [![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge)](https://web.dev/progressive-web-apps/)
 [![Themes](https://img.shields.io/badge/Themes-5-10B981?style=for-the-badge)](#theme-system)
 
-Personal portfolio website built with vanilla HTML/CSS/JS and designed around **theme-driven visuals**, **project storytelling**, and **interactive sections** (gallery, radio, game, aquarium).
+Personal software engineering portfolio built with vanilla HTML/CSS/JS and designed around **selected project storytelling**, **current experience**, **theme-driven visuals**, and **interactive sections**.
 
 ---
 
@@ -21,6 +21,10 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 ## Features
 
 - **5 themes**: `Dark`, `Light`, `Cyber`, `Space`, `Burmese`
+- **Recruiter-first hero** with current role, stack, and measurable highlights
+- **Curated project portfolio** with live demos and source links
+- **Updated experience timeline** aligned with the current resume
+- **One-page ATS-friendly resume** with a reproducible builder
 - **Code-rain visual panels** for About / Focus / Highlights
 - **Project explorer** with search + filter chips
 - **Theme-aware daily gallery**

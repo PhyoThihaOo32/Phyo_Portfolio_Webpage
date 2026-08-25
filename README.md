@@ -5,19 +5,25 @@
 [![JavaScript](https://img.shields.io/badge/JavaScript-Interaction-F7DF1E?style=for-the-badge&logo=javascript&logoColor=111)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![PWA](https://img.shields.io/badge/PWA-Enabled-5A0FC8?style=for-the-badge)](https://web.dev/progressive-web-apps/)
 [![Responsive](https://img.shields.io/badge/Responsive-Desktop%20%26%20Mobile-0EA5E9?style=for-the-badge)](#features)
-[![Themes](https://img.shields.io/badge/Themes-Dark%20%7C%20Light%20%7C%20Cyber%20%7C%20Space-10B981?style=for-the-badge)](#features)
+[![Themes](https://img.shields.io/badge/Themes-5-10B981?style=for-the-badge)](#features)
 
-A handcrafted personal portfolio built with HTML, CSS, and JavaScript.
+A recruiter-focused personal portfolio built with HTML, CSS, and JavaScript.
 
-This project presents my work, background, and personality through a multi-theme interface with custom typography, animated visual sections, curated gallery behavior, and interactive contact features. The goal was to build something that feels personal, technically solid, and visually intentional rather than using a generic portfolio template.
+**Live site:** [phyo-portfolio-webpage.onrender.com](https://phyo-portfolio-webpage.onrender.com/)
+
+The site leads with selected software projects, current engineering experience, measurable outcomes, and an updated one-page resume while preserving the multi-theme visual system, art gallery, radio, and interactive recreation features that make the portfolio personal.
 
 ## Repo Description
 
-Multi-theme personal portfolio website with custom fonts, animated visuals, curated galleries, and responsive frontend interactions.
+Responsive software engineering portfolio with curated project case studies, experience, an ATS-friendly resume, five visual themes, and progressive web app support.
 
 ## Features
 
-- Four themes: Dark, Light, Cyber, and Space
+- Five themes: Dark, Light, Cyber, Space, and Burmese
+- Recruiter-first hero with current role, stack, and measurable highlights
+- Curated project portfolio featuring SafeYork, MindEase, Code Memory Visualizer, LogicDiagramAI, and QA automation
+- Current software engineering, AI education, and CUNY experience timeline
+- Updated one-page, ATS-friendly resume generated from a reproducible source
 - Custom font system tailored to individual themes
 - Animated code-rain visual treatment for About, Focus, and Highlights
 - Gallery with theme-specific behavior
@@ -73,6 +79,8 @@ portfolio/
 │   ├── avatar.svg
 │   ├── favicon.svg
 │   └── resume.pdf
+├── output/pdf/             # Final resume artifact
+├── scripts/build_resume.py # Reproducible resume builder
 ├── content.js
 ├── index.html
 ├── main.js

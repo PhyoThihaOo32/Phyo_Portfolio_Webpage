@@ -1,268 +1,234 @@
-// Personalized content for Phyo Thiha Oo
+// Portfolio content for Phyo Thiha Oo.
+// Keep professional facts here so the page, metadata, and generated UI stay consistent.
 window.PORTFOLIO = {
   profile: {
     name: "Phyo Thiha Oo",
     role: "Software Engineer",
-    location: "Queens, NY, USA",
-    email: "phyothihaoo.pto@gmail.com",
-    phone: "", // optional
-    website: "https://github.com/PhyoThihaOo32",
-    instagram: "https://instagram.com/phyothihaoo",
-    discord: "phyo4987",
+    location: "Queens, NY",
+    email: "phyothihaoottp@gmail.com",
+    phone: "",
+    website: "https://phyo-portfolio-webpage.onrender.com/",
+    heroLead: "Building software that makes",
+    heroAccent: "complex work feel simple.",
     summary:
-      "I design and ship thoughtful software with a focus on clarity, performance, and end‑user impact.",
+      "I build practical full-stack, AI, automation, and desktop products with a focus on reliability, clear workflows, and real users.",
     headshot: "assets/avatar.svg",
     resume: "assets/resume.pdf",
     social: {
       github: "https://github.com/PhyoThihaOo32",
-      linkedin: "https://www.linkedin.com/in/phyo-t-oo-1990a2240/",
-      x: "",
-      instagram: "https://instagram.com/phyothihaoo",
-      mastodon: "",
-      devto: "",
-      youtube: ""
+      linkedin: "https://www.linkedin.com/in/phyothihaoo"
     }
   },
 
   contact: {
-    endpoint: "https://formsubmit.co/ajax/phyothihaoo.pto@gmail.com",
+    endpoint: "https://formsubmit.co/ajax/phyothihaoottp@gmail.com",
     subjectPrefix: "Portfolio message"
   },
 
   about: {
     background: [
-      "CS student (4.0 GPA) at BMCC — focused on software systems and automation.",
-      "Former navigation officer; disciplined, decisive, and calm in complex environments.",
-      "Immigrated to the U.S. and self‑fund studies while building projects and interning.",
-      "Builds practical tools: C++ robot simulation, Selenium automation, and web apps.",
-      "Information Technology Intern, BMCC CIS — CUNY 2x Tech Spring Forward.",
-      "Product‑minded engineer who values clarity, maintainability, and DX.",
-      "Seeking roles to learn fast, ship reliably, and elevate teams.",
-      "Hands-on with scripting, CI, and lightweight tooling to unblock teams.",
-      "Enjoys rapid prototyping, debugging, and tightening feedback loops.",
-      "Values steady delivery, clear communication, and practical impact.",
-      "Curious about AI/ML applied to automation and developer tooling.",
-      "Experimenting with GenAI prompts, embeddings, and retrieval to speed up workflows."
+      "Computer Science student at BMCC with a 4.0 GPA.",
+      "Software engineering experience across fintech, education, AI safety, and internal tools.",
+      "Former merchant marine officer who brings calm execution and operational discipline to engineering teams.",
+      "Based in Queens, New York, and focused on building software that solves concrete problems."
     ],
     focus: [
-      "Software systems, scripting, and automation",
-      "C/C++ for fundamentals; Python for velocity",
-      "Web: HTML/CSS + JavaScript/TypeScript (React/Node)",
-      "Quality mindset: testing, CI, Selenium, repeatability",
-      "Product thinking: shipable, usable, maintainable"
+      "Full-stack products with React, Node.js, and PostgreSQL",
+      "AI-assisted workflows and responsible AI experiences",
+      "C++ desktop applications with Qt",
+      "Automation, testing, and reliable delivery"
     ],
     highlights: [
-      "Dean’s List every term; Top 5% of CS cohort (4.0 GPA)",
-      "CUNY 2x Tech Spring Forward — IT Intern, BMCC CIS",
-      "Built C++ robot-world simulator and Selenium QA harness",
-      "Launched web mini‑apps (HTML/CSS/JS) used by classmates",
-      "Organized study circles; mentored peers on data structures"
+      "3rd Place - CUNY AI Innovation Challenge: Tech for Change",
+      "Built an internal KPI platform serving 10+ users",
+      "Created an AI resume builder used by 30+ BMCC students",
+      "Dean's List every semester since Spring 2025"
     ]
   },
 
   skills: [
     {
       category: "Languages",
-      items: [
-        { label: "TypeScript", level: 90 },
-        { label: "JavaScript", level: 95 },
-        { label: "Python", level: 80 },
-        { label: "SQL", level: 75 }
-      ]
+      items: ["C++", "JavaScript", "TypeScript", "Python", "Java", "SQL"].map(label => ({ label }))
     },
     {
-      category: "Frameworks",
-      items: [
-        { label: "React", level: 90 },
-        { label: "Next.js", level: 80 },
-        { label: "Node.js", level: 85 },
-        { label: "Express", level: 75 }
-      ]
+      category: "Frameworks & UI",
+      items: ["React", "Vite", "Node.js", "Express.js", "Qt", "Qt Widgets"].map(label => ({ label }))
     },
     {
-      category: "Tools",
-      items: [
-        { label: "Git", level: 90 },
-        { label: "Docker", level: 70 },
-        { label: "PostgreSQL", level: 75 },
-        { label: "GraphQL", level: 70 }
-      ]
+      category: "Data & Delivery",
+      items: ["PostgreSQL", "MongoDB", "Git", "Docker", "Postman", "Linux/Unix"].map(label => ({ label }))
     }
   ],
 
-  projects: [],
-
-  // Optional: per‑repo overrides for friendly names, summaries, tags, and images
-  projectOverrides: {
-    "advising_app-chatbot": {
-      name: "Advising App Chatbot",
-      summary: "C++ + HTML advising chatbot to help BMCC CIS students navigate programs, course plans, and academic requirements for CS, CIS, CNT, GIS, and Cybersecurity majors.",
-      tags: ["C++", "HTML"],
-      image: "assets/projects/advising-app-chatbot.svg",
+  projects: [
+    {
+      repoName: "SafeYork",
+      name: "SafeYork (Guardian AI)",
+      year: "2026",
+      summary: "AI-powered personal safety app with one-tap and voice-triggered alerts, trusted contacts, live location sharing, safety timers, and privacy-aware danger classification.",
+      tags: ["TypeScript", "AI Safety", "Product Design"],
+      links: {
+        repo: "https://github.com/PhyoThihaOo32/SafeYork"
+      },
       featured: true
     },
-    "CPP_From_Control_Structure_Through_Objects": {
-      name: "C++: Control Structures → Objects",
-      summary: "Exercises and small programs practicing C++ fundamentals — from control flow and functions to classes and basic OOP.",
-      tags: ["C++"],
-      image: "assets/projects/cpp-control-structures.svg"
+    {
+      repoName: "MindEase",
+      name: "MindEase",
+      year: "2026",
+      summary: "C++17 and Qt 6 desktop wellness platform for BMCC students, combining campus resources, a private journal, mood tools, and guided support in a modular interface.",
+      tags: ["C++", "Qt 6", "Desktop"],
+      links: {
+        demo: "https://mindease-demo.vercel.app/",
+        repo: "https://github.com/PhyoThihaOo32/MindEase"
+      },
+      featured: true
     },
-    "CPP_OPP_ROBERT_LAFORE": {
-      name: "C++ OOP (Robert Lafore)",
-      summary: "Implementations from Lafore’s OOP in C++ — classes, operator overloading, templates, and patterns.",
-      tags: ["C++", "OOP"],
-      image: "assets/projects/cpp-oop-lafore.svg"
+    {
+      repoName: "code-memory-visualizer",
+      name: "Code Memory Visualizer",
+      year: "2026",
+      summary: "Interactive browser tool that visualizes memory and execution step by step for Python, C++, and Java, with Python execution powered by Pyodide and WebAssembly.",
+      tags: ["TypeScript", "Pyodide", "Education"],
+      links: {
+        demo: "https://code-memory-visualizer.vercel.app",
+        repo: "https://github.com/PhyoThihaOo32/code-memory-visualizer"
+      },
+      featured: true
     },
-    "CSC101_SDLCWebPage_MiniCalculator_Project": {
-      name: "Mini Calculator (SDLC Demo)",
-      summary: "A small calculator web app illustrating SDLC phases with HTML, CSS, and vanilla JS.",
-      tags: ["HTML", "CSS", "JavaScript"],
-      image: "assets/projects/mini-calculator.svg"
+    {
+      repoName: "LogicDiagramAI",
+      name: "LogicDiagramAI",
+      year: "2026",
+      summary: "AI-assisted digital logic circuit generator that turns written requirements into circuit designs and connects them with CircuitVerse for simulation.",
+      tags: ["JavaScript", "AI", "CircuitVerse"],
+      links: {
+        repo: "https://github.com/PhyoThihaOo32/LogicDiagramAI"
+      }
     },
-    "Web_Development": {
-      name: "Web Development Exercises",
-      summary: "Static pages and micro‑projects exploring HTML5 semantics, CSS layout, and responsive design.",
-      tags: ["HTML", "CSS"],
-      image: "assets/projects/web-development.svg"
-    },
-    "Sunday_Hulk_Project": {
-      name: "QA Automation",
-      summary: "Browser test automation framework built with Selenium, Java, TestNG, and Cucumber for reusable test flows.",
-      tags: ["Selenium", "Java", "TestNG", "Cucumber"],
+    {
+      repoName: "pathFinder_project",
+      name: "PathFinder QA Framework",
+      year: "2026",
+      summary: "Behavior-driven UI automation framework covering a complete e-commerce flow with Selenium 4, Cucumber, TestNG, reusable page objects, and headless CI runs.",
+      tags: ["Java", "Selenium", "Cucumber", "TestNG"],
+      links: {
+        repo: "https://github.com/PhyoThihaOo32/pathFinder_project"
+      },
       image: "assets/projects/test-automation.svg"
+    },
+    {
+      repoName: "Phyo_Portfolio_Webpage",
+      name: "Personal Portfolio",
+      year: "2026",
+      summary: "Responsive, multi-theme portfolio built without a framework, with accessible navigation, project filtering, PWA support, gallery experiences, and custom interactive canvas features.",
+      tags: ["JavaScript", "CSS", "PWA"],
+      links: {
+        demo: "https://phyo-portfolio-webpage.onrender.com/",
+        repo: "https://github.com/PhyoThihaOo32/Phyo_Portfolio_Webpage"
+      },
+      image: "assets/projects/web-development.svg"
     }
-  },
+  ],
+
+  projectOverrides: {},
 
   passions: [
     "Astronomy",
-    "Anthropology",
-    "Universe",
     "Music",
     "Guitar",
     "Hiking",
     "Travel",
-    "Stargazing",
-    "Spiritual",
-    "Ikigai",
-    "Gaming",
     "Art",
-    "Love",
-    "Family",
-    "Politics",
-    "Novels",
     "Poetry",
-    "Petrichor",
-    "Cat",
-    "Buddha",
-    "Romance",
-    "Adventure",
-    "Wanderer",
+    "Gaming",
+    "Stargazing",
+    "Family",
     "Empathy",
-    "Sympathy",
-    "Fire",
-    "Light",
-    "Dark",
-    "Origin",
-    "Success"
+    "Adventure"
   ],
 
   music: {
-    // Paste your Apple Music playlist URL below.
-    // Example: "https://music.apple.com/us/playlist/your-playlist-id"
     applePlaylistUrl: "",
-    // Optional: country code for embed (defaults to 'us' when not present in URL)
     country: "us",
-    // Default lofi station to use when no playlist is set
     defaultLofi: "https://music.apple.com/us/playlist/lofi-chill/pl.6d0f5509eb7e4dfabe59cb2bdb9fee9f",
-    // Optional Apple presets
     presets: [
       { label: "Lofi Chill", url: "https://music.apple.com/us/playlist/lofi-chill/pl.6d0f5509eb7e4dfabe59cb2bdb9fee9f" },
-      { label: "Lo‑Fi Jazz", url: "https://music.apple.com/us/playlist/lo-fi-jazz/pl.70b7e5b2e0e2412a8b8dd3b3d8a3c0ab" },
+      { label: "Lo-Fi Jazz", url: "https://music.apple.com/us/playlist/lo-fi-jazz/pl.70b7e5b2e0e2412a8b8dd3b3d8a3c0ab" },
       { label: "Chill Beats", url: "https://music.apple.com/us/playlist/chill-beats/pl.70ee3e4a1a6b4d4da26c3bdcdceefb2a" }
     ],
-    // External radio to embed directly (takes precedence over Apple)
     externalEmbedUrl: "https://www.lofi.cafe/"
   },
 
-  // Local fallback gallery (leave empty to avoid abstract placeholders)
   gallery: [],
-
-  // Remote open‑access art source (uses The Met Collection API by default)
   remoteGallery: {
     enabled: true,
-    source: "met", // default to The Met public-domain art
+    source: "met",
     query: "*",
     departmentId: 11
   },
 
   experience: [
     {
-      company: "Borough of Manhattan Community College — CIS Department",
-      role: "Information Technology Intern (CUNY 2x Tech Spring Forward)",
+      company: "Universal Processing LLC",
+      role: "Software Engineer Intern",
+      start: "Jun 2026",
+      end: "Present",
+      location: "Manhattan, NY",
+      summary: "Build and improve internal software used by marketing staff and administrators.",
+      highlights: [
+        "Built and deployed an internal KPI Tracker for 10+ users, centralizing submissions, scoring, category assignment, and admin review",
+        "Implemented individual and shared-entry review flows with category assignment, point splitting, validation, and approval",
+        "Used regression, integration, end-to-end, and user acceptance testing to improve data accuracy and workflow reliability"
+      ]
+    },
+    {
+      company: "PYE Education Center",
+      role: "AI & Education Technology Intern",
+      start: "Jul 2026",
+      end: "Aug 2026",
+      location: "New York, NY",
+      summary: "Designed child-safe AI learning experiences and improved them through supervised user testing.",
+      highlights: [
+        "Defined guidelines for age-appropriate language, harmful-content prevention, and misuse protection",
+        "Designed interactive AI lessons and translated observed confusion points into clearer flows and navigation"
+      ]
+    },
+    {
+      company: "CUNY 2x Tech @ BMCC",
+      role: "AI & Software Innovation Intern",
       start: "Mar 2026",
-      end: "Present",
-      location: "Manhattan, New York, NY (Hybrid)",
-      summary: "Provide IT support for hardware, software, and systems within the CIS Department at BMCC.",
+      end: "May 2026",
+      location: "Manhattan, NY",
+      summary: "Built career-readiness tools and supported practical AI learning for BMCC students.",
       highlights: [
-        "Assist with day‑to‑day IT operations and support",
-        "Automate routine tasks where appropriate",
-        "Collaborate with faculty and staff on technology needs"
-      ]
-    },
-    {
-      company: "Lyft",
-      role: "Driver Partner (Self‑employed)",
-      start: "Jan 2023",
-      end: "Present",
-      location: "New York, NY",
-      summary: "Balance full‑time Computer Science studies while managing independent driving work in NYC.",
-      highlights: [
-        "Maintain a 5.0★ Lyft rating through consistent customer service",
-        "Demonstrate reliability and time management across flexible schedules"
-      ]
-    },
-    {
-      company: "Uber",
-      role: "Driver Partner (Self‑employed)",
-      start: "Jan 2023",
-      end: "Present",
-      location: "New York, NY",
-      summary: "Independent driver partner in New York City while pursuing CS studies at BMCC.",
-      highlights: [
-        "Maintain a 4.9★ Uber rating",
-        "Customer service, safety, and route optimization"
-      ]
-    },
-    {
-      company: "Yaya Tea Garden",
-      role: "Kitchen Staff (Part‑time)",
-      start: "Jun 2022",
-      end: "Dec 2022",
-      location: "Queens, NY",
-      summary: "Supported daily shop operations in a fast‑paced environment.",
-      highlights: [
-        "Prepared beverages and handled orders",
-        "Maintained cleanliness and organization; provided friendly service"
-      ]
-    },
-    {
-      company: "Toyofuji Shipping Co. Ltd",
-      role: "Merchant Marine Officer (OOW COC)",
-      start: "Jan 2017",
-      end: "Dec 2021",
-      location: "Nagoya, Japan",
-      summary: "Responsible for vessel navigation and voyage planning on international merchant vessels while ensuring compliance with maritime safety regulations.",
-      highlights: [
-        "Voyage planning and bridge watchkeeping",
-        "Safety, security, and adherence to COLREGs"
+        "Built and deployed an AI-powered resume builder that helped 30+ BMCC students improve application materials",
+        "Helped lead an AI and job-search workshop focused on resume improvement, job discovery, and applications"
       ]
     }
   ],
-  education: [
-    { school: "Borough of Manhattan Community College (CUNY)", degree: "A.S. Computer Science (in progress)", gpa: "4.0", start: "2024", end: "Present", location: "New York, NY" }
-  ],
-  achievements: [],
 
+  education: [
+    {
+      school: "Borough of Manhattan Community College (CUNY)",
+      degree: "A.S. in Computer Science",
+      gpa: "4.0",
+      start: "Jan 2025",
+      end: "Jan 2027",
+      location: "New York, NY"
+    },
+    {
+      school: "Myanmar Maritime University",
+      degree: "B.S. in Nautical Science",
+      gpa: "",
+      start: "2010",
+      end: "2014",
+      location: "Yangon, Myanmar"
+    }
+  ],
+
+  achievements: [],
   preferences: { theme: "dark" },
-  integrations: { githubToken: "" } // optional: add a token to increase rate limits
+  integrations: { githubSync: false, githubToken: "" }
 };
