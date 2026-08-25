@@ -1053,8 +1053,6 @@
     return ul;
   }
 
-  function escapeHtml(str) { return String(str).replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[s])); }
-
   function revealOnScroll() {
     const obs = new IntersectionObserver((entries) => {
       for (const e of entries) {
@@ -1181,6 +1179,8 @@
     } catch { }
   });
 })();
+
+function escapeHtml(str) { return String(str).replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[s])); }
 
 function svg(name) {
   const icons = {
