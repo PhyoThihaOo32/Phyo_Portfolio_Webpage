@@ -2919,6 +2919,21 @@ body::before {
   will-change: transform, opacity;
 }
 
+body::after {
+  content: "";
+  position: fixed;
+  inset: -8vmax;
+  z-index: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(1.06);
+  transition: opacity 900ms ease;
+  will-change: transform, opacity;
+}
+
 main,
 .site-footer {
   position: relative;
@@ -2951,6 +2966,14 @@ html[data-theme="light"] body::before {
   animation: trakto-ambient-drift 24s ease-in-out infinite alternate;
 }
 
+html[data-theme="light"] body::after {
+  background-image: url("assets/art/ambient/kaleidadope-light-relax.gif");
+  opacity: 0.2;
+  filter: blur(22px) saturate(0.9) brightness(1.04) contrast(0.84);
+  mix-blend-mode: multiply;
+  animation: kaleidadope-ambient-drift 32s ease-in-out infinite alternate;
+}
+
 @keyframes borrachas-ambient-drift {
   0% {
     transform: translate3d(-1.5%, -1%, 0) scale(1.04) rotate(-0.35deg);
@@ -2969,11 +2992,24 @@ html[data-theme="light"] body::before {
   }
 }
 
+@keyframes kaleidadope-ambient-drift {
+  0% {
+    transform: translate3d(1.2%, -1%, 0) scale(1.06) rotate(0.15deg);
+  }
+  100% {
+    transform: translate3d(-1.2%, 1%, 0) scale(1.1) rotate(-0.15deg);
+  }
+}
+
 @media (max-width: 900px) {
   body::before {
     inset: -12vmax;
     background-position: 54% 8%;
     background-size: max(780px, 145vw) auto;
+  }
+
+  body::after {
+    inset: -12vmax;
   }
 
   html[data-theme="dark"] body::before {
@@ -2986,6 +3022,11 @@ html[data-theme="light"] body::before {
     background-size: 100% 100%;
     opacity: 0.22;
     filter: blur(30px) saturate(0.86) brightness(1.07) contrast(0.84);
+  }
+
+  html[data-theme="light"] body::after {
+    opacity: 0.14;
+    filter: blur(26px) saturate(0.86) brightness(1.06) contrast(0.82);
   }
 }
 
@@ -3001,5 +3042,12 @@ html[data-theme="light"] body::before {
     opacity: 0.2;
     animation: none;
     transform: scale(1.05);
+  }
+
+  html[data-theme="light"] body::after {
+    background-image: url("assets/art/ambient/kaleidadope-light-relax-still.png");
+    opacity: 0.13;
+    animation: none;
+    transform: scale(1.07);
   }
 }
