@@ -20,6 +20,7 @@ Responsive software engineering portfolio with curated project case studies, exp
 ## Features
 
 - Five themes: Dark, Light, Cyber, Space, and Burmese
+- Soft animated Borrachas artwork in Dark mode with a reduced-motion still fallback
 - Recruiter-first hero with current role, stack, and measurable highlights
 - Curated project portfolio featuring SafeYork, MindEase, Code Memory Visualizer, LogicDiagramAI, and QA automation
 - Current software engineering, AI education, and CUNY experience timeline

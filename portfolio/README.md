@@ -21,6 +21,7 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 ## Features
 
 - **5 themes**: `Dark`, `Light`, `Cyber`, `Space`, `Burmese`
+- **Dark-theme ambient artwork** by Borrachas with a reduced-motion still fallback
 - **Recruiter-first hero** with current role, stack, and measurable highlights
 - **Curated project portfolio** with live demos and source links
 - **Updated experience timeline** aligned with the current resume

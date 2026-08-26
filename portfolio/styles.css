@@ -2896,3 +2896,76 @@ main {
     display: grid;
   }
 }
+
+/* Dark-theme ambient artwork: soft, fixed, and intentionally non-interactive. */
+body {
+  position: relative;
+  isolation: isolate;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -8vmax;
+  z-index: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: 88% 14%;
+  background-size: min(84vmax, 920px) auto;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(1.04);
+  transform-origin: 70% 24%;
+  transition: opacity 900ms ease;
+  will-change: transform, opacity;
+}
+
+main,
+.site-footer {
+  position: relative;
+  z-index: 1;
+}
+
+.fab {
+  z-index: 60;
+}
+
+html[data-theme="dark"] body::before {
+  background-image: url("assets/art/ambient/borrachas-dark-flow.gif");
+  opacity: 0.155;
+  filter: blur(18px) saturate(0.7) brightness(0.72) contrast(0.9);
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(ellipse at 72% 28%, #000 0%, rgba(0, 0, 0, 0.92) 50%, transparent 82%);
+  mask-image: radial-gradient(ellipse at 72% 28%, #000 0%, rgba(0, 0, 0, 0.92) 50%, transparent 82%);
+  animation: borrachas-ambient-drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes borrachas-ambient-drift {
+  0% {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.04) rotate(-0.35deg);
+  }
+  100% {
+    transform: translate3d(1.5%, 1.2%, 0) scale(1.08) rotate(0.35deg);
+  }
+}
+
+@media (max-width: 900px) {
+  body::before {
+    inset: -12vmax;
+    background-position: 54% 8%;
+    background-size: max(780px, 145vw) auto;
+  }
+
+  html[data-theme="dark"] body::before {
+    opacity: 0.1;
+    filter: blur(24px) saturate(0.68) brightness(0.68) contrast(0.88);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="dark"] body::before {
+    background-image: url("assets/art/ambient/borrachas-dark-flow-still.png");
+    opacity: 0.095;
+    animation: none;
+    transform: scale(1.06);
+  }
+}
