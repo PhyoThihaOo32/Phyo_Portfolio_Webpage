@@ -2941,13 +2941,13 @@ html[data-theme="dark"] body::before {
 
 html[data-theme="light"] body::before {
   background-image: url("assets/art/ambient/trakto-light-flow.gif");
-  background-position: 12% 10%;
-  background-size: min(58vmax, 720px) auto;
-  opacity: 0.14;
-  filter: blur(28px) saturate(0.76) brightness(1.08) contrast(0.82);
+  background-position: center;
+  background-size: 100% 100%;
+  opacity: 0.17;
+  filter: blur(32px) saturate(0.74) brightness(1.08) contrast(0.8);
   mix-blend-mode: multiply;
-  -webkit-mask-image: radial-gradient(ellipse at 26% 30%, #000 0%, rgba(0, 0, 0, 0.82) 44%, transparent 80%);
-  mask-image: radial-gradient(ellipse at 26% 30%, #000 0%, rgba(0, 0, 0, 0.82) 44%, transparent 80%);
+  -webkit-mask-image: none;
+  mask-image: none;
   animation: trakto-ambient-drift 24s ease-in-out infinite alternate;
 }
 
@@ -2982,10 +2982,10 @@ html[data-theme="light"] body::before {
   }
 
   html[data-theme="light"] body::before {
-    background-position: 48% 5%;
-    background-size: max(520px, 125vw) auto;
-    opacity: 0.09;
-    filter: blur(32px) saturate(0.72) brightness(1.1) contrast(0.8);
+    background-position: center;
+    background-size: 100% 100%;
+    opacity: 0.12;
+    filter: blur(34px) saturate(0.72) brightness(1.1) contrast(0.78);
   }
 }
 
@@ -2996,11 +2996,9 @@ html[data-theme="light"] body::before {
     animation: none;
     transform: scale(1.06);
   }
-
-
   html[data-theme="light"] body::before {
     background-image: url("assets/art/ambient/trakto-light-flow-still.png");
-    opacity: 0.085;
+    opacity: 0.11;
     animation: none;
     transform: scale(1.05);
   }
