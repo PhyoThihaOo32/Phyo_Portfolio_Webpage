@@ -1148,7 +1148,7 @@
 
   function scrollSpy() {
     const sections = ['about', 'skills', 'projects', 'passions', 'timeline', 'contact', 'recreation'];
-    const navLinks = sections.map(id => ({ id, el: document.querySelector(`.top-nav a[href="#${id}"]`) }));
+    const navLinks = sections.flatMap(id => Array.from(document.querySelectorAll(`.top-nav a[href="#${id}"], [data-chapter-link][href="#${id}"]`), el => ({ id, el })));
     const spy = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -1157,7 +1157,7 @@
             if (!n?.el) return;
             const active = n.id === id;
             n.el.classList.toggle('active', active);
-            if (active) n.el.setAttribute('aria-current', 'page'); else n.el.removeAttribute('aria-current');
+            if (active) n.el.setAttribute('aria-current', 'location'); else n.el.removeAttribute('aria-current');
           });
         }
       });
@@ -1239,7 +1239,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js?v=114');
+          navigator.serviceWorker.register('sw.js?v=115');
         }
       }
     } catch { }

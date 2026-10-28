@@ -3,7 +3,7 @@ const projectMotionObserver = 'IntersectionObserver' in window
   ? new IntersectionObserver(entries => entries.forEach(entry => entry.target.classList.toggle('motion-visible', entry.isIntersecting)))
   : null;
 
-function projectAnimation(repo) {
+function projectAnimation(repo, context = 'card') {
   const panel = (x, y, w, h, body, extra = '') => `<g ${extra}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="13" fill="#101d30" stroke="#ffffff" stroke-opacity=".1"/>${body}</g>`;
   const text = (x,y,t,size=12,color='#a8b9d0') => `<text x="${x}" y="${y}" fill="${color}" font-size="${size}">${t}</text>`;
   const bar = (x,y,w,opacity='.25') => `<rect x="${x}" y="${y}" width="${w}" height="5" rx="2.5" fill="currentColor" opacity="${opacity}"/>`;
@@ -32,7 +32,7 @@ function projectAnimation(repo) {
       ${panel(66,56,508,236,`<path d="M66 86h508" stroke="#ffffff" stroke-opacity=".1"/>${text(85,77,'PHYO / PORTFOLIO',9)}${text(449,77,'WORK  ABOUT',9)}${text(88,126,'Thoughtful code.',24,'#fff0ca')}${text(88,157,'Useful experiences.',24,'#fff0ca')}${bar(88,177,198)}<rect x="88" y="195" width="104" height="25" rx="6" fill="currentColor" opacity=".16"/>${text(101,211,'VIEW MY WORK',9,'#ffe8b5')}${[0,1,2].map(i=>`<g class="mini-card" style="--delay:${i*.3}s"><rect x="${88+i*153}" y="236" width="138" height="38" rx="6" fill="currentColor" opacity=".08"/>${bar(100+i*153,248,70)}${bar(100+i*153,259,105,'.12')}</g>`).join('')}<circle cx="471" cy="149" r="42" fill="currentColor" opacity=".08"/><path d="M457 135l-13 14 13 14m28-28l13 14-13 14m-9-35l-9 42" fill="none" stroke="currentColor" stroke-width="2"/>` )}` }
   };
   const v=data[repo]; if(!v) return '';
-  const id='art-'+repo.replace(/[^a-z0-9]/gi,'-');
+  const id='art-'+repo.replace(/[^a-z0-9]/gi,'-')+'-'+context;
   return `<svg class="project-loop" viewBox="0 0 640 360" aria-hidden="true" focusable="false" style="color:${v.color}" xmlns="http://www.w3.org/2000/svg">
     <defs><radialGradient id="${id}"><stop stop-color="${v.secondary}" stop-opacity=".28"/><stop offset="1" stop-color="${v.secondary}" stop-opacity="0"/></radialGradient><linearGradient id="${id}-base" x2="1" y2="1"><stop stop-color="#122038"/><stop offset="1" stop-color="#080f1b"/></linearGradient></defs>
     <rect width="640" height="360" fill="url(#${id}-base)"/><ellipse cx="520" cy="80" rx="300" ry="240" fill="url(#${id})"/>
