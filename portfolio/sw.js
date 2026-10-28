@@ -1,4 +1,4 @@
-const CACHE = 'portfolio-static-v111';
+const CACHE = 'portfolio-static-v112';
 const OFFLINE_FIRST_EXT = [
   '.css', '.js', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif', '.woff2', '.woff', '.ttf', '.otf', '.json', '.webmanifest', '.pdf'
 ];

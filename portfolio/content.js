@@ -13,7 +13,7 @@ window.PORTFOLIO = {
     summary:
       "I build practical full-stack, AI, automation, and desktop products with a focus on reliability, clear workflows, and real users.",
     headshot: "assets/avatar.svg",
-    resume: "assets/resume.pdf",
+    resume: "assets/resume.pdf?v=20261028",
     social: {
       github: "https://github.com/PhyoThihaOo32",
       linkedin: "https://www.linkedin.com/in/phyothihaoo"

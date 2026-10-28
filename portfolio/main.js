@@ -298,7 +298,7 @@
     const contactCfg = data.contact || {};
     const web = data.profile?.website || '#';
     const loc = data.profile?.location || 'City, Country';
-    const resume = data.profile?.resume || 'assets/resume.pdf';
+    const resume = data.profile?.resume || 'assets/resume.pdf?v=20261028';
 
     const emailEl = document.getElementById('contact-email'); if (emailEl) { emailEl.textContent = email; emailEl.href = `mailto:${email}`; }
     const locEl = document.getElementById('contact-location'); if (locEl) { locEl.textContent = loc; }
@@ -1185,7 +1185,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js?v=111');
+          navigator.serviceWorker.register('sw.js?v=112');
         }
       }
     } catch { }
