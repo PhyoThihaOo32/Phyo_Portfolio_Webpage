@@ -194,11 +194,16 @@
 
     function apply() {
       const q = (searchEl.value || '').toLowerCase();
+      projectMotionObserver?.disconnect();
       grid.innerHTML = '';
       const shown = projects
         .filter(p => activeTag === 'All' || (p.tags || []).includes(activeTag))
         .filter(p => !q || [p.name, p.summary, ...(p.tags || [])].join(' ').toLowerCase().includes(q))
       shown.forEach(p => grid.appendChild(projectCard(p)));
+      grid.querySelectorAll('.animated-thumb').forEach(el => {
+        if (projectMotionObserver) projectMotionObserver.observe(el);
+        else el.classList.add('motion-visible');
+      });
       const countEl = document.getElementById('projects-count');
       if (countEl) {
         if (window.__projectsLoading) { countEl.textContent = 'Loading…'; }
@@ -1001,7 +1006,9 @@
     const card = document.createElement('article'); card.className = 'project-card reveal';
     if (p.featured) card.classList.add('featured');
     const thumb = document.createElement('div'); thumb.className = 'thumb';
-    const imgUrl = p.image || abstractThumb(p.name, (p.tags || [])[0]);
+    const visual = projectAnimation(p.repoName);
+    if (visual) { thumb.classList.add('animated-thumb'); thumb.innerHTML = visual; }
+    const imgUrl = visual ? null : (p.image || abstractThumb(p.name, (p.tags || [])[0]));
     if (imgUrl) { const img = new Image(); img.alt = p.name; img.src = imgUrl; img.loading = 'lazy'; img.decoding = 'async'; img.style.borderRadius = '.6rem'; img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover'; thumb.appendChild(img); }
     if (p.featured) {
       const badge = document.createElement('span');
