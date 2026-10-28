@@ -209,7 +209,7 @@ body {
   margin: 0;
   font: 16px/1.6 var(--font-body);
   color: var(--text);
-  background: var(--bg-pattern, var(--bg)),
+  background: var(--bg-pattern, linear-gradient(transparent, transparent)),
     radial-gradient(
       1200px 800px at 20% -10%,
       rgba(124, 58, 237, 0.15),
@@ -3172,4 +3172,48 @@ html[data-theme="space"] body::after {
     transition: none;
   }
   html[data-theme="space"] body::after { transition: none; }
+}
+
+/* Final usability pass: stable controls, clear results, and readable narrow layouts. */
+#projects-count { display: block; margin: 0 0 1rem; font-size: .8rem; }
+.project-empty { grid-column: 1 / -1; padding: 2rem; border: 1px dashed var(--border); border-radius: .8rem; text-align: center; }
+.hero-now, .section-head > div { min-width: 0; }
+.now-item strong, .now-item p { overflow-wrap: anywhere; }
+@media (min-width: 821px) and (max-width: 1100px) {
+  .site-header { grid-template-columns: minmax(0, 1fr) auto; gap: .6rem 1rem; }
+  .brand { grid-column: 1; grid-row: 1; }
+  .header-actions { grid-column: 2; grid-row: 1; }
+  .top-nav { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; }
+  .theme-chooser { max-width: 38vw; }
+}
+@media (max-width: 680px) {
+  .projects-controls { flex-direction: column; align-items: stretch; overflow: visible; }
+  #project-search { flex: none; width: 100%; max-width: none; }
+  .projects-controls .filters { min-width: 0; width: 100%; flex: none; overflow-x: auto; padding: .3rem 0 .6rem; }
+  .filters .btn { min-height: 40px; }
+}
+
+/* Keep the themed display faces, but use a readable face for longer copy. */
+html[data-theme="cyber"], html[data-theme="space"] {
+  --font-body: "Segoe UI", "Helvetica Neue", Arial, system-ui, -apple-system, sans-serif;
+}
+html[data-theme="light"] #cta-primary,
+html[data-theme="light"] .contact-card .btn.primary {
+  background: linear-gradient(135deg, #6d28d9, #9235a0 60%, #994626);
+}
+
+html[data-theme="light"] {
+  --hero-gold-1: #854d0e;
+  --hero-gold-2: #9a3412;
+  --hero-gold-3: #a13d14;
+  --hero-gold-shadow: rgba(154, 52, 18, 0.08);
+}
+html[data-theme="light"] .site-header {
+  background: rgba(253, 253, 255, 0.92);
+  border-bottom-color: var(--border);
+}
+html[data-theme="light"] .theme-chip.active {
+  color: #39195a;
+  background: #eadcf8;
+  border-color: #9a71c3;
 }

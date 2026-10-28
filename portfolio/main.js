@@ -16,7 +16,8 @@
 
   function initTheme() {
     const root = document.documentElement;
-    const stored = localStorage.getItem('theme');
+    let stored;
+    try { stored = localStorage.getItem('theme'); } catch { }
     const preferred = THEMES.includes(stored) ? stored : (data.preferences && THEMES.includes(data.preferences.theme) ? data.preferences.theme : 'dark');
     root.setAttribute('data-theme', preferred);
     const btn = document.getElementById('theme-toggle');
@@ -27,7 +28,12 @@
         dark: '☾', light: '☼', cyber: '⚡', space: '✦'
       })[theme] || '◎';
     }
-    function updateIcon() { if (icon) icon.textContent = iconFor(root.getAttribute('data-theme')); }
+    function updateIcon() {
+      const theme = root.getAttribute('data-theme');
+      if (icon) icon.textContent = iconFor(theme);
+      if (btn) btn.setAttribute('aria-label', `Current theme: ${THEME_LABELS[theme]}. Switch theme`);
+    }
+    function rememberTheme(theme) { try { localStorage.setItem('theme', theme); } catch { } }
     function updateThemeMetaColor() {
       const palette = {
         dark: '#0b0f14',
@@ -53,7 +59,7 @@
         chip.title = `Switch to ${THEME_LABELS[t] || t} theme`;
         chip.addEventListener('click', () => {
           root.setAttribute('data-theme', t);
-          localStorage.setItem('theme', t);
+          rememberTheme(t);
           updateIcon();
           updateThemeMetaColor();
           updateChooser();
@@ -65,6 +71,7 @@
         const current = root.getAttribute('data-theme');
         chooser.querySelectorAll('.theme-chip').forEach(ch => {
           ch.classList.toggle('active', ch.dataset.theme === current);
+          ch.setAttribute('aria-pressed', String(ch.dataset.theme === current));
         });
       }
       updateChooser();
@@ -74,13 +81,14 @@
       const idx = THEMES.indexOf(current);
       const next = THEMES[(idx + 1 + THEMES.length) % THEMES.length];
       root.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
+      rememberTheme(next);
       updateIcon();
       updateThemeMetaColor();
       try { renderDailyGallery(); } catch { }
       if (chooser) {
         chooser.querySelectorAll('.theme-chip').forEach(ch => {
           ch.classList.toggle('active', ch.dataset.theme === next);
+          ch.setAttribute('aria-pressed', String(ch.dataset.theme === next));
         });
       }
     });
@@ -194,20 +202,27 @@
 
     function apply() {
       const q = (searchEl.value || '').toLowerCase();
-      projectMotionObserver?.disconnect();
+      if (typeof projectMotionObserver !== 'undefined') projectMotionObserver?.disconnect();
       grid.innerHTML = '';
       const shown = projects
         .filter(p => activeTag === 'All' || (p.tags || []).includes(activeTag))
         .filter(p => !q || [p.name, p.summary, ...(p.tags || [])].join(' ').toLowerCase().includes(q))
       shown.forEach(p => grid.appendChild(projectCard(p)));
       grid.querySelectorAll('.animated-thumb').forEach(el => {
-        if (projectMotionObserver) projectMotionObserver.observe(el);
+        if (typeof projectMotionObserver !== 'undefined' && projectMotionObserver) projectMotionObserver.observe(el);
         else el.classList.add('motion-visible');
       });
       const countEl = document.getElementById('projects-count');
       if (countEl) {
         if (window.__projectsLoading) { countEl.textContent = 'Loading…'; }
         else { countEl.textContent = `${shown.length} project${shown.length === 1 ? '' : 's'}`; }
+      }
+
+      if (!shown.length) {
+        const empty = document.createElement('p');
+        empty.className = 'project-empty muted';
+        empty.textContent = 'No matching projects. Try another search or choose All.';
+        grid.appendChild(empty);
       }
 
       // Re-bind reveal observer for dynamically added cards
@@ -314,7 +329,7 @@
     if (discEl && data.profile?.discord) { discEl.textContent = data.profile.discord; discEl.href = `https://discordapp.com/users/${encodeURIComponent(data.profile.discord)}`; }
     const resEl = document.getElementById('download-resume'); if (resEl) { resEl.href = resume; }
     const heroResumeEl = document.getElementById('cta-secondary'); if (heroResumeEl) { heroResumeEl.href = resume; }
-    const formEl = document.querySelector('.contact-card');
+    const formEl = document.querySelector('form.contact-card');
     if (formEl) {
       formEl.removeAttribute('action');
       formEl.noValidate = true;
@@ -384,6 +399,12 @@
           inputs.forEach(el => { if (!el.value.trim()) el.classList.add('invalid'); });
           return;
         }
+        if (!emailInput.validity.valid) {
+          emailInput.classList.add('invalid');
+          emailInput.focus();
+          setFormStatus('Please enter a valid email address.', 'error', 4500);
+          return;
+        }
         if (!contactCfg.endpoint) {
           setFormStatus('Contact form is not configured yet.', 'error', 4500);
           return;
@@ -414,7 +435,7 @@
         } catch (err) {
           const errorMessage = (err && err.name === 'AbortError')
             ? 'Message timed out. Please try again.'
-            : 'Message could not be sent. Check inbox/spam for FormSubmit activation, then try again.';
+            : 'Message could not be sent. Please try again or use the email link.';
           setFormStatus(errorMessage, 'error', 7000);
         } finally {
           submitBtn && (submitBtn.disabled = false);
@@ -516,6 +537,7 @@
       bird.vy = flapPower;
       statusEl.textContent = 'Running. Flap through the gaps.';
       if (startBtn) startBtn.hidden = true;
+      canvas.focus({ preventScroll: true });
       raf = requestAnimationFrame(loop);
     }
     function flap() {
@@ -670,9 +692,7 @@
       if (running) raf = requestAnimationFrame(loop);
     }
     function onActivate(e) {
-      const tag = (document.activeElement?.tagName || '').toLowerCase();
-      if (tag === 'input' || tag === 'textarea') return;
-      if (e.type === 'keydown' && e.code !== 'Space') return;
+      if (e.type === 'keydown' && (e.code !== 'Space' || document.activeElement !== canvas)) return;
       if (e.type === 'keydown') e.preventDefault();
       if (pointerLock) return;
       pointerLock = true;
@@ -683,7 +703,7 @@
     startBtn?.addEventListener('click', startGame);
     restartBtn?.addEventListener('click', startGame);
     canvas.addEventListener('pointerdown', onActivate);
-    window.addEventListener('keydown', onActivate);
+    canvas.addEventListener('keydown', onActivate);
 
     bestEl.textContent = String(getBest());
     resetGame();
@@ -986,27 +1006,44 @@
       fishes.forEach(fish => drawFish(fish, time));
     }
 
+    const aquariumMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let aquariumVisible = false;
+    let aquariumFrame = 0;
     function loop(time) {
+      aquariumFrame = 0;
+      if (!aquariumVisible || document.hidden || aquariumMotion.matches) return;
       const dt = Math.min(32, time - (last || time));
       last = time;
       updateFish(dt, time);
       draw(time);
-      requestAnimationFrame(loop);
+      aquariumFrame = requestAnimationFrame(loop);
     }
+    function syncAquarium() {
+      cancelAnimationFrame(aquariumFrame);
+      last = 0;
+      if (aquariumVisible && !document.hidden && !aquariumMotion.matches) aquariumFrame = requestAnimationFrame(loop);
+      else draw(0);
+    }
+    const aquariumObserver = new IntersectionObserver(entries => {
+      aquariumVisible = entries[0].isIntersecting;
+      syncAquarium();
+    });
+    aquariumObserver.observe(canvas);
+    document.addEventListener('visibilitychange', syncAquarium);
+    aquariumMotion.addEventListener('change', syncAquarium);
 
-    feedBtn.addEventListener('click', feedFish);
+    feedBtn.addEventListener('click', () => { feedFish(); if (aquariumMotion.matches) draw(0); });
     if (sceneTotal) {
       setScene(0);
     }
     draw(0);
-    requestAnimationFrame(loop);
   }
 
   function projectCard(p) {
     const card = document.createElement('article'); card.className = 'project-card reveal';
     if (p.featured) card.classList.add('featured');
     const thumb = document.createElement('div'); thumb.className = 'thumb';
-    const visual = projectAnimation(p.repoName);
+    const visual = typeof projectAnimation === 'function' ? projectAnimation(p.repoName) : '';
     if (visual) { thumb.classList.add('animated-thumb'); thumb.innerHTML = visual; }
     const imgUrl = visual ? null : (p.image || abstractThumb(p.name, (p.tags || [])[0]));
     if (imgUrl) { const img = new Image(); img.alt = p.name; img.src = imgUrl; img.loading = 'lazy'; img.decoding = 'async'; img.style.borderRadius = '.6rem'; img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover'; thumb.appendChild(img); }
@@ -1163,7 +1200,8 @@
     try {
       document.addEventListener('keydown', (e) => {
         const tag = (e.target && (e.target.tagName || '')).toLowerCase();
-        const isTyping = tag === 'input' || tag === 'textarea';
+        const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select' || e.target?.isContentEditable;
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
         if (e.key === '/' && !isTyping) { e.preventDefault(); const s = document.getElementById('project-search'); if (s) { s.focus(); s.select?.(); } }
         if ((e.key === 't' || e.key === 'T') && !isTyping) { e.preventDefault(); document.getElementById('theme-toggle')?.click(); }
       });
@@ -1180,7 +1218,7 @@
         }
       }, { rootMargin: '-10% 0px 0px 0px' });
       const hero = document.getElementById('hero'); if (hero) rootObs.observe(hero);
-      fab && fab.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      fab && fab.addEventListener('click', () => window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }));
     } catch { }
 
     // PWA: register service worker (best-effort)
@@ -1192,7 +1230,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js?v=112');
+          navigator.serviceWorker.register('sw.js?v=113');
         }
       }
     } catch { }
@@ -1593,7 +1631,8 @@ function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl, renderToken) 
   const today = new Date();
   const day = Math.floor((Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(today.getFullYear(), 0, 0)) / 86400000);
   const usableItems = (Array.isArray(items) ? items : []).filter((it) => it && it.image);
-  let idx = Number(sessionStorage.getItem('galleryIndex'));
+  const savedIndex = sessionStorage.getItem('galleryIndex');
+  let idx = savedIndex === null ? NaN : Number(savedIndex);
   if (!Number.isInteger(idx)) idx = usableItems.length ? day % usableItems.length : 0;
   let attempts = 0;
   function apply() {
@@ -1619,7 +1658,7 @@ function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl, renderToken) 
     else { artEl.style.backgroundImage = `url(${it.image})`; }
     if (it.title) { titleEl.textContent = it.title; }
     if (it.artist || it.year) { bylineEl.textContent = [it.artist, it.year].filter(Boolean).join(' · '); }
-    if (descEl) { descEl.textContent = it.desc || 'Public‑domain artwork, courtesy of The Met.'; }
+    if (descEl) { descEl.textContent = it.desc || (it.image.includes('/masters/') ? 'Public-domain artwork, courtesy of The Met.' : 'From the portfolio’s curated artwork collection.'); }
     sessionStorage.setItem('galleryIndex', idx);
   }
   window.__galleryNav = {

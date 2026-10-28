@@ -174,9 +174,9 @@ window.PORTFOLIO = {
       company: "Universal Processing LLC",
       role: "Software Engineer Intern",
       start: "Jun 2026",
-      end: "Present",
+      end: "Aug 2026",
       location: "Manhattan, NY",
-      summary: "Build and improve internal software used by marketing staff and administrators.",
+      summary: "Built and improved internal software used by marketing staff and administrators.",
       highlights: [
         "Built and deployed an internal KPI Tracker for 10+ users, centralizing submissions, scoring, category assignment, and admin review",
         "Implemented individual and shared-entry review flows with category assignment, point splitting, validation, and approval",

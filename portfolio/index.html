@@ -23,7 +23,7 @@
     <title>Phyo Thiha Oo — Portfolio</title>
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=125" />
+    <link rel="stylesheet" href="styles.css?v=126" />
     <style>
       .reveal {
         opacity: 1 !important;
@@ -81,7 +81,7 @@
         <aside class="hero-now" aria-label="Current focus">
           <span class="status-pill"><span aria-hidden="true"></span> Open to software engineering opportunities</span>
           <div class="now-item">
-            <span>Currently</span>
+            <span>Recent experience</span>
             <strong>Software Engineer Intern</strong>
             <p>Universal Processing LLC</p>
           </div>
@@ -129,6 +129,7 @@
           </div>
 
         </div>
+        <p id="projects-count" class="muted" role="status" aria-live="polite" aria-atomic="true"></p>
         <div id="projects-grid" class="projects-grid"></div>
       </section>
       <section id="passions" class="section reveal">
@@ -213,7 +214,7 @@
           </div>
           <form class="contact-card">
             <h4>Quick Message</h4>
-            <input class="hp-field" name="_honey" tabindex="-1" autocomplete="off" />
+            <input class="hp-field" name="_honey" aria-hidden="true" tabindex="-1" autocomplete="off" />
             <label>
               <span>Name</span>
               <input name="name" autocomplete="name" required />
@@ -249,7 +250,7 @@
               </div>
             </div>
             <div class="game-stage">
-              <canvas id="lofi-bird-canvas" width="720" height="420" aria-label="Lofi bird game"></canvas>
+              <canvas id="lofi-bird-canvas" width="720" height="420" aria-label="Lofi bird game. Focus here and press Space to flap." tabindex="0"></canvas>
               <button id="game-start" class="btn primary game-start" type="button">Start</button>
             </div>
             <div class="game-actions">
@@ -331,9 +332,9 @@
       <p class="muted" id="footer-copy">© <span id="year"></span> Your Name. All rights reserved.</p>
     </footer>
 
-    <script src="content.js?v=113"></script>
+    <script src="content.js?v=114"></script>
     <script defer src="project-visuals.js?v=1"></script>
-    <script defer src="main.js?v=113"></script>
+    <script defer src="main.js?v=114"></script>
     <button id="scroll-top" class="fab" aria-label="Scroll to top" title="Scroll to top">↑</button>
   </body>
 
