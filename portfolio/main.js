@@ -350,7 +350,7 @@
     listEl.innerHTML = '';
     (data.passions || []).forEach((p, idx) => {
       const li = document.createElement('li');
-      li.className = 'pill glow';
+      li.className = 'pill interest-static';
       const label = document.createElement('span'); label.textContent = p; li.appendChild(label);
       li.style.setProperty('--hue', (idx * 27 % 360) + 'deg');
       li.title = p;

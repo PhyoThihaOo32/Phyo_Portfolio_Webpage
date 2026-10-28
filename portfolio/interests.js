@@ -1,102 +1,172 @@
-// A bounded, gently animated interest field. Static tags remain the fallback.
+// Free-moving stickers with pointer capture, keyboard alternatives, and section bounds.
 document.addEventListener('DOMContentLoaded', () => {
   const field = document.getElementById('passions-list');
+  const shuffle = document.getElementById('interest-shuffle');
   if (!field || !field.children.length) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const motionAllowed = () => !reduced.matches && document.documentElement.dataset.motion !== 'paused';
-  const bubbles = Array.from(field.children);
-  bubbles.forEach((bubble, index) => {
-    const label = bubble.textContent.trim();
-    const button = document.createElement('button');
-    button.type = 'button'; button.className = 'bubble-button'; button.setAttribute('aria-pressed', 'false');
-    button.title = `Pin ${label} in place`;
+  const marks = ['✦', '♪', '♬', '↗', '✈', '✳', '¶', '✚', '⋆', '♡', '∞', '⌁', '♧', '✧', '◎', '❋', '≈'];
+  let width = 0, height = 0, frame = 0, layoutFrame = 0, last = 0, visible = false, drag = null;
+  const states = Array.from(field.children, (element, index) => {
+    const label = element.textContent.trim();
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'interest-tag';
+    button.setAttribute('aria-pressed', 'false'); button.setAttribute('aria-describedby', 'interests-help');
+    const mark = document.createElement('span'); mark.className = 'interest-mark'; mark.setAttribute('aria-hidden', 'true'); mark.textContent = marks[index % marks.length];
+    if (label === 'Animals') mark.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" focusable="false"><ellipse cx="6" cy="7" rx="2.5" ry="3"/><ellipse cx="12" cy="5" rx="2.5" ry="3"/><ellipse cx="18" cy="7" rx="2.5" ry="3"/><path d="M5 17c0-4 4-7 7-7s7 3 7 7c0 5-4 3-7 3s-7 2-7-3z"/></svg>';
     const text = document.createElement('span'); text.textContent = label;
-    const pin = document.createElement('span'); pin.className = 'bubble-pin'; pin.setAttribute('aria-hidden', 'true');
-    button.append(text, pin);
-    bubble.replaceChildren(button); bubble.className = 'pill interest-bubble';
-    bubble.style.setProperty('--bubble-hue', `${(index * 29 + 185) % 360}`);
-    bubble.style.setProperty('--float-duration', `${9 + (index % 5) * 1.6}s`);
-    bubble.style.setProperty('--float-delay', `${-index * 1.37}s`);
-    bubble.style.setProperty('--bubble-tilt', `${index % 2 ? 2 : -2}deg`);
-    button.addEventListener('click', () => {
-      const pinned = button.getAttribute('aria-pressed') !== 'true';
-      button.setAttribute('aria-pressed', String(pinned));
-      button.title = `${pinned ? 'Release' : 'Pin'} ${label}${pinned ? ' bubble' : ' in place'}`;
-      bubble.classList.toggle('is-pinned', pinned);
-      button.classList.remove('is-nudged');
-      if (motionAllowed()) {
-        void button.offsetWidth;
-        button.classList.add('is-nudged');
-      }
+    const pin = document.createElement('span'); pin.className = 'interest-pin'; pin.setAttribute('aria-hidden', 'true'); pin.textContent = '·';
+    button.append(mark, text, pin); element.replaceChildren(button); element.className = 'pill draggable-interest';
+    element.style.setProperty('--interest-hue', `${(index * 31 + 180) % 360}`);
+    const state = { element, button, label, x: 0, y: 0, w: 0, h: 0, homeX: 0, homeY: 0, vx: (index % 2 ? -1 : 1) * (3 + index % 4), vy: (index % 3 ? 1 : -1) * (2 + index % 3), tilt: [-2.5, 1.5, -1, 2][index % 4], pinned: false, hovered: false, focused: false, ignoreClick: 0 };
+    button.title = `Drag ${label} · arrow keys move · Space pins`;
+    button.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') state.hovered = true; });
+    button.addEventListener('pointerleave', () => { state.hovered = false; });
+    button.addEventListener('focus', () => { state.focused = true; render(); });
+    button.addEventListener('blur', () => { state.focused = false; });
+    button.addEventListener('pointerdown', e => {
+      if (!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0) || drag) return;
+      e.preventDefault(); button.focus({ preventScroll: true });
+      drag = { state, id: e.pointerId, clientX: e.clientX, clientY: e.clientY, x: state.x, y: state.y, pinned: state.pinned, moved: false };
+      button.setPointerCapture(e.pointerId);
     });
-    button.addEventListener('animationend', event => {
-      if (event.animationName === 'bubble-nudge') button.classList.remove('is-nudged');
+    button.addEventListener('pointermove', e => {
+      if (!drag || drag.state !== state || drag.id !== e.pointerId) return;
+      const dx = e.clientX - drag.clientX, dy = e.clientY - drag.clientY;
+      if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+      drag.moved = true; element.classList.add('is-dragging'); field.classList.add('is-arranging');
+      state.x = drag.x + dx; state.y = drag.y + dy; clamp(state); render();
     });
+    button.addEventListener('pointerup', e => { if (drag?.state === state && drag.id === e.pointerId) finishDrag(false); });
+    button.addEventListener('pointercancel', () => { if (drag?.state === state) finishDrag(true); });
+    button.addEventListener('lostpointercapture', () => { if (drag?.state === state) finishDrag(true); });
+    button.addEventListener('click', e => {
+      if (e.detail && performance.now() < state.ignoreClick) return;
+      pinState(state, !state.pinned); settle(state); render();
+    });
+    button.addEventListener('keydown', e => {
+      const delta = e.shiftKey ? 28 : 10;
+      const directions = { ArrowLeft: [-delta, 0], ArrowRight: [delta, 0], ArrowUp: [0, -delta], ArrowDown: [0, delta] };
+      if (e.key === 'Escape' && drag?.state === state) { e.preventDefault(); finishDrag(true); return; }
+      if (e.key === 'Home') { e.preventDefault(); state.x = state.homeX; state.y = state.homeY; pinState(state, false); clamp(state); render(); return; }
+      if (!directions[e.key]) return;
+      e.preventDefault(); const [dx, dy] = directions[e.key]; state.x += dx; state.y += dy; pinState(state, true); clamp(state); render();
+    });
+    button.addEventListener('animationend', () => button.classList.remove('is-settling'));
+    return state;
   });
-  field.setAttribute('aria-label', 'Interests. Activate a bubble to pin or release it.');
-  field.classList.add('is-bubble-field');
-  let frame = 0;
-  let measuredWidth = 0;
-  function layout() {
-    frame = 0;
-    const width = field.clientWidth;
-    if (!width) return;
-    measuredWidth = width;
-    const compact = width < 600;
-    const driftX = compact ? 4 : 13;
-    const driftY = compact ? 4 : 8;
-    const gap = compact ? 7 : 10;
-    const padding = compact ? 13 : 17;
-    const available = width - padding * 2;
+  field.classList.add('is-sticker-field');
+  if (shuffle) shuffle.hidden = false;
+  function pinState(state, pinned) {
+    state.pinned = pinned; state.button.setAttribute('aria-pressed', String(pinned));
+    state.element.classList.toggle('is-pinned', pinned);
+    state.button.title = `${pinned ? 'Pinned · click to release' : 'Drag to move · click to pin'} ${state.label}`;
+  }
+  function settle(state) {
+    state.button.classList.remove('is-settling');
+    if (motionAllowed()) { void state.button.offsetWidth; state.button.classList.add('is-settling'); }
+  }
+  function finishDrag(cancelled) {
+    const current = drag; if (!current) return;
+    drag = null;
+    const s = current.state;
+    if (cancelled) { s.x = current.x; s.y = current.y; pinState(s, current.pinned); }
+    else { pinState(s, current.moved ? true : !s.pinned); settle(s); }
+    s.ignoreClick = performance.now() + 450;
+    s.element.classList.remove('is-dragging'); field.classList.remove('is-arranging');
+    if (s.button.hasPointerCapture(current.id)) s.button.releasePointerCapture(current.id);
+    clamp(s); render();
+  }
+  function clamp(s) {
+    s.x = Math.max(8, Math.min(Math.max(8, width - s.w - 8), s.x));
+    s.y = Math.max(8, Math.min(Math.max(8, height - s.h - 8), s.y));
+  }
+  const locked = s => s.pinned || s.hovered || s.focused || drag?.state === s;
+  function separate() {
+    // Slow drift yields to a held tag; two deliberately pinned tags stay where placed.
+    for (let pass = 0; pass < 2; pass++) for (let i = 0; i < states.length; i++) for (let j = i + 1; j < states.length; j++) {
+      const a = states[i], b = states[j];
+      const dx = a.x + a.w / 2 - b.x - b.w / 2, dy = a.y + a.h / 2 - b.y - b.h / 2;
+      const overlapX = (a.w + b.w) / 2 + 9 - Math.abs(dx), overlapY = (a.h + b.h) / 2 + 9 - Math.abs(dy);
+      if (overlapX <= 0 || overlapY <= 0 || (locked(a) && locked(b))) continue;
+      const axis = overlapX < overlapY ? 'x' : 'y';
+      const push = (axis === 'x' ? overlapX : overlapY) * ((axis === 'x' ? dx : dy) < 0 ? -1 : 1);
+      if (!locked(a)) a[axis] += push * (locked(b) ? 1 : .5);
+      if (!locked(b)) b[axis] -= push * (locked(a) ? 1 : .5);
+      if (axis === 'x') { a.vx *= -.9; b.vx *= -.9; } else { a.vy *= -.9; b.vy *= -.9; }
+      clamp(a); clamp(b);
+    }
+  }
+  function render() {
+    states.forEach(s => { s.element.style.transform = `translate3d(${s.x.toFixed(2)}px, ${s.y.toFixed(2)}px, 0) rotate(${s.tilt}deg)`; });
+  }
+  function layout(reset = false) {
+    layoutFrame = 0;
+    if (drag) finishDrag(true);
+    const oldWidth = width, oldHeight = height;
+    width = field.clientWidth; if (!width) return;
+    const padding = 10, gap = width < 500 ? 9 : 20, envelope = width < 500 ? 6 : 10;
+    const order = states.slice();
+    if (reset) for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]];
+    }
+    const previous = new Map(states.map(s => [s, { x: s.x, y: s.y, w: s.w, h: s.h }]));
+    order.forEach(s => { s.w = s.button.offsetWidth; s.h = s.button.offsetHeight; });
+    if (!reset) order.sort((a, b) => b.w - a.w);
     const rows = [];
-    let row = { items: [], width: 0, height: 0 };
-    bubbles.forEach((element, index) => {
-      const button = element.firstElementChild;
-      const w = button.offsetWidth;
-      const h = button.offsetHeight;
-      // Reserve the complete animation envelope, including the press bounce.
-      const cellWidth = Math.ceil(w * 1.14 + driftX * 2);
-      const cellHeight = Math.ceil(h * 1.14 + driftY * 2);
-      if (row.items.length && row.width + gap + cellWidth > available) {
-        rows.push(row); row = { items: [], width: 0, height: 0 };
-      }
-      if (row.items.length) row.width += gap;
-      row.items.push({ element, w, h, cellWidth, index });
-      row.width += cellWidth;
-      row.height = Math.max(row.height, cellHeight);
+    order.forEach(s => {
+      const cellWidth = s.w + envelope, cellHeight = s.h + 8;
+      let row = rows.find(r => r.w + gap + cellWidth <= width - padding * 2);
+      if (!row) { row = { items: [], w: 0, h: 0 }; rows.push(row); }
+      if (row.items.length) row.w += gap;
+      row.items.push(s); row.w += cellWidth; row.h = Math.max(row.h, cellHeight);
     });
-    if (row.items.length) rows.push(row);
-    const totalHeight = rows.reduce((sum, r) => sum + r.height, 0);
-    const minimum = compact ? 220 : 196;
-    const height = Math.max(minimum, totalHeight + gap * (rows.length - 1) + padding * 2);
+    const sum = rows.reduce((n, r) => n + r.h, 0);
+    height = Math.max(width < 500 ? 220 : 182, sum + gap * (rows.length - 1) + padding * 2);
     field.style.height = `${height}px`;
-    const verticalGap = (height - padding * 2 - totalHeight) / Math.max(1, rows.length - 1);
-    let y = rows.length === 1 ? (height - totalHeight) / 2 : padding;
+    let y = padding;
+    const space = rows.length > 1 ? (height - padding * 2 - sum) / (rows.length - 1) : 0;
     rows.forEach(r => {
-      let x = (width - r.width) / 2;
-      r.items.forEach(({ element, w, h, cellWidth, index }) => {
-        element.style.left = `${x + (cellWidth - w) / 2}px`;
-        element.style.top = `${y + (r.height - h) / 2}px`;
-        element.style.setProperty('--drift-x', `${driftX * (index % 2 ? -1 : 1)}px`);
-        element.style.setProperty('--drift-y', `${driftY * (index % 3 ? 1 : -1)}px`);
-        x += cellWidth + gap;
+      let x = (width - r.w) / 2;
+      r.items.forEach(s => {
+        s.homeX = x + envelope / 2; s.homeY = y + (r.h - s.h) / 2;
+        if (!oldWidth || reset || !s.pinned) { s.x = s.homeX; s.y = s.homeY; if (reset || !oldWidth) pinState(s, false); }
+        else { const old = previous.get(s); s.x = old.x / Math.max(1, oldWidth - old.w) * (width - s.w); s.y = old.y / Math.max(1, oldHeight - old.h) * (height - s.h); }
+        clamp(s); x += s.w + envelope + gap;
       });
-      y += r.height + verticalGap;
+      y += r.h + space;
     });
+    separate();
+    render(); sync();
   }
-  function schedule() {
-    if (!frame) frame = requestAnimationFrame(layout);
+  function scheduleLayout() { if (!layoutFrame) layoutFrame = requestAnimationFrame(() => layout()); }
+  function tick(now) {
+    frame = 0;
+    if (!visible || document.hidden || !motionAllowed()) return;
+    if (!last || now - last >= 32) {
+      const dt = last ? Math.min(50, now - last) / 1000 : 0;
+      last = now;
+      states.forEach(s => {
+        if (locked(s)) return;
+        s.x += s.vx * dt; s.y += s.vy * dt;
+        if (s.x <= 8 || s.x >= width - s.w - 8) s.vx *= -1;
+        if (s.y <= 8 || s.y >= height - s.h - 8) s.vy *= -1;
+        clamp(s);
+      });
+      separate(); render();
+    }
+    frame = requestAnimationFrame(tick);
   }
+  function sync() {
+    cancelAnimationFrame(frame); frame = 0; last = 0;
+    if (!motionAllowed()) states.forEach(s => s.button.classList.remove('is-settling'));
+    if (visible && !document.hidden && motionAllowed()) frame = requestAnimationFrame(tick);
+  }
+  if (shuffle) shuffle.addEventListener('click', () => layout(true));
   layout();
-  const resize = new ResizeObserver(entries => {
-    if (Math.abs(entries[0].contentRect.width - measuredWidth) > 1) schedule();
-  });
-  resize.observe(field);
-  const visibility = new IntersectionObserver(entries => field.classList.toggle('field-visible', entries[0].isIntersecting));
-  visibility.observe(field);
-  const themes = new MutationObserver(schedule);
-  themes.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  document.fonts.ready.then(schedule);
-  document.fonts.addEventListener('loadingdone', schedule);
-  document.addEventListener('visibilitychange', () => field.classList.toggle('tab-hidden', document.hidden));
+  const resize = new ResizeObserver(entries => { if (Math.abs(entries[0].contentRect.width - width) > 1) scheduleLayout(); }); resize.observe(field);
+  const visibility = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync(); }); visibility.observe(field);
+  const themes = new MutationObserver(scheduleLayout); themes.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  document.fonts.ready.then(scheduleLayout); document.fonts.addEventListener('loadingdone', scheduleLayout);
+  document.addEventListener('visibilitychange', () => { if (document.hidden && drag) finishDrag(true); sync(); });
+  document.addEventListener('portfolio:motionchange', sync);
 });

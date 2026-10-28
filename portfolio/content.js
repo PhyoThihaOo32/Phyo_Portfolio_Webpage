@@ -158,7 +158,12 @@ window.PORTFOLIO = {
     "Stargazing",
     "Family",
     "Empathy",
-    "Adventure"
+    "Adventure",
+    "Animals",
+    "Tattoos",
+    "Photography",
+    "Nature",
+    "Ocean"
   ],
 
   music: {
