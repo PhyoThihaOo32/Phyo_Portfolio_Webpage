@@ -3557,3 +3557,54 @@ html[data-motion="paused"] .art-composition { transform: none; transition: none;
 @media (max-width: 480px) {
   .contact-actions { grid-template-columns: 1fr; max-width: none; }
 }
+
+/* Six distinct framework badges, each a real documentation link. */
+.skill-card .framework-link {
+  --tech: #72c8e4;
+  position: relative;
+  min-height: 46px;
+  gap: .55rem;
+  padding: .65rem .8rem;
+  isolation: isolate;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--tech) 25%, var(--text));
+  border: 1px solid color-mix(in srgb, var(--tech) 42%, var(--border));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--tech) 12%, var(--bg-elev)), var(--bg-elev));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--tech) 20%, transparent);
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease, background-color 200ms ease;
+  text-decoration: none;
+}
+.framework-icon { display: grid; place-items: center; flex: 0 0 24px; color: color-mix(in srgb, var(--tech) 75%, var(--text)); }
+.framework-icon svg { display: block; overflow: visible; }
+.framework-link .skill-label { white-space: nowrap; position: relative; z-index: 1; }
+.skill-card .framework-link[data-framework="react"] { --tech: #36b9df; border-radius: 999px; background: radial-gradient(ellipse at left, color-mix(in srgb, var(--tech) 16%, var(--bg-elev)), var(--bg-elev)); }
+.skill-card .framework-link[data-framework="vite"] { --tech: #a57cf2; border-radius: .9rem .25rem .9rem .25rem; background: linear-gradient(125deg, color-mix(in srgb, #9b6bed 17%, var(--bg-elev)), color-mix(in srgb, #e3b644 9%, var(--bg-elev))); }
+.framework-link[data-framework="vite"] .framework-icon { color: #c28b23; filter: drop-shadow(0 0 5px rgba(227,182,68,.18)); }
+.skill-card .framework-link[data-framework="node"] { --tech: #72b85e; border-radius: .5rem 1rem .5rem 1rem; border-bottom: 2px solid color-mix(in srgb, var(--tech) 65%, var(--border)); }
+.skill-card .framework-link[data-framework="express"] { --tech: #9ba7bb; border-radius: .4rem; border-style: dashed; background: linear-gradient(180deg, color-mix(in srgb, var(--tech) 6%, var(--bg-elev)), var(--bg-soft)); font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; font-size: .82rem; letter-spacing: -.02em; }
+.skill-card .framework-link[data-framework="qt"] { --tech: #78c548; border-radius: .3rem .8rem .3rem .3rem; border-top-width: 3px; background: linear-gradient(120deg, color-mix(in srgb, var(--tech) 18%, var(--bg-elev)), color-mix(in srgb, var(--tech) 5%, var(--bg-elev))); }
+.skill-card .framework-link[data-framework="widgets"] { --tech: #47bba4; border-radius: .85rem; background: linear-gradient(115deg, color-mix(in srgb, #47bba4 16%, var(--bg-elev)), color-mix(in srgb, #9e8fdf 10%, var(--bg-elev))); }
+.framework-link[data-framework="widgets"] .framework-icon { border-radius: .3rem; background: color-mix(in srgb, var(--tech) 12%, transparent); padding: .15rem; }
+.skill-card .framework-link:hover { color: var(--text); border-color: color-mix(in srgb, var(--tech) 75%, var(--text)); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--tech) 25%, transparent), 0 6px 16px -9px var(--tech); }
+.framework-link:focus-visible { outline: 2px solid color-mix(in srgb, var(--tech) 65%, var(--text)); outline-offset: 4px; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="paused"]) .framework-link:hover { transform: translateY(-2px); }
+  html:not([data-motion="paused"]) .framework-link[data-framework="react"]:is(:hover, :focus-visible) svg { animation: framework-spin 9s linear infinite; }
+  html:not([data-motion="paused"]) .framework-link[data-framework="vite"]:is(:hover, :focus-visible) svg { animation: framework-spark 1.5s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .framework-link[data-framework="node"]:is(:hover, :focus-visible) svg > path:first-child { stroke-dasharray: 9 3; animation: framework-trace 3s linear infinite; }
+  html:not([data-motion="paused"]) .framework-link[data-framework="express"]:is(:hover, :focus-visible) svg { animation: framework-prompt 1.8s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .framework-link[data-framework="qt"]:is(:hover, :focus-visible) .framework-icon { animation: framework-spark 2.2s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .framework-link[data-framework="widgets"]:is(:hover, :focus-visible) .widget-tile { animation: framework-tile 2s ease-in-out infinite; }
+  .framework-link .widget-tile:nth-child(2) { animation-delay: .2s; }
+  .framework-link .widget-tile:nth-child(3) { animation-delay: .4s; }
+  .framework-link .widget-tile:nth-child(4) { animation-delay: .6s; }
+}
+@keyframes framework-spin { to { transform: rotate(360deg); } }
+@keyframes framework-spark { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.35); } }
+@keyframes framework-trace { to { stroke-dashoffset: -48; } }
+@keyframes framework-prompt { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(2px); } }
+@keyframes framework-tile { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+html[data-motion="paused"] .framework-link { transform: none; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .skill-card .framework-link { transform: none; transition: none; }
+}

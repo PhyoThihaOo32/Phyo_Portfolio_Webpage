@@ -158,6 +158,14 @@
     const grid = document.getElementById('skills-content');
     if (!grid) return;
     grid.innerHTML = '';
+    const frameworkStyles = {
+      'React': { key: 'react', url: 'https://react.dev/', icon: '<g fill="none" stroke="currentColor" stroke-width="1.3"><ellipse cx="12" cy="12" rx="10" ry="3.7"/><ellipse cx="12" cy="12" rx="10" ry="3.7" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="3.7" transform="rotate(120 12 12)"/></g><circle cx="12" cy="12" r="1.7" fill="currentColor"/>' },
+      'Vite': { key: 'vite', url: 'https://vite.dev/', icon: '<path d="M3 4l9 18L22 4l-9 3z" fill="currentColor" opacity=".3"/><path d="M13 1L7 13h5l-1 10L20 9h-6l3-8z" fill="currentColor"/>' },
+      'Node.js': { key: 'node', url: 'https://nodejs.org/en/learn', icon: '<path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 16V8l8 8V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' },
+      'Express.js': { key: 'express', url: 'https://expressjs.com/', icon: '<path d="M4 6l6 6-6 6m9 0h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' },
+      'Qt': { key: 'qt', url: 'https://doc.qt.io/qt-6/', icon: '<path d="M4 3h16v18H4z" fill="currentColor" opacity=".15"/><circle cx="10" cy="10" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 12l4 5m1-12v9m-3-6h6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' },
+      'Qt Widgets': { key: 'widgets', url: 'https://doc.qt.io/qt-6/qtwidgets-index.html', icon: '<rect class="widget-tile" x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor"/><rect class="widget-tile" x="14" y="3" width="7" height="8" rx="1.5" fill="currentColor" opacity=".45"/><rect class="widget-tile" x="3" y="14" width="8" height="7" rx="1.5" fill="currentColor" opacity=".45"/><rect class="widget-tile" x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor"/>' }
+    };
     (data.skills || []).forEach((group, index) => {
       const c = document.createElement('div');
       c.className = 'skill-card'; c.dataset.skill = index;
@@ -168,8 +176,18 @@
       const h = document.createElement('h4'); h.textContent = group.category; c.appendChild(h);
       const tagWrap = document.createElement('div'); tagWrap.className = 'skill-tags';
       (group.items || []).forEach(item => {
-        const tag = document.createElement('span'); tag.className = 'tag';
-        tag.innerHTML = `<span>${escapeHtml(item.label)}</span>`;
+        const design = group.category === 'Frameworks & UI' ? frameworkStyles[item.label] : null;
+        const tag = document.createElement(design ? 'a' : 'span'); tag.className = 'tag';
+        if (design) {
+          tag.classList.add('framework-link'); tag.dataset.framework = design.key;
+          tag.href = design.url; tag.target = '_blank'; tag.rel = 'noreferrer';
+          tag.title = `Open ${item.label} documentation`;
+          tag.setAttribute('aria-label', `${item.label} documentation (opens in a new tab)`);
+          const icon = document.createElement('span'); icon.className = 'framework-icon'; icon.setAttribute('aria-hidden', 'true');
+          icon.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" focusable="false">${design.icon}</svg>`;
+          tag.appendChild(icon);
+        }
+        const label = document.createElement('span'); label.className = 'skill-label'; label.textContent = item.label; tag.appendChild(label);
         if (Number.isFinite(Number(item.level))) {
           const meter = document.createElement('span'); meter.className = 'meter';
           const fill = document.createElement('span'); fill.style.width = Math.max(5, Math.min(100, Number(item.level))) + '%';
@@ -1265,7 +1283,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js?v=117');
+          navigator.serviceWorker.register('sw.js?v=118');
         }
       }
     } catch { }
