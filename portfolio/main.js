@@ -209,6 +209,7 @@
         if (typeof projectMotionObserver !== 'undefined' && projectMotionObserver) projectMotionObserver.observe(el);
         else el.classList.add('motion-visible');
       });
+      grid.querySelectorAll('.project-tag').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.projectTag === activeTag)));
       const countEl = document.getElementById('projects-count');
       if (countEl) {
         if (window.__projectsLoading) { countEl.textContent = 'Loading…'; }
@@ -230,11 +231,27 @@
       } catch { }
     }
 
+    function selectTag(tag) {
+      activeTag = tag;
+      $$('.filters button', filtersEl).forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filterTag === tag)));
+      apply();
+    }
+    grid.onclick = event => {
+      const chip = event.target.closest('.project-tag');
+      if (!chip || !grid.contains(chip)) return;
+      const tag = chip.dataset.projectTag;
+      searchEl.value = '';
+      selectTag(tag);
+      const filter = $$('.filters button', filtersEl).find(button => button.dataset.filterTag === tag);
+      filter?.focus({ preventScroll: true });
+      filter?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
+    };
+
     function makeFilter(tag) {
       const btn = document.createElement('button');
-      btn.className = 'btn ghost';
+      btn.className = 'btn ghost'; btn.dataset.filterTag = tag;
       btn.textContent = tag; btn.setAttribute('aria-pressed', tag === activeTag);
-      btn.addEventListener('click', () => { activeTag = tag; $$('.filters button', filtersEl).forEach(b => b.setAttribute('aria-pressed', b.textContent === tag)); apply(); });
+      btn.addEventListener('click', () => selectTag(tag));
       return btn;
     }
 
@@ -255,7 +272,7 @@
     (data.passions || []).forEach((p, idx) => {
       const li = document.createElement('li');
       li.className = 'pill glow';
-      li.textContent = p;
+      const label = document.createElement('span'); label.textContent = p; li.appendChild(label);
       li.style.setProperty('--hue', (idx * 27 % 360) + 'deg');
       li.title = p;
       listEl.appendChild(li);
@@ -1063,7 +1080,11 @@
     }
     const sum = document.createElement('p'); sum.textContent = p.summary || '';
     const chips = document.createElement('div'); chips.className = 'chips';
-    (p.tags || []).slice(0, 4).forEach(t => { const c = document.createElement('span'); c.className = 'chip'; c.textContent = t; chips.appendChild(c); });
+    (p.tags || []).slice(0, 4).forEach(t => {
+      const c = document.createElement('button'); c.type = 'button'; c.className = 'chip project-tag';
+      c.dataset.projectTag = t; c.textContent = t; c.setAttribute('aria-label', `Filter projects by ${t}`);
+      c.setAttribute('aria-pressed', 'false'); chips.appendChild(c);
+    });
     const links = document.createElement('div'); links.className = 'links';
     if (p.links?.demo) { const a = document.createElement('a'); a.className = 'btn'; a.href = p.links.demo; a.target = '_blank'; a.rel = 'noreferrer'; a.textContent = 'Demo'; links.appendChild(a); }
     if (p.links?.repo) { const a = document.createElement('a'); a.className = 'btn ghost'; a.href = p.links.repo; a.target = '_blank'; a.rel = 'noreferrer'; a.textContent = 'Code'; links.appendChild(a); }
@@ -1239,7 +1260,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js?v=115');
+          navigator.serviceWorker.register('sw.js?v=116');
         }
       }
     } catch { }
