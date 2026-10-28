@@ -1869,13 +1869,6 @@ html[data-theme="dark"] #game-restart:hover {
   border-top: 1px solid var(--border);
   text-align: center;
 }
-.footer-nav {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 0.6rem;
-}
 .credits-section {
   padding-top: 1rem;
 }
@@ -3224,12 +3217,6 @@ html[data-theme="light"] .theme-chip.active {
 .hero .lead { max-width: 43rem; }
 .hero-now { border-radius: 1.4rem; }
 .hero-proof { background: color-mix(in srgb, var(--bg-elev) 92%, transparent); }
-.build-approach { padding-block: clamp(2.5rem, 5vw, 4rem); }
-.approach-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
-.approach-grid article { position: relative; padding: 1.5rem; border-top: 2px solid color-mix(in srgb, var(--accent) 35%, var(--border)); background: linear-gradient(160deg, color-mix(in srgb, var(--bg-elev) 85%, transparent), transparent); border-radius: 0 0 1rem 1rem; }
-.approach-number { font: 600 .75rem/1.5 ui-monospace, monospace; color: var(--accent); letter-spacing: .12em; }
-.approach-grid h4 { margin: 1rem 0 .7rem; font-size: 1.08rem; }
-.approach-grid p { margin: 0; color: var(--muted); font-size: .93rem; line-height: 1.8; }
 .projects-grid { gap: 1.5rem; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
 .project-card { gap: .8rem; padding: 1.1rem; border-radius: 1.25rem; background: color-mix(in srgb, var(--bg-elev) 96%, transparent); box-shadow: 0 8px 28px rgba(0,0,0,.08); }
 .project-card .thumb { border-radius: .85rem; aspect-ratio: 16 / 9; }
@@ -3261,9 +3248,6 @@ html[data-theme="light"] .theme-chip.active {
 }
 .project-card:focus-within { border-color: var(--accent); }
 @media (max-width: 680px) {
-  .approach-grid { grid-template-columns: 1fr; gap: .8rem; }
-  .approach-grid article { padding: 1.1rem 1.2rem; }
-  .approach-grid h4 { margin-top: .5rem; }
   .projects-grid { grid-template-columns: 1fr; gap: 1.2rem; }
   .project-card { padding: .85rem; }
   .project-card .links { flex-direction: row; }
@@ -3542,3 +3526,34 @@ html[data-motion="paused"] .art-composition { transform: none; transition: none;
 .project-details summary:hover, .project-details[open] summary { background: color-mix(in srgb, var(--card-a) 7%, transparent); }
 .project-details summary::after { display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid color-mix(in srgb, var(--card-a) 35%, var(--border)); border-radius: .5rem; background: color-mix(in srgb, var(--card-a) 8%, var(--bg-elev)); font-size: 1rem; }
 .skills-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1.1rem; }
+
+/* Interests sit below Skills; contact actions share one clean baseline. */
+#passions .passions-heading {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .5rem;
+}
+.passions-heading h3 { margin: 0; }
+#passions .passions-heading > .muted { margin: 0; max-width: none; text-align: left; }
+.contact-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: .7rem;
+  margin-top: 1.25rem;
+  max-width: 520px;
+}
+.contact-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: .75rem 1rem;
+  line-height: 1.3;
+  text-align: center;
+}
+@media (max-width: 480px) {
+  .contact-actions { grid-template-columns: 1fr; max-width: none; }
+}
