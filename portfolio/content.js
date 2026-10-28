@@ -64,6 +64,8 @@ window.PORTFOLIO = {
   projects: [
     {
       repoName: "SafeYork",
+      category: "Personal safety",
+      detail: { heading: "Stay connected when it matters.", build: "One-tap and voice-triggered alerts, trusted contacts, location sharing, and safety timers bring the core safety flow together.", focus: "Privacy-aware danger classification is a central design consideration." },
       name: "SafeYork (Guardian AI)",
       year: "2026",
       summary: "AI-powered personal safety app with one-tap and voice-triggered alerts, trusted contacts, live location sharing, safety timers, and privacy-aware danger classification.",
@@ -75,6 +77,8 @@ window.PORTFOLIO = {
     },
     {
       repoName: "MindEase",
+      category: "Student wellness",
+      detail: { heading: "Support that feels approachable.", build: "Journaling, mood tools, campus resources, and guided support share a modular C++ and Qt interface.", focus: "A desktop experience designed around the needs of BMCC students." },
       name: "MindEase",
       year: "2026",
       summary: "C++17 and Qt 6 desktop wellness platform for BMCC students, combining campus resources, a private journal, mood tools, and guided support in a modular interface.",
@@ -87,6 +91,8 @@ window.PORTFOLIO = {
     },
     {
       repoName: "code-memory-visualizer",
+      category: "Developer education",
+      detail: { heading: "See what the program is doing.", build: "Step-by-step memory and execution views help make Python, C++, and Java concepts more concrete.", focus: "Python execution runs in the browser through Pyodide and WebAssembly." },
       name: "Code Memory Visualizer",
       year: "2026",
       summary: "Interactive browser tool that visualizes memory and execution step by step for Python, C++, and Java, with Python execution powered by Pyodide and WebAssembly.",
@@ -99,6 +105,8 @@ window.PORTFOLIO = {
     },
     {
       repoName: "LogicDiagramAI",
+      category: "AI-assisted design",
+      detail: { heading: "Turn requirements into logic.", build: "Written requirements become digital logic circuit designs, with a connection to CircuitVerse for simulation.", focus: "The workflow bridges an idea expressed in words and a circuit that can be explored." },
       name: "LogicDiagramAI",
       year: "2026",
       summary: "AI-assisted digital logic circuit generator that turns written requirements into circuit designs and connects them with CircuitVerse for simulation.",
@@ -109,6 +117,8 @@ window.PORTFOLIO = {
     },
     {
       repoName: "pathFinder_project",
+      category: "Quality engineering",
+      detail: { heading: "Make critical journeys repeatable.", build: "Selenium, Cucumber, and TestNG exercise an e-commerce flow through reusable page objects.", focus: "Headless CI runs make the same checks available beyond a local browser." },
       name: "PathFinder QA Framework",
       year: "2026",
       summary: "Behavior-driven UI automation framework covering a complete e-commerce flow with Selenium 4, Cucumber, TestNG, reusable page objects, and headless CI runs.",
@@ -120,6 +130,8 @@ window.PORTFOLIO = {
     },
     {
       repoName: "Phyo_Portfolio_Webpage",
+      category: "Web experience",
+      detail: { heading: "A portfolio with a little personality.", build: "A responsive, framework-free site brings projects, experience, art, and interactive canvas experiences together.", focus: "Theme-aware illustrations, motion preferences, and PWA support keep the experience adaptable." },
       name: "Personal Portfolio",
       year: "2026",
       summary: "Responsive, multi-theme portfolio built without a framework, with accessible navigation, project filtering, PWA support, gallery experiences, and custom interactive canvas features.",

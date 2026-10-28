@@ -139,20 +139,17 @@
     if (!container) return;
     container.innerHTML = '';
 
-    const backgrounds = data.about?.background || [];
-    const empty = document.createElement('div');
-    const left = card('About me', empty); // no visible text; visual only
-    addCodeRain(left, 'lg', backgrounds);
-    const right = document.createElement('div');
-    right.className = 'about-stack';
-    const focusContent = document.createElement('div'); // keep body empty; visual carries the lines
-    const focusCard = card('Focus', focusContent);
-    addCodeRain(focusCard, 'sm', data.about?.focus || []);
-    const highlightsContent = document.createElement('div'); // hide text, keep visual
-    const highlightsCard = card('Highlights', highlightsContent);
-    addCodeRain(highlightsCard, 'sm', data.about?.highlights || []);
-    right.appendChild(focusCard);
-    right.appendChild(highlightsCard);
+    const biography = document.createElement('div'); biography.className = 'about-biography';
+    (data.about?.background || []).forEach(text => {
+      const paragraph = document.createElement('p'); paragraph.textContent = text; biography.appendChild(paragraph);
+    });
+    const left = card('A different route into engineering.', biography);
+    const right = document.createElement('div'); right.className = 'about-stack';
+    [['Focus', data.about?.focus], ['Highlights', data.about?.highlights]].forEach(([title, items]) => {
+      const points = document.createElement('ul'); points.className = 'about-points';
+      (items || []).forEach(text => { const item = document.createElement('li'); item.textContent = text; points.appendChild(item); });
+      right.appendChild(card(title, points));
+    });
 
     container.append(left, right);
   }
@@ -1011,7 +1008,7 @@
     let aquariumFrame = 0;
     function loop(time) {
       aquariumFrame = 0;
-      if (!aquariumVisible || document.hidden || aquariumMotion.matches) return;
+      if (!aquariumVisible || document.hidden || aquariumMotion.matches || document.documentElement.dataset.motion === 'paused') return;
       const dt = Math.min(32, time - (last || time));
       last = time;
       updateFish(dt, time);
@@ -1021,7 +1018,7 @@
     function syncAquarium() {
       cancelAnimationFrame(aquariumFrame);
       last = 0;
-      if (aquariumVisible && !document.hidden && !aquariumMotion.matches) aquariumFrame = requestAnimationFrame(loop);
+      if (aquariumVisible && !document.hidden && !aquariumMotion.matches && document.documentElement.dataset.motion !== 'paused') aquariumFrame = requestAnimationFrame(loop);
       else draw(0);
     }
     const aquariumObserver = new IntersectionObserver(entries => {
@@ -1031,6 +1028,7 @@
     aquariumObserver.observe(canvas);
     document.addEventListener('visibilitychange', syncAquarium);
     aquariumMotion.addEventListener('change', syncAquarium);
+    document.addEventListener('portfolio:motionchange', syncAquarium);
 
     feedBtn.addEventListener('click', () => { feedFish(); if (aquariumMotion.matches) draw(0); });
     if (sceneTotal) {
@@ -1054,9 +1052,10 @@
       thumb.appendChild(badge);
     }
 
-    const title = document.createElement('h4'); title.textContent = humanizeRepoName(p.name || '');
+    const title = document.createElement('h4'); title.textContent = p.name || '';
+    const category = document.createElement('div'); category.className = 'project-category'; category.textContent = p.category || 'Project';
     const meta = document.createElement('div'); meta.className = 'meta';
-    const left = document.createElement('span'); left.className = 'muted'; left.textContent = `${p.year || ''}${(p.tags || []).length ? ' · ' : ''}${(p.tags || []).join(' • ')}`;
+    const left = document.createElement('span'); left.className = 'muted'; left.textContent = p.year || '';
     meta.appendChild(left);
     if (typeof p.stars === 'number' && p.stars > 0) {
       const star = document.createElement('span'); star.className = 'star'; star.innerHTML = svg('star') + String(p.stars);
@@ -1068,7 +1067,17 @@
     const links = document.createElement('div'); links.className = 'links';
     if (p.links?.demo) { const a = document.createElement('a'); a.className = 'btn'; a.href = p.links.demo; a.target = '_blank'; a.rel = 'noreferrer'; a.textContent = 'Demo'; links.appendChild(a); }
     if (p.links?.repo) { const a = document.createElement('a'); a.className = 'btn ghost'; a.href = p.links.repo; a.target = '_blank'; a.rel = 'noreferrer'; a.textContent = 'Code'; links.appendChild(a); }
-    card.append(thumb, title, meta, sum, chips, links);
+    const heading = document.createElement('div'); heading.className = 'project-heading'; heading.append(title, meta);
+    card.append(thumb, category, heading, sum, chips);
+    if (p.detail) {
+      const details = document.createElement('details'); details.className = 'project-details';
+      const summary = document.createElement('summary'); summary.textContent = 'Inside the project';
+      const detailTitle = document.createElement('h5'); detailTitle.textContent = p.detail.heading;
+      const build = document.createElement('p'); build.textContent = p.detail.build;
+      const focus = document.createElement('p'); focus.textContent = p.detail.focus;
+      details.append(summary, detailTitle, build, focus); card.appendChild(details);
+    }
+    card.appendChild(links);
     return card;
   }
 
@@ -1230,7 +1239,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js?v=113');
+          navigator.serviceWorker.register('sw.js?v=114');
         }
       }
     } catch { }

@@ -23,7 +23,7 @@
     <title>Phyo Thiha Oo — Portfolio</title>
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=126" />
+    <link rel="stylesheet" href="styles.css?v=127" />
     <style>
       .reveal {
         opacity: 1 !important;
@@ -55,6 +55,7 @@
         <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme" title="Toggle theme">
           <span class="icon" aria-hidden="true">☾</span>
         </button>
+        <button id="motion-toggle" class="icon-btn" type="button" aria-label="Pause decorative animations" aria-pressed="false"><span aria-hidden="true">Ⅱ</span></button>
         <div id="social-links" class="social"></div>
       </div>
     </header>
@@ -113,6 +114,15 @@
           <p class="muted">A practical stack shaped by real projects.</p>
         </div>
         <div id="skills-content" class="skills-grid"></div>
+      </section>
+
+      <section id="approach" class="build-approach section reveal" aria-labelledby="approach-title">
+        <div class="section-head"><div><p class="section-kicker">The way I work</p><h3 id="approach-title">From a real need to a useful tool.</h3></div></div>
+        <div class="approach-grid">
+          <article><span class="approach-number" aria-hidden="true">01</span><h4>Understand the problem.</h4><p>Start with the people using the product, the work they need to do, and the friction in their way.</p></article>
+          <article><span class="approach-number" aria-hidden="true">02</span><h4>Build with intention.</h4><p>Choose a practical stack, make the core workflow clear, and keep the implementation maintainable.</p></article>
+          <article><span class="approach-number" aria-hidden="true">03</span><h4>Test. Learn. Refine.</h4><p>Check the edge cases, listen to feedback, and turn what works into something dependable.</p></article>
+        </div>
       </section>
 
       <section id="projects" class="section reveal">
@@ -332,9 +342,10 @@
       <p class="muted" id="footer-copy">© <span id="year"></span> Your Name. All rights reserved.</p>
     </footer>
 
-    <script src="content.js?v=114"></script>
-    <script defer src="project-visuals.js?v=1"></script>
-    <script defer src="main.js?v=114"></script>
+    <script src="content.js?v=115"></script>
+    <script defer src="motion.js?v=1"></script>
+    <script defer src="project-visuals.js?v=2"></script>
+    <script defer src="main.js?v=115"></script>
     <button id="scroll-top" class="fab" aria-label="Scroll to top" title="Scroll to top">↑</button>
   </body>
 
