@@ -3142,3 +3142,34 @@ html[data-theme="cyber"] body::after {
   }
   html[data-theme="cyber"] body::after { transition: none; }
 }
+
+/* Glowing particles supplied by the owner for the Space theme. */
+html[data-theme="space"] body::before {
+  inset: 0;
+  background-image: url("assets/art/ambient/space-glowing-particles.gif");
+  background-position: center;
+  background-size: cover;
+  opacity: 0.24;
+  filter: blur(1px) saturate(0.8) brightness(0.85);
+  mix-blend-mode: screen;
+  transform: scale(1.015);
+  animation: none;
+  will-change: auto;
+}
+html[data-theme="space"] body::after {
+  inset: 0;
+  background: linear-gradient(90deg, rgba(4, 7, 18, 0.42), rgba(4, 7, 18, 0.16) 65%, rgba(4, 7, 18, 0.28));
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+@media (max-width: 900px) {
+  html[data-theme="space"] body::before { opacity: 0.19; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="space"] body::before {
+    background-image: url("assets/art/ambient/space-glowing-particles-still.png");
+    transition: none;
+  }
+  html[data-theme="space"] body::after { transition: none; }
+}
