@@ -1,23 +1,32 @@
 // Delegation keeps feedback working for cards rebuilt by search and filters.
 (() => {
-  const selector = '.btn, .icon-btn, .theme-chip, .project-tag, .story-tabs button';
+  const selector = '.btn, .icon-btn, .theme-chip, .project-tag';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const motionAllowed = () => !reduced.matches && document.documentElement.dataset.motion !== 'paused';
   let frame = 0;
   let latest;
+  const surfaces = '.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now';
   document.addEventListener('pointermove', event => {
     if (event.pointerType === 'touch' || !motionAllowed()) return;
     const target = event.target.closest(selector);
-    if (!target || target.disabled) return;
-    latest = { target, x: event.clientX, y: event.clientY };
+    const surface = event.target.closest(surfaces);
+    if ((!target || target.disabled) && !surface) return;
+    latest = { target, surface, x: event.clientX, y: event.clientY };
     if (frame) return;
     frame = requestAnimationFrame(() => {
       frame = 0;
-      const { target, x, y } = latest;
-      if (!target.isConnected) return;
-      const rect = target.getBoundingClientRect();
-      target.style.setProperty('--pointer-x', `${x - rect.left}px`);
-      target.style.setProperty('--pointer-y', `${y - rect.top}px`);
+      const { target, surface, x, y } = latest;
+      for (const [element, prefix] of [[target, 'pointer'], [surface, 'surface']]) {
+        if (!element?.isConnected || element.disabled) continue;
+        const rect = element.getBoundingClientRect();
+        element.style.setProperty(`--${prefix}-x`, `${x - rect.left}px`);
+        element.style.setProperty(`--${prefix}-y`, `${y - rect.top}px`);
+      }
+      if (surface?.classList.contains('project-card')) {
+        const rect = surface.getBoundingClientRect();
+        surface.style.setProperty('--art-shift-x', `${((x - rect.left) / rect.width - .5) * 5}px`);
+        surface.style.setProperty('--art-shift-y', `${((y - rect.top) / rect.height - .5) * 4}px`);
+      }
     });
   }, { passive: true });
   document.addEventListener('click', event => {

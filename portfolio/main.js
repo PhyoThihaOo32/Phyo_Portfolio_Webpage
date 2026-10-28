@@ -158,9 +158,13 @@
     const grid = document.getElementById('skills-content');
     if (!grid) return;
     grid.innerHTML = '';
-    (data.skills || []).forEach(group => {
+    (data.skills || []).forEach((group, index) => {
       const c = document.createElement('div');
-      c.className = 'skill-card';
+      c.className = 'skill-card'; c.dataset.skill = index;
+      const ornament = document.createElement('div'); ornament.className = 'skill-ornament'; ornament.setAttribute('aria-hidden', 'true');
+      const glyph = document.createElement('span'); glyph.className = 'skill-glyph'; glyph.textContent = ['{ }', '</>', '::'][index] || '+ ';
+      const ordinal = document.createElement('span'); ordinal.className = 'skill-ordinal'; ordinal.textContent = `0${index + 1}`;
+      ornament.append(glyph, ordinal); c.appendChild(ornament);
       const h = document.createElement('h4'); h.textContent = group.category; c.appendChild(h);
       const tagWrap = document.createElement('div'); tagWrap.className = 'skill-tags';
       (group.items || []).forEach(item => {
@@ -1057,6 +1061,7 @@
   function projectCard(p) {
     const card = document.createElement('article'); card.className = 'project-card reveal';
     if (p.featured) card.classList.add('featured');
+    card.dataset.project = p.repoName || '';
     const thumb = document.createElement('div'); thumb.className = 'thumb';
     const visual = typeof projectAnimation === 'function' ? projectAnimation(p.repoName) : '';
     if (visual) { thumb.classList.add('animated-thumb'); thumb.innerHTML = visual; }
@@ -1260,7 +1265,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js?v=116');
+          navigator.serviceWorker.register('sw.js?v=117');
         }
       }
     } catch { }
