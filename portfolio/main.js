@@ -158,7 +158,19 @@
     const grid = document.getElementById('skills-content');
     if (!grid) return;
     grid.innerHTML = '';
-    const frameworkStyles = {
+    const skillStyles = {
+      'C++': { key: 'cpp', url: 'https://isocpp.org/get-started', icon: '<path d="M12 2l9 5v10l-9 5-9-5V7z" fill="currentColor" opacity=".12"/><path d="M12 2l9 5v10l-9 5-9-5V7zM11 8a4 4 0 100 8m3-6h5m-2.5-2.5v5M14 16h5m-2.5-2.5v5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>' },
+      'JavaScript': { key: 'javascript', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript', icon: '<rect x="2" y="2" width="20" height="20" rx="3" fill="currentColor" opacity=".18"/><path d="M11 7v9c0 3-5 3-5 0m13-7c-1-3-6-2-6 1 0 4 7 2 7 6 0 3-5 4-7 1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' },
+      'TypeScript': { key: 'typescript', url: 'https://www.typescriptlang.org/docs/', icon: '<rect x="2" y="2" width="20" height="20" rx="2" fill="currentColor" opacity=".16"/><path d="M4 8h9m-4.5 0v11m11-9c-1-3-6-2-6 1 0 4 7 1 7 5 0 3-5 4-7 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' },
+      'Python': { key: 'python', url: 'https://docs.python.org/3/', icon: '<path d="M5 11V6c0-5 12-5 12 0v5H8c-4 0-4 7 0 7H5c-5 0-5-7 0-7z" fill="currentColor"/><path class="python-tail" d="M19 13v5c0 5-12 5-12 0v-5h9c4 0 4-7 0-7h3c5 0 5 7 0 7z" fill="#ddb949"/><circle cx="9" cy="5" r="1" fill="var(--bg-elev)"/><circle cx="15" cy="19" r="1" fill="var(--bg-elev)"/>' },
+      'Java': { key: 'java', url: 'https://dev.java/learn/', icon: '<path d="M5 11h12v5c0 5-12 5-12 0zm12 1h2a3 3 0 010 6h-2M4 22h15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path class="java-steam" d="M9 8c-4-3 4-4 0-7m5 7c-4-3 4-4 0-7" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>' },
+      'SQL': { key: 'sql', url: 'https://www.postgresql.org/docs/current/tutorial-sql.html', icon: '<g fill="none" stroke="currentColor" stroke-width="1.4"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5"/><path class="database-layer" d="M4 12c0 4 16 4 16 0"/></g>' },
+      'PostgreSQL': { key: 'postgres', url: 'https://www.postgresql.org/docs/', icon: '<path d="M4 11C0 1 10 0 12 3c2-3 12-2 8 8l-3 7-3-2v3c0 4-5 4-5 0v-6l-3 5z" fill="currentColor" opacity=".14"/><path d="M4 11C0 1 10 0 12 3c2-3 12-2 8 8l-3 7-3-2v3c0 4-5 4-5 0v-6l-3 5zM12 3v8m2 5v-5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="7" cy="8" r="1" fill="currentColor"/><circle cx="17" cy="8" r="1" fill="currentColor"/>' },
+      'MongoDB': { key: 'mongo', url: 'https://www.mongodb.com/docs/', icon: '<path class="mongo-leaf" d="M12 1c-14 13-6 19 0 21 6-2 14-8 0-21z" fill="currentColor" opacity=".8"/><path d="M12 6v18" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 7v12" stroke="var(--bg-elev)" stroke-width="1"/>' },
+      'Git': { key: 'git', url: 'https://git-scm.com/doc', icon: '<path d="M12 1l11 11-11 11L1 12z" fill="currentColor" opacity=".18"/><path class="git-branch" d="M8 5v13m0-9l8 5" fill="none" stroke="currentColor" stroke-width="1.7"/><g fill="currentColor"><circle cx="8" cy="6" r="2"/><circle cx="8" cy="18" r="2"/><circle cx="16" cy="14" r="2"/></g>' },
+      'Docker': { key: 'docker', url: 'https://docs.docker.com/', icon: '<g fill="currentColor"><path d="M2 12h17c0 10-17 10-17 0z"/><path d="M18 11c-1-3 1-5 1-5 3 3 2 5 2 5h3c-1 3-4 3-5 2z"/><rect x="3" y="8" width="4" height="3" rx=".4"/><rect x="8" y="8" width="4" height="3" rx=".4"/><rect x="13" y="8" width="4" height="3" rx=".4"/><rect x="8" y="4" width="4" height="3" rx=".4"/><rect x="13" y="4" width="4" height="3" rx=".4"/></g><path class="docker-wave" d="M2 22q4-2 8 0t8 0" fill="none" stroke="currentColor" stroke-width="1"/>' },
+      'Postman': { key: 'postman', url: 'https://learning.postman.com/docs/introduction/overview/', icon: '<circle cx="12" cy="12" r="10" fill="currentColor" opacity=".15"/><path class="postman-arrow" d="M5 18L18 5m-7 0h7v7M8 19l-3 1 1-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' },
+      'Linux/Unix': { key: 'linux', url: 'https://www.gnu.org/software/coreutils/manual/coreutils.html', icon: '<rect x="2" y="3" width="20" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2 7h20M6 11l4 3-4 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path class="terminal-cursor" d="M13 17h5" stroke="currentColor" stroke-width="1.8"/>' },
       'React': { key: 'react', url: 'https://react.dev/', icon: '<g fill="none" stroke="currentColor" stroke-width="1.3"><ellipse cx="12" cy="12" rx="10" ry="3.7"/><ellipse cx="12" cy="12" rx="10" ry="3.7" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="3.7" transform="rotate(120 12 12)"/></g><circle cx="12" cy="12" r="1.7" fill="currentColor"/>' },
       'Vite': { key: 'vite', url: 'https://vite.dev/', icon: '<path d="M3 4l9 18L22 4l-9 3z" fill="currentColor" opacity=".3"/><path d="M13 1L7 13h5l-1 10L20 9h-6l3-8z" fill="currentColor"/>' },
       'Node.js': { key: 'node', url: 'https://nodejs.org/en/learn', icon: '<path d="M12 2l9 5v10l-9 5-9-5V7z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 16V8l8 8V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' },
@@ -176,10 +188,10 @@
       const h = document.createElement('h4'); h.textContent = group.category; c.appendChild(h);
       const tagWrap = document.createElement('div'); tagWrap.className = 'skill-tags';
       (group.items || []).forEach(item => {
-        const design = group.category === 'Frameworks & UI' ? frameworkStyles[item.label] : null;
+        const design = skillStyles[item.label] || null;
         const tag = document.createElement(design ? 'a' : 'span'); tag.className = 'tag';
         if (design) {
-          tag.classList.add('framework-link'); tag.dataset.framework = design.key;
+          tag.classList.add('framework-link', 'skill-link'); tag.dataset.framework = design.key;
           tag.href = design.url; tag.target = '_blank'; tag.rel = 'noreferrer';
           tag.title = `Open ${item.label} documentation`;
           tag.setAttribute('aria-label', `${item.label} documentation (opens in a new tab)`);
@@ -208,6 +220,10 @@
       data.projects = buildProjectsFromOverrides(data);
     }
     const projects = (data.projects || []).slice();
+    const resetBtn = document.getElementById('project-reset');
+    const shareBtn = document.getElementById('project-share');
+    const shareStatus = document.getElementById('project-share-status');
+    const shareFallback = document.getElementById('project-share-fallback');
 
     if (searchEl && !searchEl.dataset.initialized) {
       searchEl.value = '';
@@ -218,9 +234,28 @@
 
     const allTags = Array.from(new Set(projects.flatMap(p => p.tags || []))).sort();
     let activeTag = 'All';
+    function restoreFilters() {
+      const params = new URL(location.href).searchParams;
+      searchEl.value = params.get('q') || '';
+      const tag = params.get('tag');
+      activeTag = allTags.includes(tag) ? tag : 'All';
+      $$('.filters button', filtersEl).forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filterTag === activeTag)));
+    }
+    restoreFilters();
 
-    function apply() {
-      const q = (searchEl.value || '').toLowerCase();
+    function apply(syncURL = true) {
+      const search = (searchEl.value || '').trim();
+      const q = search.toLowerCase();
+      if (resetBtn) resetBtn.hidden = !search && activeTag === 'All';
+      if (shareFallback) shareFallback.hidden = true;
+      if (shareStatus) shareStatus.textContent = '';
+      if (syncURL) {
+        const url = new URL(location.href);
+        search ? url.searchParams.set('q', search) : url.searchParams.delete('q');
+        activeTag !== 'All' ? url.searchParams.set('tag', activeTag) : url.searchParams.delete('tag');
+        if (search || activeTag !== 'All') url.hash = 'projects';
+        try { history.replaceState(history.state, '', url); } catch { }
+      }
       if (typeof projectMotionObserver !== 'undefined') projectMotionObserver?.disconnect();
       grid.innerHTML = '';
       const shown = projects
@@ -282,8 +317,30 @@
       filtersEl.appendChild(makeFilter('All'));
       allTags.forEach(t => filtersEl.appendChild(makeFilter(t)));
     }
-    if (searchEl) searchEl.oninput = apply;
-
+    if (searchEl) {
+      searchEl.oninput = () => apply();
+      searchEl.onkeydown = event => {
+        if (event.key === 'Escape' && (searchEl.value || activeTag !== 'All')) {
+          event.preventDefault(); searchEl.value = ''; selectTag('All');
+        }
+      };
+    }
+    if (resetBtn) resetBtn.onclick = () => { searchEl.value = ''; selectTag('All'); searchEl.focus({ preventScroll: true }); };
+    if (shareBtn) shareBtn.onclick = async () => {
+      const url = new URL(location.href); url.hash = 'projects';
+      try {
+        await navigator.clipboard.writeText(url.href);
+        shareStatus.textContent = 'Project link copied.';
+        shareBtn.dataset.copied = 'true';
+        setTimeout(() => { delete shareBtn.dataset.copied; }, 1600);
+      } catch {
+        shareFallback.value = url.href; shareFallback.hidden = false; shareFallback.focus(); shareFallback.select();
+        shareStatus.textContent = 'Select and copy the project link below.';
+      }
+    };
+    if (grid.restoreFilters) window.removeEventListener('popstate', grid.restoreFilters);
+    grid.restoreFilters = () => { restoreFilters(); apply(false); };
+    window.addEventListener('popstate', grid.restoreFilters);
     apply();
   }
 
@@ -375,6 +432,7 @@
       if (!status) {
         status = document.createElement('div');
         status.className = 'form-status muted';
+        status.id = 'contact-form-status';
         status.setAttribute('aria-live', 'polite');
         formEl.appendChild(status);
       }
@@ -410,7 +468,7 @@
             signal: controller.signal
           });
           const result = await response.json().catch(() => ({}));
-          if (!response.ok || result.success === false || result.success === 'false') {
+          if (!response.ok || (result.success !== true && result.success !== 'true')) {
             throw new Error(result.message || 'Submission failed.');
           }
           return result;
@@ -419,6 +477,9 @@
         }
       }
 
+      formEl.addEventListener('input', event => {
+        event.target.classList.remove('invalid'); event.target.removeAttribute('aria-invalid'); event.target.removeAttribute('aria-describedby');
+      });
       formEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nameEl = formEl.querySelector('input[name="name"]');
@@ -429,16 +490,19 @@
         const from = emailInput?.value.trim() || '';
         const msg = messageEl?.value.trim() || '';
         const inputs = formEl.querySelectorAll('input:not(.hp-field), textarea');
-        inputs.forEach(el => el.classList.remove('invalid'));
+        inputs.forEach(el => { el.classList.remove('invalid'); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); });
         if (!name || !from || !msg) {
-          setFormStatus('Please add your name, email, and a message.', 'error', 4500);
-          inputs.forEach(el => { if (!el.value.trim()) el.classList.add('invalid'); });
+          setFormStatus('Please add your name, email, and a message.', 'error');
+          inputs.forEach(el => { if (!el.value.trim()) { el.classList.add('invalid'); el.setAttribute('aria-invalid', 'true'); el.setAttribute('aria-describedby', status.id); } });
+          formEl.querySelector('.invalid')?.focus();
           return;
         }
         if (!emailInput.validity.valid) {
           emailInput.classList.add('invalid');
+          emailInput.setAttribute('aria-invalid', 'true');
+          emailInput.setAttribute('aria-describedby', status.id);
           emailInput.focus();
-          setFormStatus('Please enter a valid email address.', 'error', 4500);
+          setFormStatus('Please enter a valid email address.', 'error');
           return;
         }
         if (!contactCfg.endpoint) {
@@ -527,10 +591,10 @@
     let pipes = [];
 
     function getBest() {
-      return Number(localStorage.getItem(BEST_KEY) || '0');
+      try { return Number(localStorage.getItem(BEST_KEY) || '0'); } catch { return 0; }
     }
     function setBest(next) {
-      localStorage.setItem(BEST_KEY, String(next));
+      try { localStorage.setItem(BEST_KEY, String(next)); } catch { }
       bestEl.textContent = String(next);
     }
     function spawnPipe() {
@@ -1239,6 +1303,11 @@
     safeRun('renderAquarium', renderAquarium);
     safeRun('revealOnScroll', revealOnScroll);
     safeRun('scrollSpy', scrollSpy);
+    safeRun('headerOffset', () => {
+      const header = document.querySelector('.site-header');
+      const resize = new ResizeObserver(() => document.documentElement.style.setProperty('--header-offset', `${Math.ceil(header.getBoundingClientRect().height) + 16}px`));
+      resize.observe(header);
+    });
     safeRun('injectJsonLd', injectJsonLd);
 
     // Expose minimal API for enhancement hooks before we import
@@ -1266,12 +1335,17 @@
       const rootObs = new IntersectionObserver((entries) => {
         for (const ent of entries) {
           if (!fab) return;
-          if (ent.isIntersecting) { fab.classList.remove('show'); }
-          else { fab.classList.add('show'); }
+          if (ent.isIntersecting) { fab.classList.remove('show'); fab.tabIndex = -1; fab.setAttribute('aria-hidden', 'true'); }
+          else { fab.classList.add('show'); fab.tabIndex = 0; fab.removeAttribute('aria-hidden'); }
         }
       }, { rootMargin: '-10% 0px 0px 0px' });
       const hero = document.getElementById('hero'); if (hero) rootObs.observe(hero);
-      fab && fab.addEventListener('click', () => window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }));
+      fab && fab.addEventListener('click', () => {
+        const title = document.getElementById('hero-title');
+        title?.setAttribute('tabindex', '-1'); title?.focus({ preventScroll: true });
+        const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.motion === 'paused';
+        window.scrollTo({ top: 0, behavior: still ? 'instant' : 'smooth' });
+      });
     } catch { }
 
     // PWA: register service worker (best-effort)
@@ -1283,7 +1357,7 @@
             regs.forEach(r => r.unregister());
           });
         } else {
-          navigator.serviceWorker.register('sw.js?v=118');
+          navigator.serviceWorker.register('sw.js?v=119').catch(() => {});
         }
       }
     } catch { }
@@ -1507,7 +1581,7 @@ function renderRadio() {
     iframe.src = ext;
     iframe.title = 'Lofi Radio';
     iframe.style.width = '100%';
-    iframe.style.height = '420px';
+    iframe.loading = 'lazy';
     iframe.style.border = '0';
     iframe.allow = 'autoplay *; encrypted-media *; fullscreen *; clipboard-write';
     // No sandbox to avoid blocking audio on some stations
@@ -1563,7 +1637,7 @@ function renderRadio() {
     const iframe = document.createElement('iframe');
     iframe.allow = 'autoplay *; encrypted-media *; fullscreen *; clipboard-write';
     iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('height', '360');
+    iframe.loading = 'lazy';
     iframe.style.width = '100%';
     iframe.style.maxWidth = '100%';
     iframe.style.overflow = 'hidden';
@@ -1907,13 +1981,22 @@ function wireGalleryFit() {
   const fitBtn = document.getElementById('gallery-fit');
   const art = document.getElementById('gallery-art');
   if (!art) return;
-  const pref = localStorage.getItem('galleryFit') || 'fit';
+  let pref = 'fit';
+  try { pref = localStorage.getItem('galleryFit') || 'fit'; } catch { }
   art.classList.toggle('fill', pref === 'fill');
   if (fitBtn) {
     fitBtn.type = 'button';
+    function updateFitLabel() {
+      const isFill = art.classList.contains('fill');
+      fitBtn.setAttribute('aria-pressed', String(isFill));
+      fitBtn.setAttribute('aria-label', isFill ? 'Show full artwork' : 'Fill artwork frame');
+      fitBtn.title = fitBtn.getAttribute('aria-label');
+    }
+    updateFitLabel();
     fitBtn.onclick = () => {
       const isFill = art.classList.toggle('fill');
-      localStorage.setItem('galleryFit', isFill ? 'fill' : 'fit');
+      try { localStorage.setItem('galleryFit', isFill ? 'fill' : 'fit'); } catch { }
+      updateFitLabel();
     };
   }
 }

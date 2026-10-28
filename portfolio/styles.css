@@ -3608,3 +3608,60 @@ html[data-motion="paused"] .framework-link { transform: none; transition: none; 
 @media (prefers-reduced-motion: reduce) {
   .skill-card .framework-link { transform: none; transition: none; }
 }
+
+/* Compact project utilities and native controls that follow the selected theme. */
+:root { color-scheme: dark; }
+html[data-theme="light"] { color-scheme: light; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.project-tools { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .65rem; }
+.project-tools .btn { font-size: .75rem; min-height: 38px; padding: .45rem .65rem; }
+.project-tools .icon-btn { display: grid; place-items: center; width: 38px; height: 38px; padding: .45rem; }
+#project-share-fallback { display: block; width: 100%; margin: 0 0 1rem; padding: .7rem; border: 1px solid var(--accent); border-radius: .65rem; background: var(--bg-elev); color: var(--text); font: .8rem var(--font-body); }
+@media (max-width: 480px) {
+  .project-browser-heading { align-items: flex-start; flex-wrap: wrap; gap: .7rem; }
+  .project-tools { width: 100%; justify-content: flex-start; }
+  .project-tools .btn, .project-tools .icon-btn { min-height: 44px; }
+}
+.section, #hero { scroll-margin-top: var(--header-offset, 104px); }
+html[data-motion="paused"], html[data-motion="paused"] body { scroll-behavior: auto; }
+#project-share[data-copied="true"] { border-color: var(--accent); }
+#project-share[data-copied="true"] svg { opacity: 0; }
+#project-share[data-copied="true"]::after { content: '✓'; position: absolute; inset: 0; display: grid; place-items: center; color: var(--text); font-size: 1rem; }
+
+/* Individual identities for every language and delivery tool. */
+.skill-card .skill-link[data-framework="cpp"] { --tech: #6dafe2; border-radius: .45rem 1rem .45rem 1rem; border-left-width: 3px; }
+.skill-card .skill-link[data-framework="javascript"] { --tech: #ddbf3a; border-radius: .45rem; background: linear-gradient(135deg, color-mix(in srgb, var(--tech) 15%, var(--bg-elev)), var(--bg-elev)); border-bottom-width: 3px; }
+.skill-card .skill-link[data-framework="typescript"] { --tech: #5a9de2; border-radius: .35rem .35rem .8rem .35rem; box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--tech) 24%, transparent); }
+.skill-card .skill-link[data-framework="python"] { --tech: #75a4d2; border-radius: 1rem .5rem 1rem .5rem; background: linear-gradient(115deg, color-mix(in srgb, #619fd4 13%, var(--bg-elev)), color-mix(in srgb, #d9bc4c 10%, var(--bg-elev))); }
+.skill-card .skill-link[data-framework="java"] { --tech: #d68d58; border-radius: .55rem .55rem 1.1rem 1.1rem; border-top-color: color-mix(in srgb, #deaa74 70%, var(--border)); }
+.skill-card .skill-link[data-framework="sql"] { --tech: #aa91e1; border-radius: .75rem; border-block-width: 2px; background: linear-gradient(180deg, color-mix(in srgb, var(--tech) 14%, var(--bg-elev)), var(--bg-elev)); }
+.skill-card .skill-link[data-framework="postgres"] { --tech: #75a7d5; border-radius: 1rem .5rem .5rem 1rem; border-left-width: 2px; }
+.skill-card .skill-link[data-framework="mongo"] { --tech: #73b973; border-radius: 1.1rem .4rem 1.1rem .4rem; background: linear-gradient(135deg, color-mix(in srgb, var(--tech) 15%, var(--bg-elev)), var(--bg-soft)); }
+.skill-card .skill-link[data-framework="git"] { --tech: #d78462; border-radius: .35rem .85rem .35rem .85rem; border-left: 3px solid color-mix(in srgb, var(--tech) 70%, var(--border)); }
+.skill-card .skill-link[data-framework="docker"] { --tech: #54b5d3; border-radius: .5rem .5rem 1rem 1rem; background: linear-gradient(180deg, color-mix(in srgb, var(--tech) 7%, var(--bg-elev)), color-mix(in srgb, var(--tech) 14%, var(--bg-elev))); }
+.skill-card .skill-link[data-framework="postman"] { --tech: #df9869; border-radius: 999px .8rem .8rem 999px; background: linear-gradient(115deg, color-mix(in srgb, var(--tech) 16%, var(--bg-elev)), var(--bg-elev)); }
+.skill-card .skill-link[data-framework="linux"] { --tech: #b5b7c8; border-radius: .4rem; border-top-width: 3px; font-family: ui-monospace, Consolas, monospace; font-size: .8rem; background: linear-gradient(145deg, color-mix(in srgb, var(--tech) 8%, var(--bg-elev)), var(--bg-soft)); }
+.skill-link::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(90px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), color-mix(in srgb, var(--tech) 18%, transparent), transparent 80%); transition: opacity 200ms ease; }
+.skill-link svg { transform-origin: center; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="paused"]) .skill-link:hover::before { opacity: 1; }
+  html:not([data-motion="paused"]) .skill-link:is([data-framework="cpp"], [data-framework="git"]):is(:hover, :focus-visible) svg > path:first-child { stroke-dasharray: 7 3; animation: framework-trace 3s linear infinite; }
+  html:not([data-motion="paused"]) .skill-link:is([data-framework="javascript"], [data-framework="typescript"], [data-framework="postgres"]):is(:hover, :focus-visible) svg { animation: framework-spark 2s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .skill-link[data-framework="python"]:is(:hover, :focus-visible) .python-tail { animation: framework-tile 2.5s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .skill-link[data-framework="java"]:is(:hover, :focus-visible) .java-steam { animation: skill-steam 2.2s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .skill-link[data-framework="sql"]:is(:hover, :focus-visible) .database-layer { animation: framework-tile 2s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .skill-link[data-framework="mongo"]:is(:hover, :focus-visible) .mongo-leaf { transform-origin: 12px 21px; animation: skill-leaf 3s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .skill-link[data-framework="docker"]:is(:hover, :focus-visible) .docker-wave { animation: framework-prompt 2s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .skill-link[data-framework="postman"]:is(:hover, :focus-visible) .postman-arrow { animation: framework-prompt 1.8s ease-in-out infinite; }
+  html:not([data-motion="paused"]) .skill-link[data-framework="linux"]:is(:hover, :focus-visible) .terminal-cursor { animation: framework-tile 2s ease-in-out infinite; }
+}
+@keyframes skill-steam { 0%, 100% { transform: translateY(0); opacity: .65; } 50% { transform: translateY(-2px); opacity: 1; } }
+@keyframes skill-leaf { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+html[data-motion="paused"] .skill-link::before { transition: none; }
+@media (prefers-reduced-motion: reduce) { .skill-link::before { transition: none; } }
+/* Let the sticky header and floating controls follow the full document. */
+body { min-height: 100%; height: auto; }
+@media (pointer: coarse) {
+  .project-tools .btn, .project-tools .icon-btn { min-height: 44px; min-width: 44px; }
+}

@@ -25,19 +25,22 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 - **Recruiter-first hero** with current role, stack, and measurable highlights
 - **Curated project portfolio** with live demos and source links
 - **Updated experience timeline** aligned with the current resume
-- **One-page ATS-friendly resume** with a reproducible builder
+- **Current resume PDF** with view and download controls
 - **Code-rain visual panels** for About / Focus / Highlights
-- **Project explorer** with search + filter chips
+- **18 individual skill badges** with technology-specific icons, hover effects, and documentation links
+- **Project explorer** with search, clickable tags, shareable filtered URLs, and reset controls
 - **Theme-aware daily gallery**
   - Dark/Light: public-domain artworks (The Met)
   - Cyber/Burmese: curated local gallery sets
-- **Music section** with Apple/lofi embed support
+- **Music section** with lazy-loaded Apple/lofi embeds
 - **Contact panel** with FormSubmit endpoint integration
 - **Recreation Corner**
   - Lofi Bird mini game
   - Animated Dream Aquarium canvas
 - **Responsive behavior** for laptop, tablet, and mobile
-- **PWA support** (`manifest.webmanifest`, `sw.js`)
+- **Motion control** with persistent pause preferences and system reduced-motion support
+- **Keyboard and screen-reader improvements** for navigation, filters, gallery controls, and form errors
+- **PWA support** (`manifest.webmanifest`, `sw.js`) with same-origin caching and offline fallbacks
 
 ---
 
@@ -88,6 +91,9 @@ portfolio/
 ├── content.js               # profile data + configuration
 ├── index.html               # page structure
 ├── main.js                  # UI rendering + interactions
+├── motion.js                # visitor animation preference
+├── interactions.js          # delegated button and card feedback
+├── project-visuals.js        # original animated SVG illustrations
 ├── styles.css               # themes + responsive styles
 ├── manifest.webmanifest     # PWA manifest
 ├── sw.js                    # service worker
@@ -107,11 +113,17 @@ Most personal content is managed from `content.js`:
 - `music`
 - `contact.endpoint`
 
+### Shareable Project Views
+
+Search text and the active tag are encoded in `q` and `tag` URL parameters. The project copy-link control includes `#projects` so a visitor lands at the filtered collection. Reset filters (or Escape in search) clears both.
+
+The published resume is `assets/resume.pdf`, supplied by the portfolio owner. `scripts/build_resume.py` is an older draft generator and is not used to update the published resume.
+
 ### Contact Form Delivery
 
 This site uses FormSubmit endpoint mode:
 
-- Endpoint: `https://formsubmit.co/ajax/phyothihaoo.pto@gmail.com`
+- Endpoint: `https://formsubmit.co/ajax/phyothihaoottp@gmail.com`
 - Ensure FormSubmit account/email activation is completed
 - If delivery fails, check **Spam/Promotions** and endpoint activation status
 
@@ -143,7 +155,7 @@ Static hosting ready:
 **Phyo Thiha Oo**
 
 - GitHub: [github.com/PhyoThihaOo32](https://github.com/PhyoThihaOo32)
-- LinkedIn: [linkedin.com/in/phyo-t-oo-1990a2240](https://www.linkedin.com/in/phyo-t-oo-1990a2240/)
+- LinkedIn: [linkedin.com/in/phyothihaoo](https://www.linkedin.com/in/phyothihaoo)
 - Repository: [Phyo_Portfolio_Webpage](https://github.com/PhyoThihaOo32/Phyo_Portfolio_Webpage)
 
 ---

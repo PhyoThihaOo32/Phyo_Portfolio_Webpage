@@ -1,6 +1,6 @@
 // Delegation keeps feedback working for cards rebuilt by search and filters.
 (() => {
-  const selector = '.btn, .icon-btn, .theme-chip, .project-tag';
+  const selector = '.btn, .icon-btn, .theme-chip, .project-tag, .skill-link';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const motionAllowed = () => !reduced.matches && document.documentElement.dataset.motion !== 'paused';
   let frame = 0;

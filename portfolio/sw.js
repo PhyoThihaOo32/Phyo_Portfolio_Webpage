@@ -1,8 +1,9 @@
-const CACHE = 'portfolio-static-v118';
+const CACHE_PREFIX = 'portfolio-static-';
+const CACHE = `${CACHE_PREFIX}v119`;
 const OFFLINE_FIRST_EXT = [
   '.css', '.js', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif', '.woff2', '.woff', '.ttf', '.otf', '.json', '.webmanifest', '.pdf'
 ];
-const NETWORK_FIRST_EXT = ['.css', '.js', '.json', '.webmanifest'];
+const NETWORK_FIRST_EXT = ['.css', '.js', '.json', '.webmanifest', '.pdf'];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -11,7 +12,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)));
+    await Promise.all(keys.filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE).map(k => caches.delete(k)));
     await self.clients.claim();
   })());
 });
@@ -20,6 +21,7 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   if(req.method !== 'GET'){ return; }
   const url = new URL(req.url);
+  if (url.origin !== location.origin) return;
   const isAsset = OFFLINE_FIRST_EXT.some(ext => url.pathname.endsWith(ext));
   const isNetworkFirstAsset = NETWORK_FIRST_EXT.some(ext => url.pathname.endsWith(ext));
 
@@ -28,8 +30,8 @@ self.addEventListener('fetch', (event) => {
       const cache = await caches.open(CACHE);
       if(isNetworkFirstAsset){
         try{
-          const fresh = await fetch(req);
-          if(fresh && fresh.ok){ cache.put(req, fresh.clone()); }
+          const fresh = await fetch(req, { cache: 'no-cache' });
+          if(fresh && fresh.ok){ event.waitUntil(cache.put(req, fresh.clone()).catch(()=>{})); }
           return fresh;
         } catch {
           const cached = await cache.match(req);
@@ -40,11 +42,11 @@ self.addEventListener('fetch', (event) => {
       const cached = await cache.match(req);
       if(cached){
         // Refresh in background when possible
-        fetch(req).then(r=> { if(r && r.ok) cache.put(req, r.clone()); }).catch(()=>{});
+        event.waitUntil(fetch(req).then(r=> { if(r && r.ok) return cache.put(req, r.clone()); }).catch(()=>{}));
         return cached;
       }
       const res = await fetch(req);
-      if(res && res.ok){ cache.put(req, res.clone()); }
+      if(res && res.ok){ event.waitUntil(cache.put(req, res.clone()).catch(()=>{})); }
       return res;
     })());
   } else if(url.origin === location.origin){
@@ -52,8 +54,8 @@ self.addEventListener('fetch', (event) => {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE);
       try{
-        const res = await fetch(req);
-        if(res && res.status === 200){ cache.put(req, res.clone()); }
+        const res = await fetch(req, { cache: 'no-cache' });
+        if(res && res.status === 200){ event.waitUntil(cache.put(req, res.clone()).catch(()=>{})); }
         return res;
       } catch {
         const cached = await cache.match(req);
