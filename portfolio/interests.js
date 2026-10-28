@@ -1,11 +1,11 @@
-// Free-moving stickers with pointer capture, keyboard alternatives, and section bounds.
+// Swimming interest tags with pointer capture, keyboard alternatives, and section bounds.
 document.addEventListener('DOMContentLoaded', () => {
   const field = document.getElementById('passions-list');
   if (!field || !field.children.length) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const motionAllowed = () => !reduced.matches && document.documentElement.dataset.motion !== 'paused';
   const marks = ['✦', '♪', '♬', '↗', '✈', '✳', '¶', '✚', '⋆', '♡', '∞', '⌁', '♧', '✧', '◎', '❋', '≈'];
-  let width = 0, height = 0, frame = 0, layoutFrame = 0, last = 0, visible = false, drag = null;
+  let width = 0, height = 0, frame = 0, layoutFrame = 0, last = 0, swimTime = 0, visible = false, drag = null;
   const states = Array.from(field.children, (element, index) => {
     const label = element.textContent.trim();
     const button = document.createElement('button'); button.type = 'button'; button.className = 'interest-tag';
@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const pin = document.createElement('span'); pin.className = 'interest-pin'; pin.setAttribute('aria-hidden', 'true'); pin.textContent = '·';
     button.append(mark, text, pin); element.replaceChildren(button); element.className = 'pill draggable-interest';
     element.style.setProperty('--interest-hue', `${(index * 31 + 180) % 360}`);
-    const state = { element, button, label, x: 0, y: 0, w: 0, h: 0, homeX: 0, homeY: 0, vx: (index % 2 ? -1 : 1) * (3 + index % 4), vy: (index % 3 ? 1 : -1) * (2 + index % 3), tilt: [-2.5, 1.5, -1, 2][index % 4], pinned: false, hovered: false, focused: false, ignoreClick: 0 };
+    const direction = index % 2 ? -1 : 1, speed = 22 + index % 5 * 3;
+    const state = { element, button, label, x: 0, y: 0, w: 0, h: 0, homeX: 0, homeY: 0, direction, speed, phase: index * 2.4, vx: direction * speed, vy: 0, bank: 0, tilt: [-2.5, 1.5, -1, 2][index % 4], pinned: false, hovered: false, focused: false, ignoreClick: 0 };
     button.title = `Drag ${label} · arrow keys move · Space pins`;
     button.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') state.hovered = true; });
     button.addEventListener('pointerleave', () => { state.hovered = false; });
@@ -80,22 +81,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   const locked = s => s.pinned || s.hovered || s.focused || drag?.state === s;
   function separate() {
-    // Slow drift yields to a held tag; two deliberately pinned tags stay where placed.
-    for (let pass = 0; pass < 2; pass++) for (let i = 0; i < states.length; i++) for (let j = i + 1; j < states.length; j++) {
+    // Resolve neighboring tags without slowing their cruising speed.
+    for (let pass = 0; pass < 8; pass++) for (let i = 0; i < states.length; i++) for (let j = i + 1; j < states.length; j++) {
       const a = states[i], b = states[j];
       const dx = a.x + a.w / 2 - b.x - b.w / 2, dy = a.y + a.h / 2 - b.y - b.h / 2;
-      const overlapX = (a.w + b.w) / 2 + 9 - Math.abs(dx), overlapY = (a.h + b.h) / 2 + 9 - Math.abs(dy);
+      const overlapX = (a.w + b.w) / 2 + 4 - Math.abs(dx), overlapY = (a.h + b.h) / 2 + 4 - Math.abs(dy);
       if (overlapX <= 0 || overlapY <= 0 || (locked(a) && locked(b))) continue;
-      const axis = overlapX < overlapY ? 'x' : 'y';
+      const passing = pass < 2 && a.direction !== b.direction && height > (a.h + b.h) * 1.5;
+      const axis = passing || overlapY < overlapX ? 'y' : 'x';
       const push = (axis === 'x' ? overlapX : overlapY) * ((axis === 'x' ? dx : dy) < 0 ? -1 : 1);
       if (!locked(a)) a[axis] += push * (locked(b) ? 1 : .5);
       if (!locked(b)) b[axis] -= push * (locked(a) ? 1 : .5);
-      if (axis === 'x') { a.vx *= -.9; b.vx *= -.9; } else { a.vy *= -.9; b.vy *= -.9; }
       clamp(a); clamp(b);
     }
   }
   function render() {
-    states.forEach(s => { s.element.style.transform = `translate3d(${s.x.toFixed(2)}px, ${s.y.toFixed(2)}px, 0) rotate(${s.tilt}deg)`; });
+    states.forEach(s => { s.element.style.transform = `translate3d(${s.x.toFixed(2)}px, ${s.y.toFixed(2)}px, 0) rotate(${(s.tilt + s.bank).toFixed(2)}deg)`; });
   }
   function layout() {
     layoutFrame = 0;
@@ -116,7 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
       row.items.push(s); row.w += cellWidth; row.h = Math.max(row.h, cellHeight);
     });
     const sum = rows.reduce((n, r) => n + r.h, 0);
-    height = Math.max(width < 500 ? 220 : 182, sum + gap * (rows.length - 1) + padding * 2);
+    const packedHeight = sum + gap * (rows.length - 1) + padding * 2;
+    height = Math.ceil(Math.max(width < 500 ? 250 : 206, packedHeight * (width < 500 ? 1.3 : 1.15)));
     field.style.height = `${height}px`;
     let y = padding;
     const space = rows.length > 1 ? (height - padding * 2 - sum) / (rows.length - 1) : 0;
@@ -140,11 +142,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!last || now - last >= 32) {
       const dt = last ? Math.min(50, now - last) / 1000 : 0;
       last = now;
+      swimTime += dt;
+      const pace = width < 500 ? .65 : 1, ease = 1 - Math.exp(-dt * 2.5);
       states.forEach(s => {
         if (locked(s)) return;
+        const right = Math.max(8, width - s.w - 8);
+        const turn = Math.min(34, (right - 8) / 4);
+        if (s.direction > 0 && s.x >= right - turn) s.direction = -1;
+        else if (s.direction < 0 && s.x <= 8 + turn) s.direction = 1;
+        const cruise = s.direction * s.speed * pace * (1 + .08 * Math.sin(swimTime * .7 + s.phase));
+        const depth = Math.max(0, height - s.h - 24);
+        const lane = 12 + depth * (.5 + .44 * Math.sin(swimTime * .18 + s.phase)) + Math.sin(swimTime * .6 + s.phase) * 5;
+        let dodge = 0;
+        states.forEach(other => {
+          if (other === s || (other.direction === s.direction && !locked(other))) return;
+          const ahead = (other.x + other.w / 2 - s.x - s.w / 2) * s.direction;
+          const dy = s.y + s.h / 2 - other.y - other.h / 2, clearance = (s.h + other.h) / 2 + 18;
+          if (ahead <= 0 || ahead > (s.w + other.w) / 2 + 36 || Math.abs(dy) >= clearance) return;
+          const away = Math.abs(dy) > 1 ? Math.sign(dy) : (s.phase < other.phase ? -1 : 1);
+          dodge += away * 26 * (1 - Math.abs(dy) / clearance);
+        });
+        const vertical = Math.max(-22, Math.min(22, (lane - s.y) * .8 + dodge));
+        s.vx += (cruise - s.vx) * ease;
+        s.vy += (vertical - s.vy) * ease;
+        s.bank += (Math.max(-3, Math.min(3, s.vy * s.direction * .2)) - s.bank) * ease;
         s.x += s.vx * dt; s.y += s.vy * dt;
-        if (s.x <= 8 || s.x >= width - s.w - 8) s.vx *= -1;
-        if (s.y <= 8 || s.y >= height - s.h - 8) s.vy *= -1;
         clamp(s);
       });
       separate(); render();
