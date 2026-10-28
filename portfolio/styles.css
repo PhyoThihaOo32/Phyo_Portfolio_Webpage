@@ -3675,12 +3675,9 @@ body { min-height: 100%; height: auto; }
 
 /* Open, draggable interest stickers: no bubble, glass, or visible enclosure. */
 #passions { display: block; position: relative; padding-block: 2rem; overflow: clip; }
-#passions .passions-heading { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-bottom: 1rem; }
+#passions .passions-heading { display: block; margin-bottom: 1rem; }
 #passions .passions-heading h3 { margin: 0 0 .5rem; font-size: clamp(1.55rem, 2.7vw, 2.1rem); }
 #passions .passions-heading p { margin: 0; font-size: .88rem; line-height: 1.7; text-align: left; }
-.interest-tools { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .65rem; }
-.interest-tools > span { color: var(--muted); font-size: .7rem; }
-.interest-tools .btn { min-height: 40px; padding: .5rem .75rem; font-size: .75rem; }
 #passions .pill-list { min-width: 0; }
 #passions .pill { background: var(--bg-elev); box-shadow: none; border-radius: .5rem; }
 #passions .pill::before, #passions .pill::after { content: none; }
@@ -3715,21 +3712,9 @@ html[data-motion="paused"] .interest-tag { transition: none; }
 html[data-motion="paused"] .interest-tag.is-settling { animation: none; }
 @media (max-width: 680px) {
   #passions { padding-block: 1.7rem; }
-  #passions .passions-heading { align-items: flex-start; flex-wrap: wrap; }
-  .interest-tools { justify-content: flex-start; }
-  .interest-tools .btn { min-height: 44px; }
 }
 @media (max-width: 480px) {
-  .interest-tools > span { display: none; }
   .interest-tag { font-size: .76rem; font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; padding-inline: .5rem; gap: .3rem; }
   .interest-tag .interest-mark { width: .8rem; font-size: .9rem; }
 }
 @media (prefers-reduced-motion: reduce) { .interest-tag { transition: none; } .interest-tag.is-settling { animation: none; } }
-
-@media (max-width: 680px) {
-  #passions .passions-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .4rem .5rem; }
-  #passions .passions-heading > div:first-child { display: contents; }
-  #passions .passions-heading h3 { grid-column: 1; grid-row: 1; margin: 0; }
-  #passions .passions-heading p { grid-column: 1 / -1; grid-row: 2; }
-  #passions .interest-tools { grid-column: 2; grid-row: 1; }
-}

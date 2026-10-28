@@ -1,7 +1,6 @@
 // Free-moving stickers with pointer capture, keyboard alternatives, and section bounds.
 document.addEventListener('DOMContentLoaded', () => {
   const field = document.getElementById('passions-list');
-  const shuffle = document.getElementById('interest-shuffle');
   if (!field || !field.children.length) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const motionAllowed = () => !reduced.matches && document.documentElement.dataset.motion !== 'paused';
@@ -55,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return state;
   });
   field.classList.add('is-sticker-field');
-  if (shuffle) shuffle.hidden = false;
   function pinState(state, pinned) {
     state.pinned = pinned; state.button.setAttribute('aria-pressed', String(pinned));
     state.element.classList.toggle('is-pinned', pinned);
@@ -99,19 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function render() {
     states.forEach(s => { s.element.style.transform = `translate3d(${s.x.toFixed(2)}px, ${s.y.toFixed(2)}px, 0) rotate(${s.tilt}deg)`; });
   }
-  function layout(reset = false) {
+  function layout() {
     layoutFrame = 0;
     if (drag) finishDrag(true);
     const oldWidth = width, oldHeight = height;
     width = field.clientWidth; if (!width) return;
     const padding = 10, gap = width < 500 ? 9 : 20, envelope = width < 500 ? 6 : 10;
     const order = states.slice();
-    if (reset) for (let i = order.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]];
-    }
     const previous = new Map(states.map(s => [s, { x: s.x, y: s.y, w: s.w, h: s.h }]));
     order.forEach(s => { s.w = s.button.offsetWidth; s.h = s.button.offsetHeight; });
-    if (!reset) order.sort((a, b) => b.w - a.w);
+    order.sort((a, b) => b.w - a.w);
     const rows = [];
     order.forEach(s => {
       const cellWidth = s.w + envelope, cellHeight = s.h + 8;
@@ -129,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let x = (width - r.w) / 2;
       r.items.forEach(s => {
         s.homeX = x + envelope / 2; s.homeY = y + (r.h - s.h) / 2;
-        if (!oldWidth || reset || !s.pinned) { s.x = s.homeX; s.y = s.homeY; if (reset || !oldWidth) pinState(s, false); }
+        if (!oldWidth || !s.pinned) { s.x = s.homeX; s.y = s.homeY; if (!oldWidth) pinState(s, false); }
         else { const old = previous.get(s); s.x = old.x / Math.max(1, oldWidth - old.w) * (width - s.w); s.y = old.y / Math.max(1, oldHeight - old.h) * (height - s.h); }
         clamp(s); x += s.w + envelope + gap;
       });
@@ -161,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!motionAllowed()) states.forEach(s => s.button.classList.remove('is-settling'));
     if (visible && !document.hidden && motionAllowed()) frame = requestAnimationFrame(tick);
   }
-  if (shuffle) shuffle.addEventListener('click', () => layout(true));
   layout();
   const resize = new ResizeObserver(entries => { if (Math.abs(entries[0].contentRect.width - width) > 1) scheduleLayout(); }); resize.observe(field);
   const visibility = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync(); }); visibility.observe(field);
