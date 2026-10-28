@@ -3086,3 +3086,19 @@ html[data-theme="burmese"] body::before {
     transform: scale(1.06);
   }
 }
+
+/* A contained WebGL accent; hidden until successfully initialized. */
+.orbital-scene {
+  display: none;
+  pointer-events: none;
+  height: clamp(155px, 18vw, 200px);
+  margin: -0.6rem -0.5rem 0;
+  overflow: hidden;
+  contain: strict;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 7%, transparent), transparent 68%);
+}
+.orbital-scene.is-ready { display: block; }
+.orbital-scene canvas { display: block; width: 100%; height: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  .orbital-scene.is-ready { display: none; }
+}
