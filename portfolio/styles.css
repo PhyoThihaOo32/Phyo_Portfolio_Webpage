@@ -3119,8 +3119,8 @@ html[data-theme="cyber"] body::before {
   background-image: url("assets/art/ambient/cyber-code-nebula.gif");
   background-position: center;
   background-size: cover;
-  opacity: 0.16;
-  filter: blur(7px) saturate(0.65) brightness(0.65);
+  opacity: 0.19;
+  filter: blur(6px) saturate(0.68) brightness(0.68);
   transform: scale(1.035);
   animation: none;
   will-change: auto;
@@ -3133,7 +3133,7 @@ html[data-theme="cyber"] body::after {
   will-change: auto;
 }
 @media (max-width: 900px) {
-  html[data-theme="cyber"] body::before { opacity: 0.12; }
+  html[data-theme="cyber"] body::before { opacity: 0.145; }
 }
 @media (prefers-reduced-motion: reduce) {
   html[data-theme="cyber"] body::before {
