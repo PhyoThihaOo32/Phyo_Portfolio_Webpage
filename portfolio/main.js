@@ -139,15 +139,15 @@
     if (!container) return;
     container.innerHTML = '';
 
-    const biography = document.createElement('div'); biography.className = 'about-biography';
-    (data.about?.background || []).forEach(text => {
-      const paragraph = document.createElement('p'); paragraph.textContent = text; biography.appendChild(paragraph);
+    const biography = document.createElement('div'); biography.className = 'about-biography neon-rain';
+    (data.about?.background || []).forEach((text, index) => {
+      const paragraph = document.createElement('p'); paragraph.textContent = text; paragraph.style.setProperty('--rain-index', index); biography.appendChild(paragraph);
     });
     const left = card('A different route into engineering.', biography);
     const right = document.createElement('div'); right.className = 'about-stack';
     [['Focus', data.about?.focus], ['Highlights', data.about?.highlights]].forEach(([title, items]) => {
-      const points = document.createElement('ul'); points.className = 'about-points';
-      (items || []).forEach(text => { const item = document.createElement('li'); item.textContent = text; points.appendChild(item); });
+      const points = document.createElement('ul'); points.className = 'about-points neon-rain';
+      (items || []).forEach((text, index) => { const item = document.createElement('li'); item.textContent = text; item.style.setProperty('--rain-index', index); points.appendChild(item); });
       right.appendChild(card(title, points));
     });
 

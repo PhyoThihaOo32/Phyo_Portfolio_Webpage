@@ -3308,3 +3308,41 @@ html[data-motion="paused"] .project-card:hover { transform: none; }
   .top-nav { gap: .1rem; }
   .top-nav a { font-size: .73rem; padding-inline: .3rem; }
 }
+
+/* Neon rain returns to the About cards; every line stays visible throughout. */
+.neon-rain {
+  --rain-a: #98e9ff;
+  --rain-b: #edb6ff;
+  --rain-c: #b5ffd6;
+  position: relative;
+  padding: 1rem;
+  border-radius: .85rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 9%, transparent), color-mix(in srgb, var(--accent-2) 5%, transparent));
+}
+.about-card .about-points.neon-rain { padding: 1rem 1rem 1rem 2rem; }
+.neon-rain :is(p, li) {
+  color: var(--rain-a);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 24%, transparent);
+  animation: neon-rain-flow 12s ease-in-out infinite;
+  animation-delay: calc(var(--rain-index, 0) * -1.6s);
+}
+@keyframes neon-rain-flow {
+  0%, 100% { color: var(--rain-a); transform: translate3d(0, 0, 0); }
+  33% { color: var(--rain-b); transform: translate3d(3px, 1px, 0); }
+  66% { color: var(--rain-c); transform: translate3d(0, -1px, 0); }
+}
+html[data-theme="light"] .neon-rain {
+  --rain-a: #145878;
+  --rain-b: #753894;
+  --rain-c: #216343;
+}
+html[data-theme="burmese"] .neon-rain {
+  --rain-a: #ffe0a0;
+  --rain-b: #ffd0b6;
+  --rain-c: #e6efb5;
+}
+html[data-motion="paused"] .neon-rain :is(p, li) { animation: none; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .neon-rain :is(p, li) { animation: none; transform: none; }
+}
