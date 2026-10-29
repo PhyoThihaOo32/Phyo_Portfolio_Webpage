@@ -12,7 +12,7 @@ window.PORTFOLIO = {
     heroAccent: "complex work feel simple.",
     summary:
       "I build practical full-stack, AI, automation, and desktop products with a focus on reliability, clear workflows, and real users.",
-    headshot: "assets/avatar.svg",
+    headshot: "assets/phyo-profile.jpg",
     resume: "assets/resume.pdf?v=20261028",
     social: {
       github: "https://github.com/PhyoThihaOo32",
