@@ -3675,9 +3675,18 @@ body { min-height: 100%; height: auto; }
 
 /* Open, draggable interest stickers: no bubble, glass, or visible enclosure. */
 #passions { display: block; position: relative; padding-block: 2rem; overflow: clip; }
-#passions .passions-heading { display: block; margin-bottom: 1rem; }
+#passions .passions-heading { display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
 #passions .passions-heading h3 { margin: 0 0 .5rem; font-size: clamp(1.55rem, 2.7vw, 2.1rem); }
 #passions .passions-heading p { margin: 0; font-size: .88rem; line-height: 1.7; text-align: left; }
+.interest-shuffle { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; margin-top: -.3rem; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 50%; cursor: pointer; touch-action: manipulation; transition: color 240ms ease, background-color 240ms ease, border-color 240ms ease; }
+.interest-shuffle:hover { color: var(--text); background: color-mix(in srgb, var(--accent) 7%, transparent); border-color: color-mix(in srgb, var(--accent) 20%, transparent); }
+.interest-shuffle:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.interest-shuffle[aria-busy="true"] { cursor: progress; }
+.interest-shuffle[aria-busy="true"] svg { animation: shuffle-breathe 1.8s ease-in-out infinite; }
+@keyframes shuffle-breathe { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+html[data-motion="paused"] .interest-shuffle { transition: none; }
+html[data-motion="paused"] .interest-shuffle svg { animation: none; }
+@media (prefers-reduced-motion: reduce) { .interest-shuffle { transition: none; } .interest-shuffle svg { animation: none; } }
 #passions .pill-list { min-width: 0; }
 #passions .pill { background: var(--bg-elev); box-shadow: none; border-radius: .5rem; }
 #passions .pill::before, #passions .pill::after { content: none; }

@@ -2,10 +2,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const field = document.getElementById('passions-list');
   if (!field || !field.children.length) return;
+  const shuffle = document.getElementById('interest-shuffle');
+  const shuffleStatus = document.getElementById('interest-shuffle-status');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const motionAllowed = () => !reduced.matches && document.documentElement.dataset.motion !== 'paused';
   const marks = ['✦', '♪', '♬', '↗', '✈', '✳', '¶', '✚', '⋆', '♡', '∞', '⌁', '♧', '✧', '◎', '❋', '≈'];
-  let width = 0, height = 0, frame = 0, layoutFrame = 0, last = 0, swimTime = 0, visible = false, drag = null;
+  let width = 0, height = 0, frame = 0, layoutFrame = 0, last = 0, swimTime = 0, visible = false, drag = null, rearrangement = null;
   const states = Array.from(field.children, (element, index) => {
     const label = element.textContent.trim();
     const button = document.createElement('button'); button.type = 'button'; button.className = 'interest-tag';
@@ -21,10 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
     button.title = `Drag ${label} · arrow keys move · Space pins`;
     button.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') state.hovered = true; });
     button.addEventListener('pointerleave', () => { state.hovered = false; });
-    button.addEventListener('focus', () => { state.focused = true; render(); });
+    button.addEventListener('focus', () => { stopShuffle(); state.focused = true; render(); });
     button.addEventListener('blur', () => { state.focused = false; });
     button.addEventListener('pointerdown', e => {
       if (!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0) || drag) return;
+      stopShuffle();
       e.preventDefault(); button.focus({ preventScroll: true });
       drag = { state, id: e.pointerId, clientX: e.clientX, clientY: e.clientY, x: state.x, y: state.y, pinned: state.pinned, moved: false };
       button.setPointerCapture(e.pointerId);
@@ -41,11 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('lostpointercapture', () => { if (drag?.state === state) finishDrag(true); });
     button.addEventListener('click', e => {
       if (e.detail && performance.now() < state.ignoreClick) return;
+      stopShuffle();
       pinState(state, !state.pinned); settle(state); render();
     });
     button.addEventListener('keydown', e => {
       const delta = e.shiftKey ? 28 : 10;
       const directions = { ArrowLeft: [-delta, 0], ArrowRight: [delta, 0], ArrowUp: [0, -delta], ArrowDown: [0, delta] };
+      if (directions[e.key] || ['Home', ' ', 'Enter'].includes(e.key)) stopShuffle();
       if (e.key === 'Escape' && drag?.state === state) { e.preventDefault(); finishDrag(true); return; }
       if (e.key === 'Home') { e.preventDefault(); state.x = state.homeX; state.y = state.homeY; pinState(state, false); clamp(state); render(); return; }
       if (!directions[e.key]) return;
@@ -55,6 +60,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return state;
   });
   field.classList.add('is-sticker-field');
+  if (shuffle) shuffle.hidden = false;
+  function stopShuffle(completed = false) {
+    if (!rearrangement) return;
+    if (completed) rearrangement.items.forEach(({ state: s, x, y }) => { s.x = x; s.y = y; s.bank = 0; clamp(s); });
+    rearrangement = null;
+    shuffle?.removeAttribute('aria-busy'); shuffle?.removeAttribute('aria-disabled');
+    if (shuffleStatus) shuffleStatus.textContent = completed ? 'Interests shuffled.' : '';
+  }
+  function randomize(items) {
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1)); [items[i], items[j]] = [items[j], items[i]];
+    }
+  }
   function pinState(state, pinned) {
     state.pinned = pinned; state.button.setAttribute('aria-pressed', String(pinned));
     state.element.classList.toggle('is-pinned', pinned);
@@ -98,14 +116,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function render() {
     states.forEach(s => { s.element.style.transform = `translate3d(${s.x.toFixed(2)}px, ${s.y.toFixed(2)}px, 0) rotate(${(s.tilt + s.bank).toFixed(2)}deg)`; });
   }
-  function layout() {
+  function layout(reshuffle = false) {
     layoutFrame = 0;
+    stopShuffle();
     if (drag) finishDrag(true);
     const oldWidth = width, oldHeight = height;
     width = field.clientWidth; if (!width) return;
     const padding = 10, gap = width < 500 ? 9 : 20, envelope = width < 500 ? 6 : 10;
     const order = states.slice();
-    const previous = new Map(states.map(s => [s, { x: s.x, y: s.y, w: s.w, h: s.h }]));
+    const previous = new Map(states.map(s => [s, { x: s.x, y: s.y, w: s.w, h: s.h, bank: s.bank }]));
     order.forEach(s => { s.w = s.button.offsetWidth; s.h = s.button.offsetHeight; });
     order.sort((a, b) => b.w - a.w);
     const rows = [];
@@ -116,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (row.items.length) row.w += gap;
       row.items.push(s); row.w += cellWidth; row.h = Math.max(row.h, cellHeight);
     });
+    if (reshuffle) { randomize(rows); rows.forEach(r => randomize(r.items)); }
     const sum = rows.reduce((n, r) => n + r.h, 0);
     const packedHeight = sum + gap * (rows.length - 1) + padding * 2;
     height = Math.ceil(Math.max(width < 500 ? 250 : 206, packedHeight * (width < 500 ? 1.3 : 1.15)));
@@ -126,13 +146,22 @@ document.addEventListener('DOMContentLoaded', () => {
       let x = (width - r.w) / 2;
       r.items.forEach(s => {
         s.homeX = x + envelope / 2; s.homeY = y + (r.h - s.h) / 2;
-        if (!oldWidth || !s.pinned) { s.x = s.homeX; s.y = s.homeY; if (!oldWidth) pinState(s, false); }
+        if (!oldWidth || reshuffle || !s.pinned) { s.x = s.homeX; s.y = s.homeY; if (!oldWidth || reshuffle) pinState(s, false); }
         else { const old = previous.get(s); s.x = old.x / Math.max(1, oldWidth - old.w) * (width - s.w); s.y = old.y / Math.max(1, oldHeight - old.h) * (height - s.h); }
         clamp(s); x += s.w + envelope + gap;
       });
       y += r.h + space;
     });
     separate();
+    if (reshuffle) {
+      states.forEach(s => { s.direction = Math.random() < .5 ? -1 : 1; s.vx = s.direction * s.speed * .3; s.vy = 0; });
+      if (motionAllowed()) {
+        rearrangement = { elapsed: 0, duration: 4600, items: states.map((s, i) => ({ state: s, from: previous.get(s), x: s.x, y: s.y, delay: i * 35 })) };
+        states.forEach(s => { const old = previous.get(s); s.x = old.x; s.y = old.y; s.bank = old.bank; clamp(s); });
+        shuffle?.setAttribute('aria-busy', 'true'); shuffle?.setAttribute('aria-disabled', 'true');
+        if (shuffleStatus) shuffleStatus.textContent = 'Gently rearranging interests.';
+      } else if (shuffleStatus) shuffleStatus.textContent = 'Interests shuffled.';
+    }
     render(); sync();
   }
   function scheduleLayout() { if (!layoutFrame) layoutFrame = requestAnimationFrame(() => layout()); }
@@ -142,6 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!last || now - last >= 32) {
       const dt = last ? Math.min(50, now - last) / 1000 : 0;
       last = now;
+      if (rearrangement) {
+        rearrangement.elapsed += dt * 1000;
+        let completed = true;
+        rearrangement.items.forEach(({ state: s, from, x, y, delay }) => {
+          const progress = Math.max(0, Math.min(1, (rearrangement.elapsed - delay) / rearrangement.duration));
+          const ease = progress * progress * (3 - 2 * progress);
+          s.x = from.x + (x - from.x) * ease; s.y = from.y + (y - from.y) * ease; s.bank = from.bank * (1 - ease);
+          clamp(s); if (progress < 1) completed = false;
+        });
+        render(); if (completed) stopShuffle(true);
+        frame = requestAnimationFrame(tick); return;
+      }
       swimTime += dt;
       const pace = width < 500 ? .65 : 1, ease = 1 - Math.exp(-dt * 2.5);
       states.forEach(s => {
@@ -175,9 +216,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function sync() {
     cancelAnimationFrame(frame); frame = 0; last = 0;
-    if (!motionAllowed()) states.forEach(s => s.button.classList.remove('is-settling'));
+    if (!motionAllowed()) { stopShuffle(true); states.forEach(s => s.button.classList.remove('is-settling')); render(); }
     if (visible && !document.hidden && motionAllowed()) frame = requestAnimationFrame(tick);
   }
+  shuffle?.addEventListener('click', () => { if (!rearrangement) layout(true); });
   layout();
   const resize = new ResizeObserver(entries => { if (Math.abs(entries[0].contentRect.width - width) > 1) scheduleLayout(); }); resize.observe(field);
   const visibility = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; sync(); }); visibility.observe(field);

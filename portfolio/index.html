@@ -26,7 +26,7 @@
     <title>Phyo Thiha Oo — Portfolio</title>
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=139" />
+    <link rel="stylesheet" href="styles.css?v=140" />
     <style>
       .reveal {
         opacity: 1 !important;
@@ -137,7 +137,11 @@
       <section id="passions" class="section reveal" aria-labelledby="passions-title">
         <div class="section-head passions-heading">
           <div><h3 id="passions-title">Things I love</h3><p class="muted">The interests that keep me curious.</p></div>
+          <button id="interest-shuffle" class="interest-shuffle" type="button" aria-label="Gently shuffle interests" title="Gently shuffle interests" hidden>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 3 4 3-4 3M18 15l4 3-4 3M2 18h2a4 4 0 0 0 3.3-1.8l5.4-8.4A4 4 0 0 1 16 6h6M2 6h2a4 4 0 0 1 3.3 1.8l5.4 8.4A4 4 0 0 0 16 18h6"/></svg>
+          </button>
         </div>
+        <p id="interest-shuffle-status" class="sr-only" role="status"></p>
         <p id="interests-help" class="sr-only">Drag a tag to move it. With a tag focused, use arrow keys to move, Shift for larger steps, Space to pin or release, and Home to reset its position.</p>
         <ul id="passions-list" class="pill-list" aria-label="Personal interests"></ul>
       </section>
@@ -358,7 +362,7 @@
     <script defer src="project-visuals.js?v=4"></script>
     <script defer src="main.js?v=122"></script>
     <script defer src="interactions.js?v=3"></script>
-    <script defer src="interests.js?v=4"></script>
+    <script defer src="interests.js?v=5"></script>
     <button id="scroll-top" class="fab" tabindex="-1" aria-hidden="true" aria-label="Scroll to top" title="Scroll to top">↑</button>
   </body>
 
