@@ -21,6 +21,7 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 ## Features
 
 - **5 themes**: `Dark`, `Light`, `Cyber`, `Space`, `Burmese`
+- **Borderless card surfaces** with translucent color washes and feathered edges that blend into each theme's background
 - **Dark-theme ambient artwork** by Borrachas with a reduced-motion still fallback
 - **Recruiter-first hero** with current role, stack, and measurable highlights
 - **Curated project portfolio** with live demos and source links
@@ -51,6 +52,8 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 - **Cyber**: violet/magenta neon, stylized typography
 - **Space**: nebula-inspired atmosphere, sci-fi tone
 - **Burmese**: warm gold/maroon palette reflecting cultural origin
+
+Card surfaces share `--card-surface` and `--card-feather` in `styles.css`. Only their decorative pseudo-elements are masked; text, images, and controls retain full opacity. A soft pointer highlight fades in on hover. Pause and reduced-motion preferences disable the hover movement; focus outlines and form-field boundaries remain visible.
 
 ---
 

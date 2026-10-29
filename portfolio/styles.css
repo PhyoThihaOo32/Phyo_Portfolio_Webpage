@@ -3456,25 +3456,61 @@ html[data-motion="paused"] a.btn[target="_blank"]::after { transform: none; tran
   --surface-tint: #8871df;
   --surface-warmth: #54b4c5;
   --surface-shade: rgba(3, 6, 14, .24);
-  --card-surface: var(--bg-elev);
+  --card-surface: color-mix(in srgb, var(--bg-elev) 56%, transparent);
+  --card-feather: 24px;
   --button-tint: color-mix(in srgb, var(--accent) 14%, var(--bg-elev));
 }
-html[data-theme="cyber"] { --surface-tint: #ca49e6; --surface-warmth: #36d8d0; --surface-shade: rgba(10, 0, 30, .38); --card-surface: color-mix(in srgb, var(--bg-elev) 90%, transparent); }
+html[data-theme="cyber"] { --surface-tint: #ca49e6; --surface-warmth: #36d8d0; --surface-shade: rgba(10, 0, 30, .38); --card-surface: color-mix(in srgb, var(--bg-elev) 52%, transparent); }
 html[data-theme="space"] { --surface-tint: #719df5; --surface-warmth: #bd89e9; --surface-shade: rgba(1, 6, 24, .35); }
-html[data-theme="burmese"] { --surface-tint: #d7a83d; --surface-warmth: #be6947; --surface-shade: rgba(24, 9, 0, .25); }
-html[data-theme="light"] { --surface-tint: #9471d4; --surface-warmth: #df9a87; --surface-shade: rgba(68, 45, 102, .09); }
-:is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now) {
+html[data-theme="burmese"] { --surface-tint: #d7a83d; --surface-warmth: #be6947; --surface-shade: rgba(24, 9, 0, .25); --card-surface: color-mix(in srgb, var(--bg-elev) 60%, transparent); }
+html[data-theme="light"] { --surface-tint: #9471d4; --surface-warmth: #df9a87; --surface-shade: rgba(68, 45, 102, .09); --card-surface: color-mix(in srgb, var(--bg-elev) 82%, transparent); }
+/* Feather only the surface layers so the content stays sharp and fully opaque. */
+:is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof) {
   --card-a: var(--surface-tint);
   --card-b: var(--surface-warmth);
-  background:
-    radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--card-a) 13%, transparent), transparent 65%),
-    radial-gradient(ellipse at 0% 100%, color-mix(in srgb, var(--card-b) 6%, transparent), transparent 60%),
-    linear-gradient(145deg, color-mix(in srgb, var(--surface-tint) 4%, var(--card-surface)), var(--card-surface));
-  border: 1px solid color-mix(in srgb, var(--card-a) 28%, var(--border));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--card-a) 16%, transparent), 0 12px 36px -14px var(--surface-shade);
-  border-radius: 1.15rem;
-  transition: border-color 260ms ease, box-shadow 260ms ease, transform 260ms ease;
+  --card-edge-mask: linear-gradient(90deg, transparent, #000 var(--card-feather), #000 calc(100% - var(--card-feather)), transparent), linear-gradient(180deg, transparent, #000 var(--card-feather), #000 calc(100% - var(--card-feather)), transparent);
+  position: relative;
+  isolation: isolate;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  border-radius: 1.5rem;
+  transition: transform 700ms cubic-bezier(.2, .65, .25, 1);
 }
+:is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof)::before,
+:is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  z-index: -1;
+  border: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: none;
+  -webkit-mask-image: var(--card-edge-mask);
+  mask-image: var(--card-edge-mask);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+:is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof)::before {
+  background:
+    radial-gradient(ellipse at 82% 16%, color-mix(in srgb, var(--card-a) 9%, transparent), transparent 72%),
+    radial-gradient(ellipse at 16% 84%, color-mix(in srgb, var(--card-b) 6%, transparent), transparent 72%),
+    linear-gradient(145deg, var(--card-surface), color-mix(in srgb, var(--card-surface) 72%, transparent));
+  opacity: 1;
+  filter: none;
+}
+:is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof)::after {
+  background: radial-gradient(260px 190px ellipse at var(--surface-x, 50%) var(--surface-y, 40%), color-mix(in srgb, var(--card-a) 12%, transparent), transparent 80%);
+  filter: blur(8px);
+  opacity: 0;
+  transition: opacity 800ms ease;
+}
+.hero-proof li + li, .project-card .links, .project-details, .now-item, .contact-email-options { border: 0; }
+.gallery-art, .player-embed iframe, .game-stage, .aquarium-stage { border: 0; }
+.gallery-art::after { box-shadow: none; }
 .skill-card[data-skill="0"] { --card-a: #56bfc8; --card-b: #7d9be9; }
 .skill-card[data-skill="1"] { --card-a: #b98ae9; --card-b: #e88caf; }
 .skill-card[data-skill="2"] { --card-a: #dbac61; --card-b: #8acaac; }
@@ -3491,7 +3527,7 @@ html[data-theme="light"] { --surface-tint: #9471d4; --surface-warmth: #df9a87; -
 .skill-card .tag { color: var(--text); border-radius: .65rem; border-color: color-mix(in srgb, var(--card-a) 25%, var(--border)); background: linear-gradient(140deg, color-mix(in srgb, var(--card-a) 10%, var(--bg-elev)), var(--bg-soft)); box-shadow: inset 0 1px 0 color-mix(in srgb, var(--card-a) 10%, transparent); }
 .skill-card .tag:hover { border-color: var(--card-a); box-shadow: 0 3px 14px -8px var(--card-a); }
 .project-card .project-category { color: color-mix(in srgb, var(--card-a) 60%, var(--text)); }
-.project-card .thumb { border-color: color-mix(in srgb, var(--card-a) 30%, var(--border)); box-shadow: inset 0 0 0 1px rgba(255,255,255,.025), 0 6px 20px rgba(0,0,0,.08); }
+.project-card .thumb { border: 0; box-shadow: none; }
 .project-card .chip { background: color-mix(in srgb, var(--card-a) 7%, var(--bg-elev)); border-color: color-mix(in srgb, var(--card-a) 28%, var(--border)); }
 .project-card .project-tag::after { color: color-mix(in srgb, var(--card-a) 60%, var(--text)); }
 .project-card .project-tag:hover { border-color: var(--card-a); }
@@ -3518,23 +3554,22 @@ html[data-theme="light"] .project-loop .art-symbol-panel { fill: #e5f4ee; }
 html[data-theme="light"] .project-loop .art-copy { fill: #4f607b; }
 html[data-theme="light"] .project-loop .art-strong { fill: #213453; }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  html:not([data-motion="paused"]) :is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now):hover {
-    background:
-      radial-gradient(300px circle at var(--surface-x, 50%) var(--surface-y, 30%), color-mix(in srgb, var(--card-a) 10%, transparent), transparent 75%),
-      radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--card-a) 15%, transparent), transparent 65%),
-      linear-gradient(145deg, color-mix(in srgb, var(--card-b) 5%, var(--card-surface)), var(--card-surface));
-    border-color: color-mix(in srgb, var(--card-a) 58%, var(--border));
-    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--card-a) 25%, transparent), 0 18px 38px -16px var(--surface-shade), 0 0 22px -13px var(--card-a);
-    transform: translateY(-3px);
+  html:not([data-motion="paused"]) :is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof):hover {
+    background: none;
+    border: 0;
+    box-shadow: none;
+    transform: translateY(-1px);
   }
+  html:not([data-motion="paused"]) :is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof):hover::after { opacity: 1; }
   html:not([data-motion="paused"]) .project-card:hover .art-composition { transform: translate(var(--art-shift-x, 0px), var(--art-shift-y, 0px)); }
   html:not([data-motion="paused"]) .skill-card:hover .skill-glyph { border-color: var(--card-a); }
 }
-:is(.skill-card, .project-card, .contact-card, .media-card, .recreation-card):focus-within { border-color: color-mix(in srgb, var(--card-a) 65%, var(--border)); }
-html[data-motion="paused"] :is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now) { transform: none; transition: none; }
+html[data-motion="paused"] :is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof) { transform: none; transition: none; }
+html[data-motion="paused"] :is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof)::after { opacity: 0; transition: none; }
 html[data-motion="paused"] .art-composition { transform: none; transition: none; }
 @media (prefers-reduced-motion: reduce) {
-  :is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now) { transform: none; transition: none; }
+  :is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof) { transform: none; transition: none; }
+  :is(.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof)::after { opacity: 0; transition: none; }
   .art-composition { transform: none; transition: none; }
 }
 .project-details summary { padding: .6rem .55rem; border-radius: .6rem; transition: background-color 180ms ease; }

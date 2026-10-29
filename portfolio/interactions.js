@@ -5,7 +5,7 @@
   const motionAllowed = () => !reduced.matches && document.documentElement.dataset.motion !== 'paused';
   let frame = 0;
   let latest;
-  const surfaces = '.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now';
+  const surfaces = '.about-card, .skill-card, .project-card, .timeline .item, .contact-card, .media-card, .recreation-card, .credit-card, .hero-now, .hero-proof';
   document.addEventListener('pointermove', event => {
     if (event.pointerType === 'touch' || !motionAllowed()) return;
     const target = event.target.closest(selector);
