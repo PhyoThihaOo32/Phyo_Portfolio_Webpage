@@ -27,7 +27,7 @@
     <title>Phyo Thiha Oo — Portfolio</title>
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=141" />
+    <link rel="stylesheet" href="styles.css?v=142" />
     <style>
       .reveal {
         opacity: 1 !important;
@@ -233,7 +233,7 @@
           <div>
             <dl class="contact-list">
               <dt>Email</dt>
-              <dd><a id="contact-email" href="#">you@example.com</a><button id="copy-email" class="icon-btn"
+              <dd><a id="contact-email" href="mailto:phyothihaoottp@gmail.com">phyothihaoottp@gmail.com</a><button id="copy-email" class="icon-btn"
                   title="Copy email" aria-label="Copy email address">⧉</button></dd>
               <dt>Location</dt>
               <dd id="contact-location">City, Country</dd>
@@ -245,8 +245,11 @@
               <button id="download-vcard" class="btn ghost">Save vCard</button>
             </div>
           </div>
-          <form class="contact-card">
+          <form class="contact-card" action="https://formsubmit.co/phyothihaoottp@gmail.com" method="POST">
             <h4>Quick Message</h4>
+            <input type="hidden" name="_subject" value="Portfolio message" />
+            <input type="hidden" name="_url" value="https://phyo-portfolio-webpage.onrender.com/#contact" />
+            <input type="hidden" name="_captcha" value="false" />
             <input class="hp-field" name="_honey" aria-hidden="true" tabindex="-1" autocomplete="off" />
             <label>
               <span>Name</span>
@@ -261,6 +264,17 @@
               <textarea name="message" rows="4" required></textarea>
             </label>
             <button class="btn primary" type="submit">Send</button>
+            <p id="contact-form-status" class="form-status muted" role="status" aria-live="polite"></p>
+            <div class="contact-email-options">
+              <p class="muted">Or send from your inbox</p>
+              <div class="contact-email-actions">
+                <a id="contact-mailto" class="btn ghost" href="mailto:phyothihaoottp@gmail.com">Email app</a>
+                <a id="contact-gmail" class="btn ghost" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=phyothihaoottp%40gmail.com" target="_blank" rel="noopener noreferrer">Gmail</a>
+                <button id="contact-copy-message" class="btn ghost" type="button" hidden>Copy message</button>
+              </div>
+              <p class="muted contact-email-note">Opens a draft with your message. Send it from your email account.</p>
+              <textarea id="contact-message-copy" rows="6" readonly hidden aria-label="Message to copy"></textarea>
+            </div>
           </form>
         </div>
       </section>
@@ -361,7 +375,7 @@
     <script src="content.js?v=117"></script>
     <script defer src="motion.js?v=1"></script>
     <script defer src="project-visuals.js?v=4"></script>
-    <script defer src="main.js?v=122"></script>
+    <script defer src="main.js?v=123"></script>
     <script defer src="interactions.js?v=3"></script>
     <script defer src="interests.js?v=6"></script>
     <button id="scroll-top" class="fab" tabindex="-1" aria-hidden="true" aria-label="Scroll to top" title="Scroll to top">↑</button>

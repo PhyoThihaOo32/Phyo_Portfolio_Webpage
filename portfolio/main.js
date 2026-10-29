@@ -424,11 +424,12 @@
     const heroResumeEl = document.getElementById('cta-secondary'); if (heroResumeEl) { heroResumeEl.href = resume; }
     const formEl = document.querySelector('form.contact-card');
     if (formEl) {
-      formEl.removeAttribute('action');
+      if (contactCfg.endpoint) formEl.action = contactCfg.endpoint.replace('/ajax/', '/');
       formEl.noValidate = true;
       const submitBtn = formEl.querySelector('button[type="submit"]');
       let status = formEl.querySelector('.form-status');
       let statusTimer = null;
+      let sending = false;
       if (!status) {
         status = document.createElement('div');
         status.className = 'form-status muted';
@@ -452,6 +453,39 @@
           }, timeoutMs);
         }
       }
+      const mailtoLink = formEl.querySelector('#contact-mailto');
+      const gmailLink = formEl.querySelector('#contact-gmail');
+      const copyMessage = formEl.querySelector('#contact-copy-message');
+      const copyField = formEl.querySelector('#contact-message-copy');
+      function emailDraft() {
+        const name = formEl.querySelector('[name="name"]').value.trim();
+        const from = formEl.querySelector('[name="email"]').value.trim();
+        const message = formEl.querySelector('[name="message"]').value.trim();
+        const subject = `${contactCfg.subjectPrefix || 'Portfolio message'}${name ? ` from ${name}` : ''}`.replace(/[\r\n]+/g, ' ').slice(0, 180);
+        const body = [message, [name && `Name: ${name}`, from && `Reply email: ${from}`].filter(Boolean).join('\n')].filter(Boolean).join('\n\n');
+        return { subject, body, text: `To: ${email}\nSubject: ${subject}\n\n${body}` };
+      }
+      function updateEmailOptions() {
+        const { subject, body, text } = emailDraft();
+        if (mailtoLink) mailtoLink.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        if (gmailLink) gmailLink.href = `https://mail.google.com/mail/?${new URLSearchParams({ view: 'cm', fs: '1', to: email, su: subject, body })}`;
+        if (copyField) copyField.value = text;
+      }
+      updateEmailOptions();
+      if (copyMessage) {
+        copyMessage.hidden = false;
+        copyMessage.addEventListener('click', async () => {
+          const { text } = emailDraft();
+          try {
+            await navigator.clipboard.writeText(text);
+            if (copyField) copyField.hidden = true;
+            setFormStatus('Message copied. Paste it into your email and send it.', '', 5000);
+          } catch {
+            if (copyField) { copyField.value = text; copyField.hidden = false; copyField.focus(); copyField.select(); }
+            setFormStatus('Select and copy the message below, then paste it into your email.');
+          }
+        });
+      }
       async function postContactMessage(endpoint, payload) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -467,9 +501,12 @@
             body: formData,
             signal: controller.signal
           });
-          const result = await response.json().catch(() => ({}));
-          if (!response.ok || (result.success !== true && result.success !== 'true')) {
-            throw new Error(result.message || 'Submission failed.');
+          const result = await response.json().catch(() => null);
+          const activationRequired = /\b(?:needs? activation|not (?:yet )?activated|activate (?:this|your|the) (?:form|email)|confirm your email)\b/i.test(result?.message || '');
+          if (!response.ok || !result || (result.success !== true && result.success !== 'true') || activationRequired) {
+            const error = new Error('Contact service did not confirm delivery.');
+            error.activationRequired = activationRequired;
+            throw error;
           }
           return result;
         } finally {
@@ -479,9 +516,11 @@
 
       formEl.addEventListener('input', event => {
         event.target.classList.remove('invalid'); event.target.removeAttribute('aria-invalid'); event.target.removeAttribute('aria-describedby');
+        updateEmailOptions();
       });
       formEl.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (sending) return;
         const nameEl = formEl.querySelector('input[name="name"]');
         const emailInput = formEl.querySelector('input[name="email"]');
         const messageEl = formEl.querySelector('textarea[name="message"]');
@@ -489,7 +528,7 @@
         const name = nameEl?.value.trim() || '';
         const from = emailInput?.value.trim() || '';
         const msg = messageEl?.value.trim() || '';
-        const inputs = formEl.querySelectorAll('input:not(.hp-field), textarea');
+        const inputs = formEl.querySelectorAll('input[required], textarea[required]');
         inputs.forEach(el => { el.classList.remove('invalid'); el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); });
         if (!name || !from || !msg) {
           setFormStatus('Please add your name, email, and a message.', 'error');
@@ -506,15 +545,17 @@
           return;
         }
         if (!contactCfg.endpoint) {
-          setFormStatus('Contact form is not configured yet.', 'error', 4500);
+          setFormStatus('Please use Email app or Gmail below to send your message.', 'error');
           return;
         }
         if (honeyEl && honeyEl.value.trim()) {
           // Honeypot filled; treat as success without sending
           formEl.reset();
+          updateEmailOptions();
           setFormStatus('Message sent successfully.', 'success', 3500);
           return;
         }
+        sending = true;
         submitBtn && (submitBtn.disabled = true);
         if (submitBtn) { submitBtn.dataset.label = submitBtn.textContent; submitBtn.textContent = 'Sending...'; }
         setFormStatus('Sending your message...');
@@ -527,17 +568,22 @@
             _subject: `${contactCfg.subjectPrefix || 'Portfolio message'} from ${name}`,
             _replyto: from,
             _captcha: 'false',
+            _url: new URL('#contact', web.startsWith('http') ? web : location.href).href,
             _honey: honeyEl?.value || ''
           });
 
           formEl.reset();
-          setFormStatus('Message sent successfully.', 'success', 3500);
+          updateEmailOptions();
+          if (copyField) copyField.hidden = true;
+          setFormStatus('Message submitted successfully.', 'success');
         } catch (err) {
-          const errorMessage = (err && err.name === 'AbortError')
-            ? 'Message timed out. Please try again.'
-            : 'Message could not be sent. Please try again or use the email link.';
-          setFormStatus(errorMessage, 'error', 7000);
+          const errorMessage = err?.activationRequired
+            ? 'This form is temporarily unavailable. Use Email app or Gmail below to send your message.'
+            : 'We couldn’t confirm delivery. Your message is still here—use Email app or Gmail below, or try again.';
+          updateEmailOptions();
+          setFormStatus(errorMessage, 'error');
         } finally {
+          sending = false;
           submitBtn && (submitBtn.disabled = false);
           if (submitBtn) { submitBtn.textContent = submitBtn.dataset.label || 'Send'; }
         }

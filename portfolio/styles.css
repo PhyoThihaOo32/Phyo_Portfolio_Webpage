@@ -1342,6 +1342,13 @@ html[data-theme="space"] .about-visual span {
 .form-status.success {
   color: #34d399;
 }
+.form-status:empty { display: none; }
+.contact-email-options { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.contact-email-options p { margin: 0 0 .65rem; }
+.contact-email-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.contact-email-actions .btn { min-height: 44px; font-size: .8rem; padding: .55rem .7rem; }
+.contact-email-options .contact-email-note { margin: .7rem 0 0; font-size: .8rem; line-height: 1.6; }
+#contact-message-copy { margin-top: .75rem; min-height: 160px; font: .85rem/1.5 var(--font-body); }
 .contact-card button[disabled] {
   opacity: 0.7;
   cursor: wait;

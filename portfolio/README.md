@@ -126,6 +126,10 @@ This site uses FormSubmit endpoint mode:
 - Endpoint: `https://formsubmit.co/ajax/phyothihaoottp@gmail.com`
 - Ensure FormSubmit account/email activation is completed
 - If delivery fails, check **Spam/Promotions** and endpoint activation status
+- FormSubmit must be available; a hosting or provider outage cannot be repaired by front-end JavaScript.
+- The form retains the visitor's input when delivery is not confirmed. Email app and Gmail links open a draft containing that input, and Copy message provides a manual fallback.
+- These email options open a draft; visitors still press Send in their email account. They work independently of FormSubmit.
+- `_url` identifies the published contact page even when the browser omits its referrer. Without JavaScript, the form uses the normal FormSubmit POST endpoint.
 
 ---
 
