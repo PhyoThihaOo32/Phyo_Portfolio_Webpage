@@ -166,7 +166,7 @@ def build():
     story = [
         p("PHYO THIHA OO", styles["name"]),
         p(
-            'Queens, NY &nbsp;|&nbsp; <a href="mailto:phyothihaoottp@gmail.com">phyothihaoottp@gmail.com</a>'
+            'Queens, NY &nbsp;|&nbsp; <a href="mailto:phyothihaoo.pto@gmail.com">phyothihaoo.pto@gmail.com</a>'
             ' &nbsp;|&nbsp; 347-738-8708 &nbsp;|&nbsp; '
             '<a href="https://phyo-portfolio-webpage.onrender.com/">phyo-portfolio-webpage.onrender.com</a>',
             styles["contact"],

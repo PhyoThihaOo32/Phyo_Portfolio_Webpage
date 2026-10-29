@@ -5,7 +5,7 @@ window.PORTFOLIO = {
     name: "Phyo Thiha Oo",
     role: "Software Engineer",
     location: "Queens, NY",
-    email: "phyothihaoottp@gmail.com",
+    email: "phyothihaoo.pto@gmail.com",
     phone: "",
     website: "https://phyo-portfolio-webpage.onrender.com/",
     heroLead: "Building software that makes",
@@ -21,7 +21,7 @@ window.PORTFOLIO = {
   },
 
   contact: {
-    endpoint: "https://formsubmit.co/ajax/phyothihaoottp@gmail.com",
+    endpoint: "https://formsubmit.co/ajax/phyothihaoo.pto@gmail.com",
     subjectPrefix: "Portfolio message"
   },
 

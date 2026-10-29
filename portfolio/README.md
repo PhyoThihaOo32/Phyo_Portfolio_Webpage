@@ -123,7 +123,7 @@ The published resume is `assets/resume.pdf`, supplied by the portfolio owner. `s
 
 This site uses FormSubmit endpoint mode:
 
-- Endpoint: `https://formsubmit.co/ajax/phyothihaoottp@gmail.com`
+- Endpoint: `https://formsubmit.co/ajax/phyothihaoo.pto@gmail.com`
 - Ensure FormSubmit account/email activation is completed
 - If delivery fails, check **Spam/Promotions** and endpoint activation status
 - FormSubmit must be available; a hosting or provider outage cannot be repaired by front-end JavaScript.
