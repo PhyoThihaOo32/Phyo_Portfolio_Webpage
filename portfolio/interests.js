@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (reshuffle) {
       states.forEach(s => { s.direction = Math.random() < .5 ? -1 : 1; s.vx = s.direction * s.speed * .3; s.vy = 0; });
       if (motionAllowed()) {
-        rearrangement = { elapsed: 0, duration: 4600, items: states.map((s, i) => ({ state: s, from: previous.get(s), x: s.x, y: s.y, delay: i * 35 })) };
+        rearrangement = { elapsed: 0, duration: 3800, items: states.map((s, i) => ({ state: s, from: previous.get(s), x: s.x, y: s.y, delay: i * 35 })) };
         states.forEach(s => { const old = previous.get(s); s.x = old.x; s.y = old.y; s.bank = old.bank; clamp(s); });
         shuffle?.setAttribute('aria-busy', 'true'); shuffle?.setAttribute('aria-disabled', 'true');
         if (shuffleStatus) shuffleStatus.textContent = 'Gently rearranging interests.';
