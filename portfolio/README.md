@@ -5,7 +5,7 @@
 [![JavaScript](https://img.shields.io/badge/JavaScript-Interaction-F7DF1E?style=for-the-badge&logo=javascript&logoColor=111)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Responsive](https://img.shields.io/badge/Responsive-Mobile%20%2B%20Desktop-0EA5E9?style=for-the-badge)](#features)
 [![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge)](https://web.dev/progressive-web-apps/)
-[![Themes](https://img.shields.io/badge/Themes-5-10B981?style=for-the-badge)](#theme-system)
+[![Themes](https://img.shields.io/badge/Themes-6-10B981?style=for-the-badge)](#theme-system)
 
 Personal software engineering portfolio built with vanilla HTML/CSS/JS and designed around **selected project storytelling**, **current experience**, **theme-driven visuals**, and **interactive sections**.
 
@@ -20,7 +20,8 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 
 ## Features
 
-- **5 themes**: `Dark`, `Light`, `Cyber`, `Space`, `Burmese`
+- **6 themes**: `Dark`, `Light`, `Cyber`, `Space`, `Burmese`, `Ocean`
+- **Ocean's tropical Three.js scene**: GPU-driven waves, sunshine, distant islands, moving clouds, and swaying palm fronds; lazy-loaded with original illustrated stills for reduced motion, data saving, and unavailable WebGL
 - **Borderless card surfaces** with translucent color washes and feathered edges that blend into each theme's background
 - **Dark-theme ambient artwork** by Borrachas with a reduced-motion still fallback
 - **Recruiter-first hero** with current role, stack, and measurable highlights
@@ -33,6 +34,7 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 - **Theme-aware daily gallery**
   - Dark/Light: public-domain artworks (The Met)
   - Cyber/Burmese: curated local gallery sets
+  - Ocean: original tropical SVG postcards
 - **Music section** with lazy-loaded Apple/lofi embeds
 - **Contact panel** with FormSubmit endpoint integration
 - **Recreation Corner**
@@ -52,8 +54,13 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 - **Cyber**: violet/magenta neon, stylized typography
 - **Space**: nebula-inspired atmosphere, sci-fi tone
 - **Burmese**: warm gold/maroon palette reflecting cultural origin
+- **Ocean**: sky blue, turquoise, seafoam, and warm coral accents with Hawaiian-inspired original artwork
 
 Card surfaces share `--card-surface` and `--card-feather` in `styles.css`. Only their decorative pseudo-elements are masked; text, images, and controls retain full opacity. A soft pointer highlight fades in on hover. Pause and reduced-motion preferences disable the hover movement; focus outlines and form-field boundaries remain visible.
+
+Ocean's renderer lives in `ocean-scene.js` and uses a self-hosted, MIT-licensed Three.js 0.187.0 bundle. `ocean.js` imports it only after Ocean is selected and disposes its GPU resources when leaving the theme. Animation is capped near 30 fps with a limited pixel ratio; hidden tabs stop rendering. System reduced-motion and data-saving preferences use the illustrated shore without downloading Three.js. See `assets/vendor/three/README.md` for the dependency source and `assets/art/ocean/` for the original SVG gallery.
+
+Link directly to a theme with `?theme=ocean` (or any of the other theme names). Changing themes updates that parameter when present; ordinary portfolio URLs retain the visitor's saved preference.
 
 ---
 

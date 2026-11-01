@@ -1,12 +1,13 @@
 (function () {
   const data = window.PORTFOLIO || {};
-  const THEMES = ['dark', 'light', 'cyber', 'space', 'burmese'];
+  const THEMES = ['dark', 'light', 'cyber', 'space', 'burmese', 'ocean'];
   const THEME_LABELS = {
     dark: 'Dark',
     light: 'Light',
     cyber: 'Cyber',
     space: 'Space',
-    burmese: 'Burmese'
+    burmese: 'Burmese',
+    ocean: 'Ocean'
   };
 
   const $ = (sel, parent = document) => parent.querySelector(sel);
@@ -18,14 +19,15 @@
     const root = document.documentElement;
     let stored;
     try { stored = localStorage.getItem('theme'); } catch { }
-    const preferred = THEMES.includes(stored) ? stored : (data.preferences && THEMES.includes(data.preferences.theme) ? data.preferences.theme : 'dark');
+    const requested = new URLSearchParams(location.search).get('theme');
+    const preferred = THEMES.includes(requested) ? requested : (THEMES.includes(stored) ? stored : (data.preferences && THEMES.includes(data.preferences.theme) ? data.preferences.theme : 'dark'));
     root.setAttribute('data-theme', preferred);
     const btn = document.getElementById('theme-toggle');
     const icon = btn && btn.querySelector('.icon');
     const chooser = document.getElementById('theme-chooser');
     function iconFor(theme) {
       return ({
-        dark: '☾', light: '☼', cyber: '⚡', space: '✦'
+        dark: '☾', light: '☼', cyber: '⚡', space: '✦', ocean: '≋'
       })[theme] || '◎';
     }
     function updateIcon() {
@@ -33,14 +35,19 @@
       if (icon) icon.textContent = iconFor(theme);
       if (btn) btn.setAttribute('aria-label', `Current theme: ${THEME_LABELS[theme]}. Switch theme`);
     }
-    function rememberTheme(theme) { try { localStorage.setItem('theme', theme); } catch { } }
+    function rememberTheme(theme) {
+      try { localStorage.setItem('theme', theme); } catch { }
+      const url = new URL(location.href);
+      if (url.searchParams.has('theme')) { url.searchParams.set('theme', theme); history.replaceState(null, '', url); }
+    }
     function updateThemeMetaColor() {
       const palette = {
         dark: '#0b0f14',
         light: '#f7f8fb',
         cyber: '#0c0b1a',
         space: '#070b17',
-        burmese: '#23120b'
+        burmese: '#23120b',
+        ocean: '#e8f8fc'
       };
       const m = document.querySelector('meta[name="theme-color"]');
       const theme = root.getAttribute('data-theme');
@@ -1719,6 +1726,20 @@ async function renderDailyGallery() {
   const renderToken = nextGalleryRenderToken();
 
   const theme = document.documentElement.getAttribute('data-theme');
+  if (theme === 'ocean') {
+    try {
+      const res = await fetch(new URL('assets/art/ocean/manifest.json?v=1', location.href));
+      if (!isGalleryRenderCurrent(renderToken)) return;
+      const images = res.ok ? await res.json() : [];
+      if (!isGalleryRenderCurrent(renderToken)) return;
+      if (Array.isArray(images) && images.length) {
+        renderLocalDaily(images, artEl, titleEl, bylineEl, descEl, renderToken);
+        wireGalleryFit(); bindKenBurns();
+        window.__gallerySource = 'ocean';
+        return;
+      }
+    } catch { }
+  }
   if (theme === 'burmese') {
     try {
       const manifestUrl = new URL('assets/art/burmese/manifest.json?v=2', location.href).toString();
@@ -1956,6 +1977,11 @@ function isGalleryRenderCurrent(token) {
 
 // Palette extraction
 function trySetAccentFromImage(img) {
+  if (document.documentElement.dataset.theme === 'ocean') {
+    const section = document.getElementById('listen');
+    section?.style.removeProperty('--accent'); section?.style.removeProperty('--accent-2');
+    return;
+  }
   try {
     const c = document.createElement('canvas');
     const w = c.width = 32; const h = c.height = 32; const ctx = c.getContext('2d', { willReadFrequently: true });
