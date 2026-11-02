@@ -23,7 +23,7 @@
         if (choices.includes(theme)) document.documentElement.dataset.theme = theme;
         if (localStorage.getItem('portfolio-motion') === 'paused' || matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.dataset.motion = 'paused';
         const fonts = document.documentElement.dataset.theme === 'ocean'
-          ? ['dm-sans-latin-variable.woff2', 'original-surfer-latin-400.woff2', 'pacifico-latin-400.woff2'].map(file => `assets/fonts/ocean/${file}`)
+          ? ['dm-sans-latin-variable.woff2', 'make-summer-fun-regular.ttf'].map(file => `assets/fonts/ocean/${file}`)
           : ['assets/fonts/reyda/ReydademoRegular-6Rl2A.ttf'];
         for (const href of fonts) {
           const preload = document.createElement('link');
@@ -37,7 +37,7 @@
     <title>Phyo Thiha Oo — Portfolio</title>
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=152" />
+    <link rel="stylesheet" href="styles.css?v=153" />
     <style>
       .reveal {
         opacity: 1 !important;
@@ -376,10 +376,9 @@
               references and local assets. Ocean features animations by Karl Jahnke, Allison House, aceslowman,
               xponentialdesign, ATLAST, Garbi KW, dualvoidanima, and Awkwafina is Nora from Queens. Its featured painting is
               Ivan Aivazovsky’s <em>Moonlit Night at Sea</em>, selected from @darkgloomyart on Instagram.</p>
-            <p class="muted">Ocean typography pairs Pacifico, Original Surfer, and DM Sans.</p>
+            <p class="muted">Ocean typography pairs Make Summer Fun by Misti’s Fonts with DM Sans.</p>
             <div class="credit-links">
-              <a href="https://www.fontspace.com/pacifico-font-f11956" target="_blank" rel="noreferrer">Pacifico · FontSpace ↗</a>
-              <a href="https://fonts.google.com/specimen/Original+Surfer" target="_blank" rel="noreferrer">Original Surfer ↗</a>
+              <a href="https://www.fontspace.com/make-summer-fun-font-f46329" target="_blank" rel="noreferrer">Make Summer Fun · Misti’s Fonts ↗</a>
               <a href="https://fonts.google.com/specimen/DM+Sans" target="_blank" rel="noreferrer">DM Sans ↗</a>
               <a href="https://threejs.org/" target="_blank" rel="noreferrer">Three.js · MIT license ↗</a>
             </div>
