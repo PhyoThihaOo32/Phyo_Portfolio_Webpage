@@ -5,16 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!atmosphere) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const image = document.querySelector('.hero-artwork-image img');
-  const caption = document.querySelector('.artwork-caption');
   const credit = document.querySelector('.hero-artwork figcaption');
-  const original = { src: image?.getAttribute('src'), alt: image?.alt, caption: caption?.innerHTML, credit: credit?.innerHTML };
+  const original = { src: image?.getAttribute('src'), alt: image?.alt, width: image?.getAttribute('width'), height: image?.getAttribute('height'), credit: credit?.innerHTML };
   let video = null, lastTheme = '', playback = 0;
   const canAnimate = () => !reduced.matches && root.dataset.motion !== 'paused' && !document.hidden;
 
-  function postcard(ocean) {
-    if (image) { image.src = ocean ? 'assets/art/ocean/aloha-shore.svg' : original.src; image.alt = ocean ? 'Turquoise waves, a golden sun, and palms on a quiet tropical shore.' : original.alt; }
-    if (caption) caption.innerHTML = ocean ? 'Stay curious.<br/><em>Go with the flow.</em>' : original.caption;
-    if (credit) credit.innerHTML = ocean ? '<span>A little aloha</span><a href="#listen">Explore the ocean postcards ↘</a>' : original.credit;
+  function heroArtwork(ocean) {
+    if (image) {
+      image.src = ocean ? 'assets/art/ocean/aivazovsky-moonlit-sea.webp' : original.src;
+      image.alt = ocean ? 'Moonlight over a ship on restless waves, with two figures watching from shore — Moonlit Night at Sea by Ivan Aivazovsky.' : original.alt;
+      image.setAttribute('width', ocean ? '1440' : original.width);
+      image.setAttribute('height', ocean ? '1882' : original.height);
+    }
+    if (credit) credit.innerHTML = ocean ? '<span>Moonlit Night at Sea</span><a href="https://www.instagram.com/p/DVNCXLXim2p/" target="_blank" rel="noopener noreferrer">Ivan Aivazovsky · @darkgloomyart ↗</a>' : original.credit;
   }
   function dispose() {
     ++playback;
@@ -64,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function syncTheme() {
     const theme = root.dataset.theme;
     if (theme === lastTheme) return;
-    lastTheme = theme; postcard(theme === 'ocean'); activate();
+    lastTheme = theme; heroArtwork(theme === 'ocean'); activate();
   }
   new MutationObserver(syncTheme).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
   document.addEventListener('portfolio:motionchange', activate);

@@ -17,4 +17,8 @@ The portfolio owner supplied these GIFs and selected them for the Ocean gallery.
 
 Each media stem has an H.264 MP4 loop and a matching `-still.png` first frame. The two Art Summer sources are distinct animations. The gallery preserves full artwork framing by default, including the portrait Deep Chills piece. No sound is included. Reduced-motion and data-saving preferences use the PNG; autoplay or media failures also leave that still visible. The original source files remain outside the repository on the owner's Desktop.
 
-The original tropical SVG illustrations in this directory remain in the hero postcard and as editable source artwork.
+## Featured painting
+
+**Moonlit Night at Sea** by **Ivan Aivazovsky**, selected from [@darkgloomyart's Instagram post](https://www.instagram.com/p/DVNCXLXim2p/). The post identifies the painting as circa 1885. `aivazovsky-moonlit-sea.webp` is the full 1440 × 1882 image displayed in that public post, saved locally without cropping or color changes. The Ocean hero presents it in full with the artist and post credited below the frame. The Instagram caption and comments are not reproduced.
+
+The earlier tropical SVG illustrations remain in this directory as editable source artwork.

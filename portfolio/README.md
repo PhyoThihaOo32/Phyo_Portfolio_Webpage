@@ -54,13 +54,15 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 - **Cyber**: violet/magenta neon, stylized typography
 - **Space**: nebula-inspired atmosphere, sci-fi tone
 - **Burmese**: warm gold/maroon palette reflecting cultural origin
-- **Ocean**: sky blue, turquoise, seafoam, and warm coral accents with Hawaiian-inspired original artwork
+- **Ocean**: sky blue, turquoise, seafoam, and warm coral accents with tropical animation and a featured maritime painting
 
 Card surfaces share `--card-surface` and `--card-feather` in `styles.css`. Only their decorative pseudo-elements are masked; text, images, and controls retain full opacity. A soft pointer highlight fades in on hover. Pause and reduced-motion preferences disable the hover movement; focus outlines and form-field boundaries remain visible.
 
 Ocean uses clear card surfaces instead of the shared feathered wash: its white surface layer and blur are removed, with subtle blue contours from `assets/art/ocean/water-contours.svg` below the content. A continuous sky-blue veil over the wave background supports readable text across the page, and unused space around gallery artwork reveals the same water. The contours stay still, and the motion control continues to pause the underlying waves and gallery.
 
-Ocean's background uses the owner-supplied **Loop Glow GIF by xponentialdesign**, exported as an H.264 MP4 in `assets/art/ambient/ocean-glow-waves.mp4` to preserve the full loop at a smaller download size. `ocean.js` loads the muted, inline video only when Ocean is visible and motion is allowed. The motion control freezes and resumes the video; hidden tabs pause it, and leaving Ocean releases the decoder. Reduced-motion, data-saving, blocked-autoplay, and failed-media cases use a matching PNG still. A sky-blue veil keeps the background quiet and the foreground readable. Original tropical illustrations remain in `assets/art/ocean/` and the hero postcard.
+Ocean's background uses the owner-supplied **Loop Glow GIF by xponentialdesign**, exported as an H.264 MP4 in `assets/art/ambient/ocean-glow-waves.mp4` to preserve the full loop at a smaller download size. `ocean.js` loads the muted, inline video only when Ocean is visible and motion is allowed. The motion control freezes and resumes the video; hidden tabs pause it, and leaving Ocean releases the decoder. Reduced-motion, data-saving, blocked-autoplay, and failed-media cases use a matching PNG still. A sky-blue veil keeps the background quiet and the foreground readable.
+
+The Ocean hero features **Moonlit Night at Sea** by **Ivan Aivazovsky**, selected by the owner from [@darkgloomyart's Instagram post](https://www.instagram.com/p/DVNCXLXim2p/). The 1440 × 1882 WebP is self-hosted in `assets/art/ocean/aivazovsky-moonlit-sea.webp`; the full portrait is shown without text over the painting. The caption credits the artist and links to the selected post. Other themes retain their original hero artwork.
 
 Ocean's gallery manifest pairs ten owner-supplied GIFs with optimized MP4 loops and PNG stills. Loop Glow reuses the background's existing media files. Gallery loops load as the gallery approaches the viewport, play silently inline, respect motion/data preferences, and pause offscreen or in hidden tabs. Switching artwork or themes releases the previous video. Fit mode preserves each full frame; the existing fill control remains available. Creator credits appear with each piece; [the Ocean asset notes](assets/art/ocean/README.md) record the source filenames and credits.
 
