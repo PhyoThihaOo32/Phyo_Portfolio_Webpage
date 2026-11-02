@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 120" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="edges">
+      <stop stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".14" stop-color="#fff"/>
+      <stop offset=".86" stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="water" x2="0" y2="1">
+      <stop stop-color="#2d9fb9" stop-opacity=".05"/>
+      <stop offset="1" stop-color="#64c2d0" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="fade"><path fill="url(#edges)" d="M0 0h800v120H0z"/></mask>
+  </defs>
+  <g mask="url(#fade)">
+    <path d="M-40 53C112 4 220 106 404 63S680 22 840 57V120H-40Z" fill="url(#water)"/>
+    <g fill="none" vector-effect="non-scaling-stroke">
+      <path d="M-40 53C112 4 220 106 404 63S680 22 840 57" stroke="#239bb5" stroke-opacity=".18"/>
+      <path d="M-40 67C116 19 228 120 412 77S688 36 840 71" stroke="#7acbd7" stroke-opacity=".32"/>
+      <path d="M-40 91C132 48 256 139 442 101S700 66 840 93" stroke="#288faa" stroke-opacity=".12"/>
+    </g>
+  </g>
+</svg>
