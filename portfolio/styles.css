@@ -3836,13 +3836,13 @@ html[data-theme="ocean"] .section-head h3 { line-height: 1.3; letter-spacing: 0;
 html[data-theme="ocean"] .interest-tag { font-family: var(--font-body); }
 html[data-theme="ocean"] body { background: var(--bg); }
 #ocean-atmosphere { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #d7eff7; }
-html[data-theme="ocean"] #ocean-atmosphere { opacity: .9; background-image: linear-gradient(rgba(215,239,247,.28), rgba(215,239,247,.28)), url("assets/art/ambient/ocean-glow-waves-still.png"); background-position: center; background-size: cover; }
+html[data-theme="ocean"] #ocean-atmosphere { opacity: .94; background-image: linear-gradient(rgba(215,239,247,.28), rgba(215,239,247,.28)), url("assets/art/ambient/ocean-glow-waves-still.png"); background-position: center; background-size: cover; }
 #ocean-atmosphere .ocean-wave-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
 #ocean-atmosphere[data-ready="true"] .ocean-wave-video { opacity: .72; }
 html[data-theme="ocean"] body::before { opacity: 0; background: none; animation: none; transform: none; will-change: auto; }
 html[data-theme="ocean"] body::after {
   inset: 0;
-  background: linear-gradient(90deg, rgba(207, 238, 247, .86), rgba(204, 238, 246, .82) 56%, rgba(195, 231, 243, .8)), linear-gradient(180deg, rgba(145, 218, 235, .06), rgba(88, 192, 209, .09));
+  background: linear-gradient(90deg, rgba(207, 238, 247, .83), rgba(204, 238, 246, .79) 56%, rgba(195, 231, 243, .77)), linear-gradient(180deg, rgba(145, 218, 235, .06), rgba(88, 192, 209, .09));
   opacity: 1; transform: none; animation: none; will-change: auto;
 }
 /* Clear surfaces reveal the continuous water beneath; only fine blue currents remain. */
@@ -3879,9 +3879,21 @@ html[data-theme="ocean"] .neon-rain :is(p, li) { text-shadow: none; }
 html[data-theme="ocean"] .hero-artwork-image { width: min(100%, 300px); margin-inline: auto; aspect-ratio: 1440 / 1882; background: transparent; }
 html[data-theme="ocean"] .hero-artwork-image img { object-fit: contain; filter: none; }
 html[data-theme="ocean"] .hero-artwork:hover img { transform: none; }
-html[data-theme="ocean"] .hero-artwork-image::after { content: none; }
-html[data-theme="ocean"] :is(.artwork-caption, .artwork-guide) { display: none; }
-html[data-theme="ocean"] .hero-artwork figcaption { max-width: 300px; margin-inline: auto; flex-direction: column; align-items: flex-start; gap: .15rem; padding-top: .6rem; font-size: .66rem; line-height: 1.5; }
+html[data-theme="ocean"] .hero-artwork-image::after { content: ''; z-index: 2; background: linear-gradient(180deg, transparent 62%, rgba(3, 17, 26, .12) 75%, rgba(3, 17, 26, .66)); }
+html[data-theme="ocean"] .artwork-guide { display: none; }
+html[data-theme="ocean"] .artwork-caption { display: block; z-index: 4; inset: auto .75rem .95rem .9rem; font-size: clamp(1.8rem, 2.5vw, 2.2rem); line-height: 1.02; text-shadow: 0 2px 14px rgba(0, 12, 21, .6); pointer-events: none; }
+html[data-theme="ocean"] .hero-artwork figcaption { max-width: 300px; margin-inline: auto; flex-direction: column; align-items: flex-start; gap: .1rem; padding-top: .45rem; font-size: .6rem; line-height: 1.5; }
+html[data-theme="ocean"] .credits-section { padding-block: 1rem 1.5rem; }
+html[data-theme="ocean"] .credits-section .section-head { gap: .5rem 1rem; margin-bottom: 1rem; }
+html[data-theme="ocean"] .credits-section .section-head h3 { font-size: 1.9rem; }
+html[data-theme="ocean"] .credits-section .section-head p { font-size: .84rem; }
+html[data-theme="ocean"] .credits-grid { gap: .75rem; align-items: start; }
+html[data-theme="ocean"] .credit-card { padding: .8rem .85rem; gap: .35rem; font-size: .85rem; }
+html[data-theme="ocean"] .credit-card h4 { font-size: .95rem; }
+html[data-theme="ocean"] .credit-card p { line-height: 1.5; }
+html[data-theme="ocean"] .credit-kicker { font-size: .65rem; padding: .16rem .4rem; }
+html[data-theme="ocean"] .credit-links { gap: .2rem .65rem; }
+html[data-theme="ocean"] .credit-card a { padding-block: .12rem; }
 .ocean-art-canvas { display: block; opacity: 0; border-radius: inherit; transition: opacity 1s ease; }
 html[data-theme="ocean"] .hero-artwork-image[data-art-renderer="three"] { transform: perspective(900px) rotateX(var(--ocean-art-tilt-x, 0deg)) rotateY(var(--ocean-art-tilt-y, 0deg)); }
 html[data-theme="ocean"] .hero-artwork-image[data-art-ready="true"] > .ocean-art-canvas { opacity: 1; }
@@ -3904,7 +3916,7 @@ html[data-theme="ocean"] .form-status.success { color: #086b5c; }
 html[data-theme="ocean"] .interest-shuffle:hover { background: rgba(97, 193, 211, .15); }
 @media (max-width: 680px) {
   html[data-theme="ocean"] .hero h2 { font-size: clamp(2.8rem, 12vw, 3.8rem); }
-  html[data-theme="ocean"] body::after { background: linear-gradient(180deg, rgba(207,238,247,.9), rgba(204,238,246,.86) 42%, rgba(195,231,243,.88)); }
+  html[data-theme="ocean"] body::after { background: linear-gradient(180deg, rgba(207,238,247,.87), rgba(204,238,246,.83) 42%, rgba(195,231,243,.85)); }
 }
 @media (prefers-reduced-motion: reduce) { #ocean-atmosphere .ocean-wave-video { transition: none; } }
 html[data-motion="paused"] #ocean-atmosphere .ocean-wave-video { transition: none; }
