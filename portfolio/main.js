@@ -1715,6 +1715,63 @@ function renderRadio() {
 
 }
 
+let galleryPlayback = null;
+
+// Animated artwork keeps its original framing and rests while outside the viewport.
+function createGalleryPlayback() {
+  const art = document.getElementById('gallery-art');
+  const root = document.documentElement;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let item = null, token = 0, video = null, inView = false, blocked = false, playback = 0;
+  const current = () => item && isGalleryRenderCurrent(token);
+  const canPlay = () => current() && inView && !document.hidden && !reduced.matches &&
+    !navigator.connection?.saveData && root.dataset.motion !== 'paused';
+
+  function dispose() {
+    ++playback;
+    const oldVideo = video;
+    video = null;
+    if (oldVideo) {
+      oldVideo.pause(); oldVideo.removeAttribute('src'); oldVideo.load(); oldVideo.remove();
+    }
+  }
+  function fallback() { blocked = true; dispose(); }
+  function sync() {
+    const attempt = ++playback;
+    if (!current() || reduced.matches || navigator.connection?.saveData) { dispose(); return; }
+    if (!canPlay()) { video?.pause(); return; }
+    if (blocked) return;
+    if (!video) {
+      const loop = document.createElement('video');
+      loop.className = 'gallery-video';
+      loop.muted = true; loop.defaultMuted = true; loop.loop = true; loop.playsInline = true;
+      loop.disablePictureInPicture = true;
+      loop.setAttribute('aria-hidden', 'true'); loop.tabIndex = -1;
+      loop.addEventListener('loadeddata', () => { if (video === loop) loop.classList.add('is-ready'); });
+      loop.addEventListener('error', () => { if (video === loop) fallback(); });
+      loop.src = item.video;
+      video = loop; art.appendChild(loop);
+    }
+    const activeVideo = video;
+    activeVideo.play().catch(() => {
+      if (attempt === playback && video === activeVideo && canPlay()) fallback();
+    });
+  }
+  new IntersectionObserver(entries => {
+    inView = entries[0].isIntersecting;
+    sync();
+  }, { rootMargin: '100px', threshold: 0 }).observe(art);
+  document.addEventListener('portfolio:motionchange', () => { blocked = false; sync(); });
+  document.addEventListener('visibilitychange', sync);
+  reduced.addEventListener('change', sync);
+  window.addEventListener('pagehide', dispose);
+  window.addEventListener('pageshow', e => { if (e.persisted) sync(); });
+  return {
+    select(next, renderToken) { dispose(); item = next; token = renderToken; blocked = false; sync(); },
+    clear() { item = null; token = 0; dispose(); }
+  };
+}
+
 async function renderDailyGallery() {
   const data = window.PORTFOLIO || {};
   const items = data.gallery || [];
@@ -1728,7 +1785,7 @@ async function renderDailyGallery() {
   const theme = document.documentElement.getAttribute('data-theme');
   if (theme === 'ocean') {
     try {
-      const res = await fetch(new URL('assets/art/ocean/manifest.json?v=1', location.href));
+      const res = await fetch(new URL('assets/art/ocean/manifest.json?v=2', location.href));
       if (!isGalleryRenderCurrent(renderToken)) return;
       const images = res.ok ? await res.json() : [];
       if (!isGalleryRenderCurrent(renderToken)) return;
@@ -1828,25 +1885,35 @@ function renderLocalDaily(items, artEl, titleEl, bylineEl, descEl, renderToken) 
   const savedIndex = sessionStorage.getItem('galleryIndex');
   let idx = savedIndex === null ? NaN : Number(savedIndex);
   if (!Number.isInteger(idx)) idx = usableItems.length ? day % usableItems.length : 0;
-  let attempts = 0;
+  let attempts = 0, selection = 0;
   function apply() {
     if (!isGalleryRenderCurrent(renderToken)) return;
     if (attempts > usableItems.length + 2) { showSpinner(artEl, false); return; }
     const it = usableItems.length ? usableItems[((idx % usableItems.length) + usableItems.length) % usableItems.length] : null;
     if (!it || !it.image) { return; }
+    const currentSelection = ++selection;
+    artEl.dataset.animated = String(Boolean(it.video));
+    artEl.setAttribute('aria-label', [it.title || 'Artwork', it.artist, it.desc].filter(Boolean).join(' — '));
+    if (it.video) {
+      galleryPlayback ||= createGalleryPlayback();
+      galleryPlayback.select(it, renderToken);
+    } else { galleryPlayback?.clear(); }
     const img = document.getElementById('gallery-img');
     if (img) {
       showSpinner(artEl, true);
       img.alt = `${it.title || 'Artwork'} — ${it.artist || ''}`.trim();
       setGalleryImage(img, it.image, {
         onLoad: () => {
-          if (!isGalleryRenderCurrent(renderToken)) return;
+          if (!isGalleryRenderCurrent(renderToken) || currentSelection !== selection) return;
           trySetAccentFromImage(img);
           bindKenBurns();
           showSpinner(artEl, false);
           attempts = 0;
         },
-        onError: () => { showSpinner(artEl, false); attempts++; idx++; apply(); }
+        onError: () => {
+          if (!isGalleryRenderCurrent(renderToken) || currentSelection !== selection) return;
+          showSpinner(artEl, false); attempts++; idx++; apply();
+        }
       });
     }
     else { artEl.style.backgroundImage = `url(${it.image})`; }
@@ -1893,6 +1960,7 @@ async function renderMetDaily(fallbackItems, artEl, titleEl, bylineEl, renderTok
 
   function apply(obj) {
     if (!isGalleryRenderCurrent(renderToken)) return;
+    artEl.setAttribute('aria-label', [obj.title || 'Artwork', obj.artist, obj.desc].filter(Boolean).join(' — '));
     const img = document.getElementById('gallery-img');
     if (img) {
       showSpinner(artEl, true);
@@ -1966,6 +2034,9 @@ function dayOfYear(d = new Date()) {
 }
 
 function nextGalleryRenderToken() {
+  galleryPlayback?.clear();
+  const art = document.getElementById('gallery-art');
+  if (art) delete art.dataset.animated;
   const next = (window.__galleryRenderToken || 0) + 1;
   window.__galleryRenderToken = next;
   return next;
@@ -2077,6 +2148,7 @@ function bindKenBurns() {
   const img = document.getElementById('gallery-img');
   if (!img) return;
   img.classList.remove('kenburns');
+  if (document.getElementById('gallery-art')?.dataset.animated === 'true') return;
   void img.offsetWidth;
   img.classList.add('kenburns');
 }

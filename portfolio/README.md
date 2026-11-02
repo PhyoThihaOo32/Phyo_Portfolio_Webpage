@@ -34,7 +34,7 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 - **Theme-aware daily gallery**
   - Dark/Light: public-domain artworks (The Met)
   - Cyber/Burmese: curated local gallery sets
-  - Ocean: original tropical SVG postcards
+  - Ocean: ten owner-selected animations with individual creator credits
 - **Music section** with lazy-loaded Apple/lofi embeds
 - **Contact panel** with FormSubmit endpoint integration
 - **Recreation Corner**
@@ -58,7 +58,9 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 
 Card surfaces share `--card-surface` and `--card-feather` in `styles.css`. Only their decorative pseudo-elements are masked; text, images, and controls retain full opacity. A soft pointer highlight fades in on hover. Pause and reduced-motion preferences disable the hover movement; focus outlines and form-field boundaries remain visible.
 
-Ocean's background uses the owner-supplied **Loop Glow GIF by xponentialdesign**, exported as an H.264 MP4 in `assets/art/ambient/ocean-glow-waves.mp4` to preserve the full loop at a smaller download size. `ocean.js` loads the muted, inline video only when Ocean is visible and motion is allowed. The motion control freezes and resumes the video; hidden tabs pause it, and leaving Ocean releases the decoder. Reduced-motion, data-saving, blocked-autoplay, and failed-media cases use a matching PNG still. A sky-blue veil keeps the background quiet and the foreground readable. Original tropical postcards remain in `assets/art/ocean/`.
+Ocean's background uses the owner-supplied **Loop Glow GIF by xponentialdesign**, exported as an H.264 MP4 in `assets/art/ambient/ocean-glow-waves.mp4` to preserve the full loop at a smaller download size. `ocean.js` loads the muted, inline video only when Ocean is visible and motion is allowed. The motion control freezes and resumes the video; hidden tabs pause it, and leaving Ocean releases the decoder. Reduced-motion, data-saving, blocked-autoplay, and failed-media cases use a matching PNG still. A sky-blue veil keeps the background quiet and the foreground readable. Original tropical illustrations remain in `assets/art/ocean/` and the hero postcard.
+
+Ocean's gallery manifest pairs ten owner-supplied GIFs with optimized MP4 loops and PNG stills. Loop Glow reuses the background's existing media files. Gallery loops load as the gallery approaches the viewport, play silently inline, respect motion/data preferences, and pause offscreen or in hidden tabs. Switching artwork or themes releases the previous video. Fit mode preserves each full frame; the existing fill control remains available. Creator credits appear with each piece; [the Ocean asset notes](assets/art/ocean/README.md) record the source filenames and credits.
 
 The earlier procedural Three.js sea is retained in `ocean-scene.js` and `assets/vendor/three/` as an unused source asset; the GIF-based background does not download or render it.
 

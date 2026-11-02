@@ -2205,7 +2205,7 @@ pre {
   background: var(--bg-soft);
   overflow: hidden;
 }
-.gallery-art img {
+.gallery-art :is(img, .gallery-video) {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -2214,9 +2214,13 @@ pre {
   background: #0f1520;
   transform-origin: center;
 }
-.gallery-art.fill img {
+.gallery-art.fill :is(img, .gallery-video) {
   object-fit: cover;
 }
+.gallery-video { opacity: 0; pointer-events: none; transition: opacity .35s ease; }
+.gallery-video.is-ready { opacity: 1; }
+html[data-motion="paused"] .gallery-video { transition: none; }
+@media (prefers-reduced-motion: reduce) { .gallery-video { transition: none; } }
 .gallery-art::after {
   content: "";
   position: absolute;
@@ -3828,7 +3832,7 @@ html[data-theme="ocean"] .project-loop .art-panel { fill: #f7ffff; stroke: #83b5
 html[data-theme="ocean"] .project-loop .art-symbol-panel { fill: #d1eeee; }
 html[data-theme="ocean"] .project-loop .art-copy { fill: #416775; }
 html[data-theme="ocean"] .project-loop .art-strong { fill: #163d4c; }
-html[data-theme="ocean"] .gallery-art img { background: #d4eff2; }
+html[data-theme="ocean"] .gallery-art :is(img, .gallery-video) { background: #d4eff2; }
 html[data-theme="ocean"] .form-status.error { color: #9c432b; }
 html[data-theme="ocean"] .form-status.success { color: #086b5c; }
 html[data-theme="ocean"] .interest-shuffle:hover { background: rgba(97, 193, 211, .15); }
