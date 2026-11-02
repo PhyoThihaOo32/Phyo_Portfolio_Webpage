@@ -3867,3 +3867,10 @@ html[data-theme="ocean"] .interest-shuffle:hover { background: rgba(97, 193, 211
 }
 @media (prefers-reduced-motion: reduce) { #ocean-atmosphere .ocean-wave-video { transition: none; } }
 html[data-motion="paused"] #ocean-atmosphere .ocean-wave-video { transition: none; }
+
+/* Transparent hover currents sit below copy, and lightly above the two artwork frames. */
+.ocean-water-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; border-radius: inherit; pointer-events: none; }
+.hero-artwork-image > .ocean-water-canvas, .gallery-art > .ocean-water-canvas { z-index: 3; }
+html:not([data-theme="ocean"]) .ocean-water-canvas,
+html[data-motion="paused"] .ocean-water-canvas { display: none; }
+@media (prefers-reduced-motion: reduce), (any-hover: none), (any-pointer: none) { .ocean-water-canvas { display: none; } }
