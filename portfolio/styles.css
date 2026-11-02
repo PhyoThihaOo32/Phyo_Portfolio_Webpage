@@ -3775,6 +3775,29 @@ html[data-motion="paused"] .interest-tag.is-settling { animation: none; }
 }
 @media (prefers-reduced-motion: reduce) { .interest-tag { transition: none; } .interest-tag.is-settling { animation: none; } }
 
+/* Openly licensed, self-hosted Latin webfonts used only by Ocean. */
+@font-face {
+  font-family: "DM Sans";
+  src: url("assets/fonts/ocean/dm-sans-latin-variable.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Original Surfer";
+  src: url("assets/fonts/ocean/original-surfer-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pacifico";
+  src: url("assets/fonts/ocean/pacifico-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Ocean: a bright, tropical palette over the owner's softly glowing wave loop. */
 html[data-theme="ocean"] {
   color-scheme: light;
@@ -3792,14 +3815,32 @@ html[data-theme="ocean"] {
   --surface-shade: rgba(31, 113, 139, .12);
   --card-surface: transparent;
   --header-glow: linear-gradient(90deg, rgba(140, 216, 230, .25), rgba(252, 227, 182, .15));
-  --font-body: "Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif;
-  --font-heading: "Reyda", "Segoe UI", sans-serif;
-  --font-display: "Reyda", "Segoe UI", sans-serif;
+  --font-body: "DM Sans", "Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-heading: "Original Surfer", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-display: "Original Surfer", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-ocean-accent: "Pacifico", "Brush Script MT", "Segoe Script", cursive;
   --hero-gold-1: #087c8d;
   --hero-gold-2: #176d9b;
   --hero-gold-3: #a7583c;
   --hero-gold-shadow: rgba(24, 129, 151, .08);
 }
+html[data-theme="ocean"] :is(h2, h3) { font-weight: 400; letter-spacing: -.025em; }
+html[data-theme="ocean"] :is(h4, h5, h6),
+html[data-theme="ocean"] .brand h1 { font-family: var(--font-body); }
+html[data-theme="ocean"] .brand h1 { font-weight: 600; }
+html[data-theme="ocean"] .hero h2 { font-size: clamp(2.6rem, 5.2vw, 4.75rem); line-height: 1.14; }
+html[data-theme="ocean"] .hero h2 .accent {
+  font-family: var(--font-ocean-accent);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: -.015em;
+  line-height: 1.3;
+  padding: .05em .04em .12em 0;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+html[data-theme="ocean"] .section-head h3 { line-height: 1.22; letter-spacing: -.015em; }
+html[data-theme="ocean"] .interest-tag { font-family: var(--font-body); }
 html[data-theme="ocean"] body { background: var(--bg); }
 #ocean-atmosphere { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #d7eff7; }
 html[data-theme="ocean"] #ocean-atmosphere { background-image: linear-gradient(rgba(215,239,247,.28), rgba(215,239,247,.28)), url("assets/art/ambient/ocean-glow-waves-still.png"); background-position: center; background-size: cover; }
@@ -3863,6 +3904,7 @@ html[data-theme="ocean"] .form-status.error { color: #9c432b; }
 html[data-theme="ocean"] .form-status.success { color: #086b5c; }
 html[data-theme="ocean"] .interest-shuffle:hover { background: rgba(97, 193, 211, .15); }
 @media (max-width: 680px) {
+  html[data-theme="ocean"] .hero h2 { font-size: clamp(2.4rem, 10.8vw, 3.4rem); }
   html[data-theme="ocean"] body::after { background: linear-gradient(180deg, rgba(207,238,247,.9), rgba(204,238,246,.86) 42%, rgba(195,231,243,.88)); }
 }
 @media (prefers-reduced-motion: reduce) { #ocean-atmosphere .ocean-wave-video { transition: none; } }

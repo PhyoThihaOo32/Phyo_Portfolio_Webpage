@@ -22,14 +22,22 @@
         const theme = choices.includes(requested) ? requested : localStorage.getItem('theme');
         if (choices.includes(theme)) document.documentElement.dataset.theme = theme;
         if (localStorage.getItem('portfolio-motion') === 'paused' || matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.dataset.motion = 'paused';
+        const fonts = document.documentElement.dataset.theme === 'ocean'
+          ? ['dm-sans-latin-variable.woff2', 'original-surfer-latin-400.woff2', 'pacifico-latin-400.woff2'].map(file => `assets/fonts/ocean/${file}`)
+          : ['assets/fonts/reyda/ReydademoRegular-6Rl2A.ttf'];
+        for (const href of fonts) {
+          const preload = document.createElement('link');
+          preload.rel = 'preload'; preload.as = 'font'; preload.href = href;
+          preload.type = href.endsWith('.woff2') ? 'font/woff2' : 'font/ttf';
+          preload.crossOrigin = 'anonymous'; document.head.appendChild(preload);
+        }
       } catch { }
     </script>
-    <link rel="preload" href="assets/fonts/reyda/ReydademoRegular-6Rl2A.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="manifest" href="manifest.webmanifest" />
     <title>Phyo Thiha Oo — Portfolio</title>
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=149" />
+    <link rel="stylesheet" href="styles.css?v=150" />
     <style>
       .reveal {
         opacity: 1 !important;
@@ -368,6 +376,12 @@
               references and local assets. Ocean features animations by Karl Jahnke, Allison House, aceslowman,
               xponentialdesign, ATLAST, Garbi KW, dualvoidanima, and Awkwafina is Nora from Queens. Its featured painting is
               Ivan Aivazovsky’s <em>Moonlit Night at Sea</em>, selected from @darkgloomyart on Instagram.</p>
+            <p class="muted">Ocean typography pairs Pacifico, Original Surfer, and DM Sans.</p>
+            <div class="credit-links">
+              <a href="https://www.fontspace.com/pacifico-font-f11956" target="_blank" rel="noreferrer">Pacifico · FontSpace ↗</a>
+              <a href="https://fonts.google.com/specimen/Original+Surfer" target="_blank" rel="noreferrer">Original Surfer ↗</a>
+              <a href="https://fonts.google.com/specimen/DM+Sans" target="_blank" rel="noreferrer">DM Sans ↗</a>
+            </div>
           </article>
         </div>
       </section>

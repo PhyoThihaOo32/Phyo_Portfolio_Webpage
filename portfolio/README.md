@@ -56,6 +56,8 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 - **Burmese**: warm gold/maroon palette reflecting cultural origin
 - **Ocean**: sky blue, turquoise, seafoam, and warm coral accents with tropical animation and a featured maritime painting
 
+Ocean's type system uses **Original Surfer** for large headings, **Pacifico** for the flowing hero accent, and **DM Sans** for body text, buttons, navigation, and card titles. Pacifico was selected from FontSpace's surf-inspired options; all three families are served as local Google Fonts WOFF2 files with `font-display: swap`. Initial Ocean visits preload its three fonts, while other themes retain their existing typefaces. See [`assets/fonts/ocean/README.md`](assets/fonts/ocean/README.md) for sources and the bundled SIL Open Font Licenses.
+
 Card surfaces share `--card-surface` and `--card-feather` in `styles.css`. Only their decorative pseudo-elements are masked; text, images, and controls retain full opacity. A soft pointer highlight fades in on hover. Pause and reduced-motion preferences disable the hover movement; focus outlines and form-field boundaries remain visible.
 
 Ocean uses clear card surfaces instead of the shared feathered wash: its white surface layer and blur are removed, with subtle blue contours from `assets/art/ocean/water-contours.svg` below the content. A continuous sky-blue veil over the wave background supports readable text across the page, and unused space around gallery artwork reveals the same water. The contours stay still, and the motion control continues to pause the underlying waves and gallery.
