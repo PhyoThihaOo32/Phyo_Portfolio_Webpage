@@ -460,39 +460,6 @@
           }, timeoutMs);
         }
       }
-      const mailtoLink = formEl.querySelector('#contact-mailto');
-      const gmailLink = formEl.querySelector('#contact-gmail');
-      const copyMessage = formEl.querySelector('#contact-copy-message');
-      const copyField = formEl.querySelector('#contact-message-copy');
-      function emailDraft() {
-        const name = formEl.querySelector('[name="name"]').value.trim();
-        const from = formEl.querySelector('[name="email"]').value.trim();
-        const message = formEl.querySelector('[name="message"]').value.trim();
-        const subject = `${contactCfg.subjectPrefix || 'Portfolio message'}${name ? ` from ${name}` : ''}`.replace(/[\r\n]+/g, ' ').slice(0, 180);
-        const body = [message, [name && `Name: ${name}`, from && `Reply email: ${from}`].filter(Boolean).join('\n')].filter(Boolean).join('\n\n');
-        return { subject, body, text: `To: ${email}\nSubject: ${subject}\n\n${body}` };
-      }
-      function updateEmailOptions() {
-        const { subject, body, text } = emailDraft();
-        if (mailtoLink) mailtoLink.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        if (gmailLink) gmailLink.href = `https://mail.google.com/mail/?${new URLSearchParams({ view: 'cm', fs: '1', to: email, su: subject, body })}`;
-        if (copyField) copyField.value = text;
-      }
-      updateEmailOptions();
-      if (copyMessage) {
-        copyMessage.hidden = false;
-        copyMessage.addEventListener('click', async () => {
-          const { text } = emailDraft();
-          try {
-            await navigator.clipboard.writeText(text);
-            if (copyField) copyField.hidden = true;
-            setFormStatus('Message copied. Paste it into your email and send it.', '', 5000);
-          } catch {
-            if (copyField) { copyField.value = text; copyField.hidden = false; copyField.focus(); copyField.select(); }
-            setFormStatus('Select and copy the message below, then paste it into your email.');
-          }
-        });
-      }
       async function postContactMessage(endpoint, payload) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -523,7 +490,6 @@
 
       formEl.addEventListener('input', event => {
         event.target.classList.remove('invalid'); event.target.removeAttribute('aria-invalid'); event.target.removeAttribute('aria-describedby');
-        updateEmailOptions();
       });
       formEl.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -552,13 +518,12 @@
           return;
         }
         if (!contactCfg.endpoint) {
-          setFormStatus('Please use Email app or Gmail below to send your message.', 'error');
+          setFormStatus('Please use the email address in Contact to send your message.', 'error');
           return;
         }
         if (honeyEl && honeyEl.value.trim()) {
           // Honeypot filled; treat as success without sending
           formEl.reset();
-          updateEmailOptions();
           setFormStatus('Message sent successfully.', 'success', 3500);
           return;
         }
@@ -580,14 +545,11 @@
           });
 
           formEl.reset();
-          updateEmailOptions();
-          if (copyField) copyField.hidden = true;
           setFormStatus('Message submitted successfully.', 'success');
         } catch (err) {
           const errorMessage = err?.activationRequired
-            ? 'This form is temporarily unavailable. Use Email app or Gmail below to send your message.'
-            : 'We couldn’t confirm delivery. Your message is still here—use Email app or Gmail below, or try again.';
-          updateEmailOptions();
+            ? 'This form is temporarily unavailable. Please use the email address in Contact.'
+            : 'We couldn’t confirm delivery. Your message is still here. Try again or use the email address in Contact.';
           setFormStatus(errorMessage, 'error');
         } finally {
           sending = false;

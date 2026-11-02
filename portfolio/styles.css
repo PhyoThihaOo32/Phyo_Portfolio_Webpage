@@ -1343,12 +1343,6 @@ html[data-theme="space"] .about-visual span {
   color: #34d399;
 }
 .form-status:empty { display: none; }
-.contact-email-options { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-.contact-email-options p { margin: 0 0 .65rem; }
-.contact-email-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
-.contact-email-actions .btn { min-height: 44px; font-size: .8rem; padding: .55rem .7rem; }
-.contact-email-options .contact-email-note { margin: .7rem 0 0; font-size: .8rem; line-height: 1.6; }
-#contact-message-copy { margin-top: .75rem; min-height: 160px; font: .85rem/1.5 var(--font-body); }
 .contact-card button[disabled] {
   opacity: 0.7;
   cursor: wait;
@@ -3512,7 +3506,7 @@ html[data-theme="light"] { --surface-tint: #9471d4; --surface-warmth: #df9a87; -
   opacity: 0;
   transition: opacity 800ms ease;
 }
-.hero-proof li + li, .project-card .links, .project-details, .now-item, .contact-email-options { border: 0; }
+.hero-proof li + li, .project-card .links, .project-details, .now-item { border: 0; }
 .gallery-art, .player-embed iframe, .game-stage, .aquarium-stage { border: 0; }
 .gallery-art::after { box-shadow: none; }
 .skill-card[data-skill="0"] { --card-a: #56bfc8; --card-b: #7d9be9; }
@@ -3940,3 +3934,17 @@ html[data-motion="paused"] #ocean-atmosphere .ocean-wave-video { transition: non
 html:not([data-theme="ocean"]) .ocean-water-canvas,
 html[data-motion="paused"] .ocean-water-canvas { display: none; }
 @media (prefers-reduced-motion: reduce), (any-hover: none), (any-pointer: none) { .ocean-water-canvas { display: none; } }
+
+/* A quiet, opt-in Ocean soundtrack, within reach while reading. */
+.ocean-sound { position: fixed; left: max(.75rem, env(safe-area-inset-left)); bottom: max(.75rem, env(safe-area-inset-bottom)); z-index: 61; display: flex; align-items: center; gap: .5rem; max-width: calc(100vw - 5.25rem); padding: .15rem .7rem .15rem .25rem; color: #143b4b; background: rgba(232, 248, 252, .96); border: 1px solid rgba(66, 145, 165, .3); border-radius: 2rem; box-shadow: 0 4px 18px rgba(20, 59, 75, .08); }
+.ocean-sound[hidden], html:not([data-theme="ocean"]) .ocean-sound { display: none; }
+#ocean-sound-toggle { display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; padding: .25rem .45rem; border: 0; border-radius: 1.5rem; background: transparent; color: inherit; font: 500 .75rem/1.3 var(--font-body); white-space: nowrap; cursor: pointer; }
+#ocean-sound-toggle svg { flex-shrink: 0; }
+#ocean-sound-toggle:hover { background: rgba(70, 165, 184, .1); }
+#ocean-sound-toggle[aria-pressed="true"] { color: #076077; }
+.ocean-sound-volume { display: flex; align-items: center; min-height: 44px; }
+#ocean-sound-volume { width: 3.5rem; height: 24px; margin: 0; accent-color: #107d94; cursor: pointer; }
+.ocean-sound-waves, .ocean-sound.is-audible .ocean-sound-muted { display: none; }
+.ocean-sound.is-audible .ocean-sound-waves { display: block; }
+#ocean-sound-toggle:focus-visible, #ocean-sound-volume:focus-visible { outline: 2px solid #076077; outline-offset: 2px; }
+#ocean-sound-toggle:disabled { cursor: default; opacity: .6; }

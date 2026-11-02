@@ -37,7 +37,7 @@
     <title>Phyo Thiha Oo — Portfolio</title>
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=155" />
+    <link rel="stylesheet" href="styles.css?v=156" />
     <style>
       .reveal {
         opacity: 1 !important;
@@ -276,16 +276,6 @@
             </label>
             <button class="btn primary" type="submit">Send</button>
             <p id="contact-form-status" class="form-status muted" role="status" aria-live="polite"></p>
-            <div class="contact-email-options">
-              <p class="muted">Or send from your inbox</p>
-              <div class="contact-email-actions">
-                <a id="contact-mailto" class="btn ghost" href="mailto:phyothihaoo.pto@gmail.com">Email app</a>
-                <a id="contact-gmail" class="btn ghost" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=phyothihaoo.pto%40gmail.com" target="_blank" rel="noopener noreferrer">Gmail</a>
-                <button id="contact-copy-message" class="btn ghost" type="button" hidden>Copy message</button>
-              </div>
-              <p class="muted contact-email-note">Opens a draft with your message. Send it from your email account.</p>
-              <textarea id="contact-message-copy" rows="6" readonly hidden aria-label="Message to copy"></textarea>
-            </div>
           </form>
         </div>
       </section>
@@ -362,7 +352,7 @@
           <article class="credit-card">
             <span class="credit-kicker">Atmosphere</span>
             <h4>Music &amp; Radio</h4>
-            <p class="muted">Ambient listening is powered by Apple Music embeds and lofi.cafe when enabled.</p>
+            <p class="muted">Ambient listening is powered by Apple Music embeds and lofi.cafe when enabled. Ocean wave audio is supplied by the portfolio owner.</p>
             <div class="credit-links">
               <a href="https://music.apple.com/" target="_blank" rel="noreferrer">Apple Music ↗</a>
               <a href="https://www.lofi.cafe/" target="_blank" rel="noreferrer">lofi.cafe ↗</a>
@@ -394,12 +384,28 @@
     <script src="content.js?v=118"></script>
     <script defer src="motion.js?v=1"></script>
     <script defer src="project-visuals.js?v=4"></script>
-    <script defer src="main.js?v=125"></script>
+    <script defer src="main.js?v=126"></script>
     <script defer src="interactions.js?v=4"></script>
     <script defer src="interests.js?v=7"></script>
     <script defer src="ocean.js?v=4"></script>
     <script defer src="ocean-water.js?v=2"></script>
     <script defer src="ocean-art.js?v=1"></script>
+    <script defer src="ocean-sound.js?v=1"></script>
+    <aside id="ocean-sound" class="ocean-sound" aria-label="Ocean ambience" hidden>
+      <button id="ocean-sound-toggle" type="button" aria-label="Turn on ocean waves" aria-pressed="false" title="Turn on ocean waves">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 5 6 9H3v6h3l5 4V5Z"/>
+          <path class="ocean-sound-waves" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>
+          <path class="ocean-sound-muted" d="m16 9 5 6m0-6-5 6"/>
+        </svg>
+        <span>Ocean sound</span>
+      </button>
+      <label class="ocean-sound-volume">
+        <span class="sr-only">Ocean sound volume</span>
+        <input id="ocean-sound-volume" type="range" min="0" max="100" step="1" value="30" aria-valuetext="30 percent" />
+      </label>
+      <p id="ocean-sound-status" class="sr-only" role="status" aria-live="polite"></p>
+    </aside>
     <button id="scroll-top" class="fab" tabindex="-1" aria-hidden="true" aria-label="Scroll to top" title="Scroll to top">↑</button>
   </body>
 
