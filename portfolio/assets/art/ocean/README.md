@@ -22,3 +22,5 @@ Each media stem has an H.264 MP4 loop and a matching `-still.png` first frame. T
 **Moonlit Night at Sea** by **Ivan Aivazovsky**, selected from [@darkgloomyart's Instagram post](https://www.instagram.com/p/DVNCXLXim2p/). The post identifies the painting as circa 1885. `aivazovsky-moonlit-sea.webp` is the full 1440 × 1882 image displayed in that public post, saved locally without cropping or color changes. The Ocean hero presents it in full with the artist and post credited below the frame. The Instagram caption and comments are not reproduced.
 
 The earlier tropical SVG illustrations remain in this directory as editable source artwork.
+
+The featured painting also serves as the texture for an image-based Three.js presentation. The original file stays unchanged; small procedural depth and sea/light motion are applied at render time. Artist/source credit remains visible. Motion and graphics fallbacks show the original still.

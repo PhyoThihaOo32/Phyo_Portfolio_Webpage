@@ -68,9 +68,11 @@ Ocean's background uses the owner-supplied **Loop Glow GIF by xponentialdesign**
 
 The Ocean hero features **Moonlit Night at Sea** by **Ivan Aivazovsky**, selected by the owner from [@darkgloomyart's Instagram post](https://www.instagram.com/p/DVNCXLXim2p/). The 1440 × 1882 WebP is self-hosted in `assets/art/ocean/aivazovsky-moonlit-sea.webp`; the full portrait is shown without text over the painting. The caption credits the artist and links to the selected post. Other themes retain their original hero artwork.
 
+`ocean-art.js` turns this image into a quiet, image-based Three.js scene: small depth differences, a gentle mouse tilt, subtle sea refraction, and warm moonlight shimmer. `ocean-art-scene.js` reuses the local MIT-licensed Three.js bundle. It loads only when the Ocean painting approaches the viewport with motion enabled; the original image stays underneath as a fallback. Rendering is capped near 30 fps with a small texture and limited pixel density. The scene stops offscreen or in hidden tabs, shows the original still when motion is paused, and releases its GPU resources on theme changes. Reduced motion, data saving, module/WebGL failure, and context loss preserve the still image. The painting uses this shader instead of the card-hover canvas; other Ocean cards keep their existing gentle ripples.
+
 Ocean's gallery manifest pairs ten owner-supplied GIFs with optimized MP4 loops and PNG stills. Loop Glow reuses the background's existing media files. Gallery loops load as the gallery approaches the viewport, play silently inline, respect motion/data preferences, and pause offscreen or in hidden tabs. Switching artwork or themes releases the previous video. Fit mode preserves each full frame; the existing fill control remains available. Creator credits appear with each piece; [the Ocean asset notes](assets/art/ocean/README.md) record the source filenames and credits.
 
-The earlier procedural Three.js sea is retained in `ocean-scene.js` and `assets/vendor/three/` as an unused source asset; the GIF-based background does not download or render it.
+The earlier procedural sea is retained in `ocean-scene.js` as unused source artwork. The page background remains the owner-selected GIF loop; the Three.js renderer belongs to the featured painting.
 
 Link directly to a theme with `?theme=ocean` (or any of the other theme names). Changing themes updates that parameter when present; ordinary portfolio URLs retain the visitor's saved preference.
 

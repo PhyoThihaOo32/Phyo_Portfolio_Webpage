@@ -3889,6 +3889,12 @@ html[data-theme="ocean"] .hero-artwork:hover img { transform: none; }
 html[data-theme="ocean"] .hero-artwork-image::after { content: none; }
 html[data-theme="ocean"] :is(.artwork-caption, .artwork-guide) { display: none; }
 html[data-theme="ocean"] .hero-artwork figcaption { max-width: 300px; margin-inline: auto; flex-direction: column; align-items: flex-start; gap: .15rem; padding-top: .6rem; font-size: .66rem; line-height: 1.5; }
+.ocean-art-canvas { display: block; opacity: 0; border-radius: inherit; transition: opacity 1s ease; }
+html[data-theme="ocean"] .hero-artwork-image[data-art-renderer="three"] { transform: perspective(900px) rotateX(var(--ocean-art-tilt-x, 0deg)) rotateY(var(--ocean-art-tilt-y, 0deg)); }
+html[data-theme="ocean"] .hero-artwork-image[data-art-ready="true"] > .ocean-art-canvas { opacity: 1; }
+html[data-motion="paused"] .hero-artwork-image[data-art-renderer="three"] { transform: none; }
+html[data-theme="ocean"][data-motion="paused"] .hero-artwork-image > .ocean-art-canvas { opacity: 0; transition: none; }
+@media (prefers-reduced-motion: reduce) { .ocean-art-canvas { display: none; transition: none; } }
 html[data-theme="ocean"] .project-loop { --illustration-ink: color-mix(in srgb, var(--illustration-accent) 35%, #164654); }
 html[data-theme="ocean"] .project-loop .art-base-first { stop-color: #e6f8fc; }
 html[data-theme="ocean"] .project-loop .art-base-last { stop-color: #c9edf0; }

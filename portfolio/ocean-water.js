@@ -7,6 +7,7 @@
   const allowed = () => root.dataset.theme === 'ocean' && root.dataset.motion !== 'paused' &&
     !reduced.matches && finePointer.matches && !document.hidden;
   let scenes = [], active = null, frame = 0, lastDraw = 0;
+  const livingArtwork = element => element.matches('.hero-artwork-image[data-art-renderer="three"]');
 
   function remove(scene) { scene.canvas.remove(); }
   function clear() {
@@ -115,7 +116,7 @@
     lastDraw = now;
     if (active && now - active.lastMove > 1300) leave();
     scenes = scenes.filter(scene => {
-      if (!scene.element.isConnected || (scene.fading && scene.opacity < .015)) {
+      if (!scene.element.isConnected || livingArtwork(scene.element) || (scene.fading && scene.opacity < .015)) {
         if (active === scene) active = null;
         remove(scene); return false;
       }
@@ -127,7 +128,7 @@
   document.addEventListener('pointermove', event => {
     if (event.pointerType !== 'mouse' || event.buttons || !allowed()) { if (scenes.length) clear(); return; }
     const element = event.target instanceof Element ? event.target.closest(surfaces) : null;
-    if (!element || event.target instanceof HTMLIFrameElement) { leave(); return; }
+    if (!element || livingArtwork(element) || event.target instanceof HTMLIFrameElement) { leave(); return; }
     const now = performance.now();
     if (active?.element !== element) {
       leave();
