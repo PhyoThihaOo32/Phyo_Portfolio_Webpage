@@ -21,7 +21,7 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 ## Features
 
 - **6 themes**: `Dark`, `Light`, `Cyber`, `Space`, `Burmese`, `Ocean`
-- **Ocean's tropical Three.js scene**: GPU-driven waves, sunshine, distant islands, moving clouds, and swaying palm fronds; lazy-loaded with original illustrated stills for reduced motion, data saving, and unavailable WebGL
+- **Ocean's glowing wave background**: the owner's selected Loop Glow animation by xponentialdesign, softened by a sky-blue veil with a matching still for reduced motion and data saving
 - **Borderless card surfaces** with translucent color washes and feathered edges that blend into each theme's background
 - **Dark-theme ambient artwork** by Borrachas with a reduced-motion still fallback
 - **Recruiter-first hero** with current role, stack, and measurable highlights
@@ -58,7 +58,9 @@ It highlights my background, skills, projects, timeline, and contact flow in a c
 
 Card surfaces share `--card-surface` and `--card-feather` in `styles.css`. Only their decorative pseudo-elements are masked; text, images, and controls retain full opacity. A soft pointer highlight fades in on hover. Pause and reduced-motion preferences disable the hover movement; focus outlines and form-field boundaries remain visible.
 
-Ocean's renderer lives in `ocean-scene.js` and uses a self-hosted, MIT-licensed Three.js 0.187.0 bundle. `ocean.js` imports it only after Ocean is selected and disposes its GPU resources when leaving the theme. Animation is capped near 30 fps with a limited pixel ratio; hidden tabs stop rendering. System reduced-motion and data-saving preferences use the illustrated shore without downloading Three.js. See `assets/vendor/three/README.md` for the dependency source and `assets/art/ocean/` for the original SVG gallery.
+Ocean's background uses the owner-supplied **Loop Glow GIF by xponentialdesign**, exported as an H.264 MP4 in `assets/art/ambient/ocean-glow-waves.mp4` to preserve the full loop at a smaller download size. `ocean.js` loads the muted, inline video only when Ocean is visible and motion is allowed. The motion control freezes and resumes the video; hidden tabs pause it, and leaving Ocean releases the decoder. Reduced-motion, data-saving, blocked-autoplay, and failed-media cases use a matching PNG still. A sky-blue veil keeps the background quiet and the foreground readable. Original tropical postcards remain in `assets/art/ocean/`.
+
+The earlier procedural Three.js sea is retained in `ocean-scene.js` and `assets/vendor/three/` as an unused source asset; the GIF-based background does not download or render it.
 
 Link directly to a theme with `?theme=ocean` (or any of the other theme names). Changing themes updates that parameter when present; ordinary portfolio URLs retain the visitor's saved preference.
 

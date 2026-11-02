@@ -1,4 +1,4 @@
-// The Ocean theme owns its renderer; other themes never download Three.js.
+// The owner-selected wave loop loads only while Ocean is visible and motion is allowed.
 document.addEventListener('DOMContentLoaded', () => {
   const root = document.documentElement;
   const atmosphere = document.getElementById('ocean-atmosphere');
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const caption = document.querySelector('.artwork-caption');
   const credit = document.querySelector('.hero-artwork figcaption');
   const original = { src: image?.getAttribute('src'), alt: image?.alt, caption: caption?.innerHTML, credit: credit?.innerHTML };
-  let scene = null, pending = null, generation = 0, lastTheme = '';
+  let video = null, lastTheme = '', playback = 0;
   const canAnimate = () => !reduced.matches && root.dataset.motion !== 'paused' && !document.hidden;
 
   function postcard(ocean) {
@@ -17,36 +17,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if (credit) credit.innerHTML = ocean ? '<span>A little aloha</span><a href="#listen">Explore the ocean postcards ↘</a>' : original.credit;
   }
   function dispose() {
-    if (scene) { scene.dispose(); scene = null; }
-    atmosphere.replaceChildren();
+    ++playback;
+    const oldVideo = video;
+    video = null;
+    if (oldVideo) {
+      oldVideo.pause(); oldVideo.removeAttribute('src'); oldVideo.load(); oldVideo.remove();
+    }
     delete atmosphere.dataset.ready;
   }
   function fallback() {
     dispose();
     atmosphere.dataset.renderer = 'static';
   }
-  async function activate() {
-    const current = ++generation;
+  function activate() {
+    const currentPlayback = ++playback;
     if (root.dataset.theme !== 'ocean') {
       dispose(); atmosphere.hidden = true; delete atmosphere.dataset.renderer;
       return;
     }
     atmosphere.hidden = false;
     if (reduced.matches || navigator.connection?.saveData) { fallback(); return; }
-    if (scene) { scene.setMotion(canAnimate()); return; }
-    atmosphere.dataset.renderer = 'loading';
-    try {
-      pending ||= import('./ocean-scene.js?v=1');
-      const { createOceanScene } = await pending;
-      if (current !== generation || root.dataset.theme !== 'ocean') return;
-      const canvas = document.createElement('canvas');
-      canvas.setAttribute('aria-hidden', 'true'); atmosphere.appendChild(canvas);
-      scene = createOceanScene(canvas, { onContextLost: fallback });
-      scene.setMotion(canAnimate());
-      atmosphere.dataset.renderer = 'three'; atmosphere.dataset.ready = 'true';
-    } catch {
-      if (current === generation) fallback();
+    if (!canAnimate()) {
+      video?.pause();
+      if (!video) atmosphere.dataset.renderer = 'static';
+      return;
     }
+    if (!video) {
+      const loop = document.createElement('video');
+      loop.className = 'ocean-wave-video';
+      loop.muted = true; loop.defaultMuted = true; loop.loop = true; loop.playsInline = true;
+      loop.disablePictureInPicture = true;
+      loop.setAttribute('aria-hidden', 'true'); loop.tabIndex = -1;
+      loop.addEventListener('loadeddata', () => {
+        if (video === loop) atmosphere.dataset.ready = 'true';
+      });
+      loop.addEventListener('error', () => { if (video === loop) fallback(); });
+      loop.src = 'assets/art/ambient/ocean-glow-waves.mp4';
+      video = loop; atmosphere.appendChild(loop);
+    }
+    atmosphere.dataset.renderer = 'video';
+    const currentVideo = video;
+    currentVideo.play().catch(() => {
+      if (currentPlayback === playback && video === currentVideo && canAnimate()) fallback();
+    });
   }
   function syncTheme() {
     const theme = root.dataset.theme;
@@ -54,10 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
     lastTheme = theme; postcard(theme === 'ocean'); activate();
   }
   new MutationObserver(syncTheme).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-  document.addEventListener('portfolio:motionchange', () => { if (root.dataset.theme === 'ocean') { if (reduced.matches) activate(); else if (scene) scene.setMotion(canAnimate()); else activate(); } });
-  document.addEventListener('visibilitychange', () => scene?.setMotion(canAnimate()));
+  document.addEventListener('portfolio:motionchange', activate);
+  document.addEventListener('visibilitychange', activate);
   reduced.addEventListener('change', () => { if (root.dataset.theme === 'ocean') activate(); });
-  window.addEventListener('pagehide', () => { ++generation; dispose(); });
+  window.addEventListener('pagehide', dispose);
   window.addEventListener('pageshow', e => { if (e.persisted) activate(); });
   syncTheme();
 });

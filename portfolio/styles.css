@@ -3771,7 +3771,7 @@ html[data-motion="paused"] .interest-tag.is-settling { animation: none; }
 }
 @media (prefers-reduced-motion: reduce) { .interest-tag { transition: none; } .interest-tag.is-settling { animation: none; } }
 
-/* Ocean: a bright, tropical palette over a quiet Pacific scene. */
+/* Ocean: a bright, tropical palette over the owner's softly glowing wave loop. */
 html[data-theme="ocean"] {
   color-scheme: light;
   --bg: #e8f8fc;
@@ -3780,7 +3780,7 @@ html[data-theme="ocean"] {
   --text: #143b4b;
   --muted: #3e6273;
   --border: #bcdde5;
-  --accent: #087f92;
+  --accent: #086d80;
   --accent-2: #bf7051;
   --shadow: 0 8px 28px rgba(31, 113, 139, .1);
   --surface-tint: #399fb1;
@@ -3797,13 +3797,14 @@ html[data-theme="ocean"] {
   --hero-gold-shadow: rgba(24, 129, 151, .08);
 }
 html[data-theme="ocean"] body { background: var(--bg); }
-#ocean-atmosphere { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #bce8ef url("assets/art/ocean/aloha-shore.svg") center / cover no-repeat; }
-#ocean-atmosphere canvas { width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s ease; }
-#ocean-atmosphere[data-ready="true"] canvas { opacity: 1; }
+#ocean-atmosphere { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #d7eff7; }
+html[data-theme="ocean"] #ocean-atmosphere { background-image: linear-gradient(rgba(215,239,247,.28), rgba(215,239,247,.28)), url("assets/art/ambient/ocean-glow-waves-still.png"); background-position: center; background-size: cover; }
+#ocean-atmosphere .ocean-wave-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
+#ocean-atmosphere[data-ready="true"] .ocean-wave-video { opacity: .72; }
 html[data-theme="ocean"] body::before { opacity: 0; background: none; animation: none; transform: none; will-change: auto; }
 html[data-theme="ocean"] body::after {
   inset: 0;
-  background: linear-gradient(90deg, rgba(239, 251, 255, .87), rgba(239, 251, 255, .62) 56%, rgba(239, 251, 255, .34)), linear-gradient(180deg, rgba(238, 250, 255, .2), rgba(223, 248, 247, .36));
+  background: linear-gradient(90deg, rgba(239, 251, 255, .86), rgba(239, 251, 255, .72) 56%, rgba(239, 251, 255, .56)), linear-gradient(180deg, rgba(238, 250, 255, .08), rgba(223, 248, 247, .18));
   opacity: 1; transform: none; animation: none; will-change: auto;
 }
 html[data-theme="ocean"] .site-header { background: rgba(235, 250, 254, .91); border-bottom: 0; box-shadow: 0 8px 30px rgba(38, 122, 146, .06); backdrop-filter: blur(14px); }
@@ -3832,8 +3833,7 @@ html[data-theme="ocean"] .form-status.error { color: #9c432b; }
 html[data-theme="ocean"] .form-status.success { color: #086b5c; }
 html[data-theme="ocean"] .interest-shuffle:hover { background: rgba(97, 193, 211, .15); }
 @media (max-width: 680px) {
-  #ocean-atmosphere { background-image: url("assets/art/ocean/ocean-mobile.svg"); }
-  html[data-theme="ocean"] body::after { background: linear-gradient(180deg, rgba(239,251,255,.78), rgba(233,250,252,.7) 42%, rgba(229,249,248,.74)); }
+  html[data-theme="ocean"] body::after { background: linear-gradient(180deg, rgba(239,251,255,.84), rgba(233,250,252,.78) 42%, rgba(229,249,248,.82)); }
 }
-@media (prefers-reduced-motion: reduce) { #ocean-atmosphere canvas { transition: none; } }
-html[data-motion="paused"] #ocean-atmosphere canvas { transition: none; }
+@media (prefers-reduced-motion: reduce) { #ocean-atmosphere .ocean-wave-video { transition: none; } }
+html[data-motion="paused"] #ocean-atmosphere .ocean-wave-video { transition: none; }
