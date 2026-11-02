@@ -3843,7 +3843,7 @@ html[data-theme="ocean"] .section-head h3 { line-height: 1.22; letter-spacing: -
 html[data-theme="ocean"] .interest-tag { font-family: var(--font-body); }
 html[data-theme="ocean"] body { background: var(--bg); }
 #ocean-atmosphere { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #d7eff7; }
-html[data-theme="ocean"] #ocean-atmosphere { background-image: linear-gradient(rgba(215,239,247,.28), rgba(215,239,247,.28)), url("assets/art/ambient/ocean-glow-waves-still.png"); background-position: center; background-size: cover; }
+html[data-theme="ocean"] #ocean-atmosphere { opacity: .9; background-image: linear-gradient(rgba(215,239,247,.28), rgba(215,239,247,.28)), url("assets/art/ambient/ocean-glow-waves-still.png"); background-position: center; background-size: cover; }
 #ocean-atmosphere .ocean-wave-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
 #ocean-atmosphere[data-ready="true"] .ocean-wave-video { opacity: .72; }
 html[data-theme="ocean"] body::before { opacity: 0; background: none; animation: none; transform: none; will-change: auto; }
