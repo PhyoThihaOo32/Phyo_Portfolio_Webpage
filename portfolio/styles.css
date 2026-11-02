@@ -3879,9 +3879,22 @@ html[data-theme="ocean"] .neon-rain :is(p, li) { text-shadow: none; }
 html[data-theme="ocean"] .hero-artwork-image { width: min(100%, 300px); margin-inline: auto; aspect-ratio: 1440 / 1882; background: transparent; }
 html[data-theme="ocean"] .hero-artwork-image img { object-fit: contain; filter: none; }
 html[data-theme="ocean"] .hero-artwork:hover img { transform: none; }
-html[data-theme="ocean"] .hero-artwork-image::after { content: ''; z-index: 2; background: linear-gradient(180deg, transparent 62%, rgba(3, 17, 26, .12) 75%, rgba(3, 17, 26, .66)); }
+html[data-theme="ocean"] .hero-artwork-image::after { content: none; }
 html[data-theme="ocean"] .artwork-guide { display: none; }
-html[data-theme="ocean"] .artwork-caption { display: block; z-index: 4; inset: auto .75rem .95rem .9rem; font-size: clamp(1.8rem, 2.5vw, 2.2rem); line-height: 1.02; text-shadow: 0 2px 14px rgba(0, 12, 21, .6); pointer-events: none; }
+html[data-theme="ocean"] .hero-artwork-image .artwork-caption { display: none; }
+html[data-theme="ocean"] .hero-artwork > .artwork-caption { position: relative; z-index: auto; inset: auto; display: flex; align-items: baseline; gap: .32em; width: min(100%, 300px); margin: .75rem auto .15rem; color: var(--text); font-size: clamp(1.05rem, 1.55vw, 1.25rem); line-height: 1.5; letter-spacing: -.025em; text-shadow: none; pointer-events: none; }
+html[data-theme="ocean"] .artwork-caption br { display: none; }
+html[data-theme="ocean"] .artwork-caption em { color: var(--accent); }
+html[data-theme="ocean"] .hero-artwork > .artwork-caption::after { content: ''; align-self: center; flex: 1; min-width: 1.4rem; max-width: 3rem; height: .65rem; margin-left: .2rem; background: url("assets/art/ocean/quote-current.svg") 0 center / 3.2rem .6rem repeat-x; opacity: .55; }
+@keyframes ocean-quote-tide { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+@keyframes ocean-quote-current { to { background-position: 3.2rem center; } }
+@media (prefers-reduced-motion: no-preference) {
+  html[data-theme="ocean"] .artwork-curiosity { animation: ocean-quote-tide 7s ease-in-out infinite; }
+  html[data-theme="ocean"] .artwork-caption em { animation: ocean-quote-tide 8.5s -3s ease-in-out infinite; }
+  html[data-theme="ocean"] .hero-artwork > .artwork-caption::after { animation: ocean-quote-current 9s linear infinite; }
+}
+html[data-theme="ocean"][data-motion="paused"] .artwork-caption :is(.artwork-curiosity, em),
+html[data-theme="ocean"][data-motion="paused"] .hero-artwork > .artwork-caption::after { animation: none; }
 html[data-theme="ocean"] .hero-artwork figcaption { max-width: 300px; margin-inline: auto; flex-direction: column; align-items: flex-start; gap: .1rem; padding-top: .45rem; font-size: .6rem; line-height: 1.5; }
 html[data-theme="ocean"] .credits-section { padding-block: 1rem 1.5rem; }
 html[data-theme="ocean"] .credits-section .section-head { gap: .5rem 1rem; margin-bottom: 1rem; }

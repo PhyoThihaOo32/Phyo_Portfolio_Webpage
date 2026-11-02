@@ -6,11 +6,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const image = document.querySelector('.hero-artwork-image img');
   const credit = document.querySelector('.hero-artwork figcaption');
+  const quote = document.querySelector('.hero-artwork .artwork-caption');
   const original = { src: image?.getAttribute('src'), alt: image?.alt, width: image?.getAttribute('width'), height: image?.getAttribute('height'), credit: credit?.innerHTML };
   let video = null, lastTheme = '', playback = 0;
   const canAnimate = () => !reduced.matches && root.dataset.motion !== 'paused' && !document.hidden;
 
   function heroArtwork(ocean) {
+    // Keep Ocean's quote outside the painting; restore the original layout elsewhere.
+    if (quote && credit && image) {
+      if (ocean) credit.before(quote);
+      else image.parentElement.appendChild(quote);
+    }
     if (image) {
       image.src = ocean ? 'assets/art/ocean/aivazovsky-moonlit-sea.webp' : original.src;
       image.alt = ocean ? 'Moonlight over a ship on restless waves, with two figures watching from shore — Moonlit Night at Sea by Ivan Aivazovsky.' : original.alt;
